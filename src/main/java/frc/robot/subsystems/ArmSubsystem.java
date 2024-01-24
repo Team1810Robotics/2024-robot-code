@@ -1,14 +1,13 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
+import frc.robot.Constants.ArmConstants;
 
 public class ArmSubsystem extends TrapezoidProfileSubsystem {
 
     public ArmSubsystem() {
-        // TODO: Make this a constant in Constants.java
-        super(new Constraints(0, 0));
+        super(ArmConstants.CONSTRAINTS, ArmConstants.INITIAL_POSITION);
     }
 
     @Override
