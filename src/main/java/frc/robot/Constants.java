@@ -76,7 +76,12 @@ public final class Constants {
     }
 
     public static final class ClimbConstants {
-        public static final int MOTOR1_PORT = 0;
-        public static final int MOTOR2_PORT = 0;
+        public static final int LEFT_MOTOR_PORT = 0;
+        public static final int RIGHT_MOTOR_PORT = 0;
+
+        public static final int LEFT_TOP_LS = 0;
+        public static final int LEFT_BOTTOM_LS = 0;
+        public static final int RIGHT_TOP_LS = 0;
+        public static final int RIGHT_BOTTOM_LS = 0;
     }
 }
