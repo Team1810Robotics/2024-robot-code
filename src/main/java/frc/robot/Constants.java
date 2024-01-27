@@ -46,6 +46,7 @@ public final class Constants {
 
     public static final class ArmConstants {
         public static final double INITIAL_POSITION = 0.0;
+        public static final double INTAKE_POSITION = 0;
 
         public static final Constraints CONSTRAINTS
             = new Constraints(0, 0);
