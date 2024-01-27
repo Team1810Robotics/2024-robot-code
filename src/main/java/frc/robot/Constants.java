@@ -45,6 +45,9 @@ public final class Constants {
     }
 
     public static final class ArmConstants {
+        public static final int MOTOR1_PORT = 0;
+        public static final int MOTOR2_PORT = 0;
+
         public static final double INITIAL_POSITION = 0.0;
         public static final double INTAKE_POSITION = 0;
 
@@ -56,5 +59,31 @@ public final class Constants {
         public static final Constraints CONSTRAINTS
             = new Constraints(0, 0);
     
+    }
+
+    public static final class IntakeConstants {
+        public static final int MOTOR_PORT = 0;
+        public static final int BEAM_BREAK_PORT = 0;
+    }
+
+    public static final class ShooterConstants {
+        public static final int TOP_MOTOR_PORT = 0;
+        public static final int BOTTOM_MOTOR_PORT = 0;
+    }
+
+    public static final class ExtenderConstants {
+        public static final int MOTOR_PORT = 0;
+        public static final int TOP_LS_PORT = 0;
+        public static final int BOTTOM_LS_PORT = 0;
+    }
+
+    public static final class ClimbConstants {
+        public static final int LEFT_MOTOR_PORT = 0;
+        public static final int RIGHT_MOTOR_PORT = 0;
+
+        public static final int LEFT_TOP_LS = 0;
+        public static final int LEFT_BOTTOM_LS = 0;
+        public static final int RIGHT_TOP_LS = 0;
+        public static final int RIGHT_BOTTOM_LS = 0;
     }
 }
