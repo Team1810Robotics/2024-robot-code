@@ -50,5 +50,6 @@ public final class Constants {
 
         public static final Constraints CONSTRAINTS
             = new Constraints(0, 0);
+    
     }
 }

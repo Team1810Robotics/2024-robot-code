@@ -1,0 +1,32 @@
+package frc.robot.commands;
+ 
+ public class IntakeCommand extends IntakeCommand{
+    
+    
+    IntakeSubsystem intakeSubsystem;
+
+    double intake;
+
+    public IntakeCommand(IntakeSubsystem intakeSubsystem, double intake){
+        this.intake = intake;
+        this.IntakeSubsystem = intakeSubsystem;
+
+        addRequirments(IntakeSubsystem);
+    }
+
+    public void execute(){
+        intakeSubsystem.set(intake);
+    }
+
+    public void end(){
+        intakeSubssytem.set(0);
+    }
+    public boolean isFinished(){
+        if (IntakeSubsystem.getBeamBreak()){
+       
+        return true;
+        }
+        return false;
+    }
+
+}
