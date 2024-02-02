@@ -4,18 +4,26 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
 
+  Joystick j = new Joystick(0);
+  double angle = 0;
+
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
+    Shuffleboard.getTab("swerve").addNumber("set", () -> (angle % 360));
   }
 
   @Override
@@ -66,7 +74,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    if (j.getRawButtonPressed(2)) {
+      angle += 90;
+    }
+    SwerveDriveTest.angleModules(m_robotContainer.drivetrain.swerveDrive, Rotation2d.fromDegrees(angle));
+  }
 
   @Override
   public void testExit() {}

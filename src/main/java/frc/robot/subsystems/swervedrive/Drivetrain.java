@@ -22,7 +22,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class Drivetrain extends SubsystemBase{
     public final double maxSpeed = Constants.Swerve.maxVelocity;
 
-    private final SwerveDrive swerveDrive;
+    public final SwerveDrive swerveDrive;
 
     private final double driveConversionFactor = Constants.Swerve.driveConversionFactor;
     private final double angleConversionFactor = Constants.Swerve.angleConversionFactor;
@@ -46,7 +46,8 @@ public class Drivetrain extends SubsystemBase{
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+    }
 
     /**
      * Setup AutoBuilder for PathPlanner
