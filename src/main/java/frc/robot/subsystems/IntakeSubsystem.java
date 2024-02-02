@@ -5,15 +5,16 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
      
-    CANSparkMax motor1 = new CANSparkMax(0, MotorType.kBrushless);
+    CANSparkMax motor = new CANSparkMax(Constants.IntakeConstants.MOTOR_PORT, MotorType.kBrushless);
 
-    DigitalInput input = new DigitalInput(0);
+    DigitalInput input = new DigitalInput(Constants.IntakeConstants.BEAM_BREAK_PORT);
 
     public void setSpeed(double motorSpeed){    
-        motor1.set(motorSpeed);
+        motor.set(motorSpeed);
 
     }
     public boolean getBeamBreak(){

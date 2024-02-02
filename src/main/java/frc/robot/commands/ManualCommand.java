@@ -1,8 +1,9 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSubsystem;
 
-public class ManualCommand extends ManualCommand {
+public class ManualCommand extends Command {
     
     
     ArmSubsystem armSubsystem;
@@ -13,11 +14,11 @@ public class ManualCommand extends ManualCommand {
         this.movement = movement;
         this.armSubsystem = armSubsystem;
 
-        addRequirments(armSubsystem);
+        addRequirements(armSubsystem);
     }
 
     public void execute(){
-        armSubsystem.setSpeed(.5);
+        armSubsystem.setSpeed(movement);
     }
     public void end(){
         armSubsystem.setSpeed(0);
