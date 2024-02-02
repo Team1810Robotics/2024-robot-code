@@ -1,6 +1,9 @@
 package frc.robot.commands;
- 
- public class IntakeCommand extends IntakeCommand{
+
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.IntakeSubsystem;
+
+public class IntakeCommand extends Command{
     
     
     IntakeSubsystem intakeSubsystem;
@@ -9,20 +12,20 @@ package frc.robot.commands;
 
     public IntakeCommand(IntakeSubsystem intakeSubsystem, double intake){
         this.intake = intake;
-        this.IntakeSubsystem = intakeSubsystem;
+        this.intakeSubsystem = intakeSubsystem;
 
-        addRequirments(IntakeSubsystem);
+        addRequirements(intakeSubsystem);
     }
 
     public void execute(){
-        intakeSubsystem.set(intake);
+        intakeSubsystem.setSpeed(intake);
     }
 
     public void end(){
-        intakeSubssytem.set(0);
+        intakeSubsystem.setSpeed(0);
     }
     public boolean isFinished(){
-        if (IntakeSubsystem.getBeamBreak()){
+        if (intakeSubsystem.getBeamBreak()){
        
         return true;
         }

@@ -1,9 +1,10 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmSubsystem;
 
-public class ArmCommand extends CommandsBase  {
+public class ArmCommand extends Command  {
 
     ArmSubsystem armSubsystem;
 
@@ -13,20 +14,22 @@ public class ArmCommand extends CommandsBase  {
         this.arm = arm;
         this.armSubsystem = armSubsystem;
 
-        addRequirments(armSubsystem);
+        addRequirements(armSubsystem);
     }
     
     public void initialize(){
-        ArmSubsystem.setgoal(ArmConstants.INITIAL_POSITION);
+        armSubsystem.setGoal(ArmConstants.INITIAL_POSITION);
     }
 
     public void execute(){
-        ArmSubsystem.setgoal(ArmConstants.INTAKE_POSITION);
+        armSubsystem.setGoal(ArmConstants.INTAKE_POSITION);
     }
 
     public void end(){
-        ArmSubsystem.setgoal(ArmConstants.INITIAL_POSITION);
+        armSubsystem.setGoal(ArmConstants.INITIAL_POSITION);
     }
+
+    
 }
 
 
