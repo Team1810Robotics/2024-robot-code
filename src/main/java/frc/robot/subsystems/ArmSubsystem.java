@@ -11,9 +11,9 @@ import com.ctre.phoenix6.hardware.CANcoder;
 
 public class ArmSubsystem extends SubsystemBase {
 
-CANSparkMax motor = new CANSparkMax(Constants.ArmConstants.MOTOR1_PORT, MotorType.kBrushless);
+CANSparkMax motor = new CANSparkMax(2, MotorType.kBrushless);
     
-CANSparkMax motor2 = new CANSparkMax (Constants.ArmConstants.MOTOR2_PORT, MotorType.kBrushless);
+CANSparkMax motor2 = new CANSparkMax (3, MotorType.kBrushless);
 
 CANcoder can = new CANcoder(0);
 
