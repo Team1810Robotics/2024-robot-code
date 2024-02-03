@@ -34,8 +34,8 @@ public class RobotContainer {
 
     private void configureBindings() {
 
-        Button_A.whileTrue(new ManualCommand(armButton, .1 ));
-        Button_B.whileTrue(new ManualCommand(armButton, -.1 ));
+        Button_A.onTrue(new ManualCommand(armButton, .1 )).onFalse(new ManualCommand(armButton, 0));
+        Button_B.onTrue(new ManualCommand(armButton, -.1 )).onFalse(new ManualCommand(armButton, 0));
         Button_X.whileTrue(new ShooterCommand(shooterButton, .75));
         Button_LB.whileTrue(new IntakeCommand(intakeButton, .75));
         Button_RB.whileTrue(new IntakeCommand(intakeButton, -.75));

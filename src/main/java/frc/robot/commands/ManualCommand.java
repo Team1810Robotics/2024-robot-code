@@ -16,11 +16,12 @@ public class ManualCommand extends Command {
 
         addRequirements(armSubsystem);
     }
-
+    @Override
     public void execute(){
         armSubsystem.setSpeed(movement);
     }
-    public void end(){
+    @Override 
+    public void end(boolean interrupted){
         armSubsystem.setSpeed(0);
     }
 }
