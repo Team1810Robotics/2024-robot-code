@@ -1,5 +1,6 @@
 package frc.robot.subsystems.swervedrive;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -9,10 +10,16 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.Drivetrain.UpdateValues;
+import frc.robot.commands.Drivetrain.ZeroOffset;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
@@ -23,6 +30,8 @@ public class Drivetrain extends SubsystemBase{
     public final double maxSpeed = Constants.Swerve.maxVelocity;
 
     public final SwerveDrive swerveDrive;
+
+    public Pigeon2 gyro = new Pigeon2(DriveConstants.PIGEON);
 
     private final double driveConversionFactor = Constants.Swerve.driveConversionFactor;
     private final double angleConversionFactor = Constants.Swerve.angleConversionFactor;
@@ -37,12 +46,39 @@ public class Drivetrain extends SubsystemBase{
         }
         swerveDrive.setHeadingCorrection(true);
 
+        SmartDashboard.putData("Zero Encoder Offset", new ZeroOffset(swerveDrive));
+        SmartDashboard.putData("Update Encoder offset values", new UpdateValues(swerveDrive));
+        
         Shuffleboard.getTab("swerve").addNumber("FL Cancoder", () -> swerveDrive.getModulePositions()[0].angle.getDegrees());
         Shuffleboard.getTab("swerve").addNumber("FR Cancoder", () -> swerveDrive.getModulePositions()[1].angle.getDegrees());
         Shuffleboard.getTab("swerve").addNumber("BL Cancoder", () -> swerveDrive.getModulePositions()[2].angle.getDegrees());
-        Shuffleboard.getTab("swerve").addNumber("BR Cancoder", () -> swerveDrive.getModulePositions()[3].angle.getDegrees());
+        Shuffleboard.getTab("swerve").addNumber("BR Cancoder", () -> swerveDrive.getModulePositions()[3].angle.getDegrees()); 
 
         setupPathPlanner();
+
+        SmartDashboard.putData("Swerve Visualizer", new Sendable() { //
+
+            @Override
+            public void initSendable(SendableBuilder builder) {
+                //Set widget type to swerve
+                builder.setSmartDashboardType("SwerveDrive");
+
+                //Wheel angles for Elastic
+                builder.addDoubleProperty("Front Left Angle", () -> swerveDrive.getModulePositions()[0].angle.getDegrees(), null);
+                builder.addDoubleProperty("Front Right Angle", () -> swerveDrive.getModulePositions()[1].angle.getDegrees(), null);
+                builder.addDoubleProperty("Back Left Angle", () -> swerveDrive.getModulePositions()[2].angle.getDegrees(), null);
+                builder.addDoubleProperty("Back Right Angle", () -> swerveDrive.getModulePositions()[3].angle.getDegrees(), null);
+                
+                //TODO: Check if the wheels match with robot - 1, 3, 5, 7 
+                builder.addDoubleProperty("Front Left Velocity", () -> SwerveDriveTelemetry.measuredStates[1], null);
+                builder.addDoubleProperty("Front Right Velocity", () -> SwerveDriveTelemetry.measuredStates[3], null);
+                builder.addDoubleProperty("Back Left Velocity", () -> SwerveDriveTelemetry.measuredStates[5], null);
+                builder.addDoubleProperty("Back Right Velocity", () -> SwerveDriveTelemetry.measuredStates[7], null);
+
+                //Adds rotation to the widget - Comment out to stop
+                builder.addDoubleProperty("Robot Angle", () -> getRotation(), null);
+            }    
+        });
     }
 
     @Override
@@ -132,6 +168,10 @@ public class Drivetrain extends SubsystemBase{
      */
     public Pose2d getPose() {
         return swerveDrive.getPose();
+    }
+
+    public double getRotation() {
+        return gyro.getAngle();
     }
 
     /**
