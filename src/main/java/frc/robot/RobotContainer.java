@@ -15,7 +15,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer {
 
-    private final ArmSubsystem armButton = new ArmSubsystem();
+    // private final ArmSubsystem armButton = new ArmSubsystem();
     private final ShooterSubsystem shooterButton = new ShooterSubsystem();
     private final IntakeSubsystem intakeButton = new IntakeSubsystem();
 
@@ -34,11 +34,11 @@ public class RobotContainer {
 
     private void configureBindings() {
 
-        Button_A.onTrue(new ManualCommand(armButton, .1 )).onFalse(new ManualCommand(armButton, 0));
-        Button_B.onTrue(new ManualCommand(armButton, -.1 )).onFalse(new ManualCommand(armButton, 0));
-        Button_X.whileTrue(new ShooterCommand(shooterButton, .75));
-        Button_LB.whileTrue(new IntakeCommand(intakeButton, .75));
-        Button_RB.whileTrue(new IntakeCommand(intakeButton, -.75));
+        // Button_A.onTrue(new ManualCommand(armButton, .1 )).onFalse(new ManualCommand(armButton, 0));
+        // Button_B.onTrue(new ManualCommand(armButton, -.1 )).onFalse(new ManualCommand(armButton, 0));
+        Button_X.whileTrue(new ShooterCommand(shooterButton, 0.75));
+        Button_LB.whileTrue(new IntakeCommand(intakeButton, 0.75));
+        Button_RB.whileTrue(new IntakeCommand(intakeButton, -0.75));
 
     }
 

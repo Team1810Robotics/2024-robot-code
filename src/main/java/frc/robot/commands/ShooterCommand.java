@@ -2,12 +2,10 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterSubsystem;
-public class ShooterCommand extends Command{
-    
-    
-    ShooterSubsystem shooterSubsystem;
+public class ShooterCommand extends Command {
+    private ShooterSubsystem shooterSubsystem;
 
-    double launch;
+    private double launch;
 
     public ShooterCommand(ShooterSubsystem shooterSubsystem, double launch){
         this.launch = launch;
@@ -16,11 +14,13 @@ public class ShooterCommand extends Command{
         addRequirements(shooterSubsystem);
     }
 
+    @Override
     public void execute(){
        shooterSubsystem.setBothSpeed(launch);
     }
 
-    public void end(){
+    @Override
+    public void end(boolean interupted){
         shooterSubsystem.setBothSpeed(0);
     }
     
