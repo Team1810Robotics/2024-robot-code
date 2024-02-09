@@ -18,8 +18,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.Drivetrain.UpdateValues;
-import frc.robot.commands.Drivetrain.ZeroOffset;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
@@ -45,9 +43,6 @@ public class Drivetrain extends SubsystemBase{
             throw new RuntimeException(e);
         }
         swerveDrive.setHeadingCorrection(true);
-
-        SmartDashboard.putData("Zero Encoder Offset", new ZeroOffset(swerveDrive));
-        SmartDashboard.putData("Update Encoder offset values", new UpdateValues(swerveDrive));
         
         Shuffleboard.getTab("swerve").addNumber("FL Cancoder", () -> swerveDrive.getModulePositions()[0].angle.getDegrees());
         Shuffleboard.getTab("swerve").addNumber("FR Cancoder", () -> swerveDrive.getModulePositions()[1].angle.getDegrees());
