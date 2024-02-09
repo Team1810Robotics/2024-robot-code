@@ -62,13 +62,13 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final int MOTOR_PORT = 11;
+        public static final int MOTOR_PORT = 2;
         public static final int BEAM_BREAK_PORT = 10;
     }
 
     public static final class ShooterConstants {
-        public static final int TOP_MOTOR_PORT = 1;
-        public static final int BOTTOM_MOTOR_PORT = 4;
+        public static final int TOP_MOTOR_PORT = 4;
+        public static final int BOTTOM_MOTOR_PORT = 1;
     }
 
     public static final class ExtenderConstants {

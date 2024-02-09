@@ -10,24 +10,22 @@ import frc.robot.Constants;
 public class ShooterSubsystem extends SubsystemBase {
     
     CANSparkMax bottomMotor = new CANSparkMax(Constants.ShooterConstants.BOTTOM_MOTOR_PORT, MotorType.kBrushless);
-
     CANSparkMax topMotor = new CANSparkMax(Constants.ShooterConstants.TOP_MOTOR_PORT, MotorType.kBrushless);
-      
 
-    public void setBottomSpeed(double bottomSpeed){    
+    public ShooterSubsystem(){
+        topMotor.setInverted(true);
+    }
+
+    public void setBottomSpeed(double bottomSpeed){
         bottomMotor.set(bottomSpeed);
     }
 
-    public void settopSpeed(double topSpeed){    
+    public void settopSpeed(double topSpeed){
         topMotor.set(topSpeed);
-              
     }
 
-    public void setBothSpeed(double motorSpeed){    
+    public void setBothSpeed(double motorSpeed){
         topMotor.set(motorSpeed);
-        bottomMotor.set(motorSpeed);
-    }
-    public ShooterSubsystem(){
-        topMotor.setInverted(true);
+        bottomMotor.set(-motorSpeed);
     }
 }
