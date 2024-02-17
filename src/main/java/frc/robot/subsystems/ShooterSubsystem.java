@@ -25,7 +25,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void setBothSpeed(double motorSpeed){    
         topMotor.set(motorSpeed);
-        bottomMotor.set(motorSpeed);
+        
     }
     public ShooterSubsystem(){
         topMotor.setInverted(true);
