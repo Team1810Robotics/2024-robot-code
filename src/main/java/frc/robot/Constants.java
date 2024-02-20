@@ -13,40 +13,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
  * <pre>{@code import static frc.robot.Constants.*; }</pre>
  */
 public final class Constants {
-    // Can IDs set as so
-    // https://drive.google.com/file/d/1fXTWswe1oX0XLHEosK-BxezZ92rvbHfV/view?usp=drive_link
-    public static final class DriveConstants {
-        public static final int PIGEON = 13;
-
-        // FIXME: all temporary values and im not sure if this is going to be needed
-        public static final class FR {
-            public static final int STEER = 1;
-            public static final int DRIVE = 2;
-            public static final int CANCODER = 9;
-        }
-
-        public static final class FL {
-            public static final int STEER = 3;
-            public static final int DRIVE = 4;
-            public static final int CANCODER = 10;
-        }
-
-        public static final class BR {
-            public static final int STEER = 5;
-            public static final int DRIVE = 6;
-            public static final int CANCODER = 11;
-        }
-
-        public static final class BL {
-            public static final int STEER = 7;
-            public static final int DRIVE = 8;
-            public static final int CANCODER = 12;
-        }
-    }
+    // CHANGE: remove drive constants
 
     public static final class ArmConstants {
         public static final int MOTOR1_PORT = 0;
         public static final int MOTOR2_PORT = 0;
+        public static final int CANCODER_PORT = 0; // CHANGE: add port number
 
         public static final double INITIAL_POSITION = 0.0;
         public static final double INTAKE_POSITION = 0;
@@ -58,7 +30,6 @@ public final class Constants {
 
         public static final Constraints CONSTRAINTS
             = new Constraints(0, 0);
-    
     }
 
     public static final class IntakeConstants {
@@ -85,5 +56,13 @@ public final class Constants {
         public static final int LEFT_BOTTOM_LS = 0;
         public static final int RIGHT_TOP_LS = 0;
         public static final int RIGHT_BOTTOM_LS = 0;
+    }
+
+    // CHANGE: added OI constants for controllers
+    public static final class OIConstants {
+        public static final int DRIVER_JOYSTICK_PORT = 0;
+        public static final int MANIPULATOR_XBOX_PORT = 1;
+
+        public static final double DEADBAND = 0.1; // TODO: tune deadband
     }
 }
