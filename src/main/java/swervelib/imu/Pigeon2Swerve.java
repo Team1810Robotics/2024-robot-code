@@ -4,7 +4,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Pigeon2Configurator;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,7 +18,7 @@ public class Pigeon2Swerve extends SwerveIMU
   /**
    * Wait time for status frames to show up.
    */
-  private final double     STATUS_TIMEOUT_SECONDS = 0.02;
+  public static double STATUS_TIMEOUT_SECONDS = 0.04;
   /**
    * Pigeon2 IMU device.
    */
@@ -27,11 +26,11 @@ public class Pigeon2Swerve extends SwerveIMU
   /**
    * Offset for the Pigeon 2.
    */
-  private       Rotation3d offset                 = new Rotation3d();
+  private Rotation3d offset      = new Rotation3d();
   /**
    * Inversion for the gyro
    */
-  private       boolean    invertedIMU            = false;
+  private boolean    invertedIMU = false;
 
   /**
    * Generate the SwerveIMU for pigeon.
@@ -105,15 +104,7 @@ public class Pigeon2Swerve extends SwerveIMU
   @Override
   public Rotation3d getRawRotation3d()
   {
-    // TODO: Switch to suppliers.
-    StatusSignal<Double> w = imu.getQuatW();
-    StatusSignal<Double> x = imu.getQuatX();
-    StatusSignal<Double> y = imu.getQuatY();
-    StatusSignal<Double> z = imu.getQuatZ();
-    Rotation3d reading = new Rotation3d(new Quaternion(w.waitForUpdate(STATUS_TIMEOUT_SECONDS).getValue(),
-                                                       x.waitForUpdate(STATUS_TIMEOUT_SECONDS).getValue(),
-                                                       y.waitForUpdate(STATUS_TIMEOUT_SECONDS).getValue(),
-                                                       z.waitForUpdate(STATUS_TIMEOUT_SECONDS).getValue()));
+    Rotation3d reading = imu.getRotation3d();
     return invertedIMU ? reading.unaryMinus() : reading;
   }
 

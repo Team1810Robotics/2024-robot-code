@@ -4,11 +4,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.SparkAnalogSensor;
 import com.revrobotics.SparkAnalogSensor.Mode;
-
+import java.util.function.Supplier;
 import swervelib.motors.SwerveMotor;
 import swervelib.telemetry.Alert;
-
-import java.util.function.Supplier;
 
 /**
  * SparkMax absolute encoder, attached through the data port analog pin.

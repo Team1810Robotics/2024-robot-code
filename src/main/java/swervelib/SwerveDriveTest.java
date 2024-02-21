@@ -25,9 +25,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
-import swervelib.encoders.SwerveAbsoluteEncoder;
-
 import java.util.function.Supplier;
+import swervelib.encoders.SwerveAbsoluteEncoder;
 
 /**
  * Class to perform tests on the swerve drive.

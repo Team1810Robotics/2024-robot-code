@@ -11,16 +11,11 @@ import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAnalogSensor;
 import com.revrobotics.SparkPIDController;
-
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import java.util.function.Supplier;
 import swervelib.encoders.SwerveAbsoluteEncoder;
 import swervelib.parser.PIDFConfig;
 import swervelib.telemetry.SwerveDriveTelemetry;
-
-import java.util.function.Supplier;
 
 /**
  * An implementation of {@link CANSparkMax} as a {@link SwerveMotor}.
@@ -254,15 +249,6 @@ public class SparkMaxSwerve extends SwerveMotor
     }
   }
 
-
-
-
-/* 
-    public ShuffleboardTab swerveTab = Shuffleboard.getTab("swerve");
-    public GenericEntry shuffPID = Shuffleboard.add("pid", pid).getEntry();
- */
-
-
   /**
    * Configure the PIDF values for the closed loop controller.
    *
@@ -273,8 +259,7 @@ public class SparkMaxSwerve extends SwerveMotor
   {
 //    int pidSlot =
 //        isDriveMotor ? SparkMAX_slotIdx.Velocity.ordinal() : SparkMAX_slotIdx.Position.ordinal();
-    //int pidSlot = 0;
-
+    int pidSlot = 0;
     configureSparkMax(() -> pid.setP(config.p));
     configureSparkMax(() -> pid.setI(config.i));
     configureSparkMax(() -> pid.setD(config.d));
@@ -378,7 +363,7 @@ public class SparkMaxSwerve extends SwerveMotor
   @Override
   public void setReference(double setpoint, double feedforward)
   {
-    //boolean possibleBurnOutIssue = true;
+    boolean possibleBurnOutIssue = true;
 //    int pidSlot =
 //        isDriveMotor ? SparkMAX_slotIdx.Velocity.ordinal() : SparkMAX_slotIdx.Position.ordinal();
     int pidSlot = 0;

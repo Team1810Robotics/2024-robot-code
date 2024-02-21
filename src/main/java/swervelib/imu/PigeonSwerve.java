@@ -1,4 +1,4 @@
-package frc.swervelib.imu;
+package swervelib.imu;
 
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import edu.wpi.first.math.geometry.Quaternion;

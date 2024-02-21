@@ -6,12 +6,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
-
-import swervelib.encoders.SwerveAbsoluteEncoder;
-import swervelib.parser.PIDFConfig;
-import swervelib.telemetry.Alert;
-import swervelib.telemetry.SwerveDriveTelemetry;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.MotorFeedbackSensor;
 import com.revrobotics.REVLibError;
@@ -19,6 +13,10 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAnalogSensor;
 import com.revrobotics.SparkPIDController;
 import java.util.function.Supplier;
+import swervelib.encoders.SwerveAbsoluteEncoder;
+import swervelib.parser.PIDFConfig;
+import swervelib.telemetry.Alert;
+import swervelib.telemetry.SwerveDriveTelemetry;
 
 /**
  * An implementation of {@link CANSparkFlex} as a {@link SwerveMotor}.
@@ -365,7 +363,7 @@ public class SparkFlexSwerve extends SwerveMotor
   @Override
   public void setReference(double setpoint, double feedforward)
   {
-    //boolean possibleBurnOutIssue = true;
+    boolean possibleBurnOutIssue = true;
 //    int pidSlot =
 //        isDriveMotor ? SparkMAX_slotIdx.Velocity.ordinal() : SparkMAX_slotIdx.Position.ordinal();
     int pidSlot = 0;

@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.MagnetHealthValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import frc.robot.Constants;
 import swervelib.telemetry.Alert;
 
 /**
@@ -21,7 +22,7 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder
   /**
    * Wait time for status frames to show up.
    */
-  private final double   STATUS_TIMEOUT_SECONDS = 0.02;
+  public static double   STATUS_TIMEOUT_SECONDS = 0.02;
   /**
    * CANCoder with WPILib sendable and support.
    */
@@ -161,7 +162,27 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder
       readingIgnored.set(false);
     }
 
-    return angle.getValue() * 360;
+    double offset = 0.0;
+    switch(encoder.getDeviceID())
+    {
+      case Constants.Swerve.FR_CANCODER_ID: //front right
+        offset = Constants.Swerve.FR_CANCODER_OFFSET;
+        break;
+      case Constants.Swerve.FL_CANCODER_ID: //front left
+        offset = Constants.Swerve.FL_CANCODER_OFFSET;
+        break;
+      case Constants.Swerve.BL_CANCODER_ID: //back left
+        offset = Constants.Swerve.BL_CANCODER_OFFSET;
+        break;
+      case Constants.Swerve.BR_CANCODER_ID: //back right
+        offset = Constants.Swerve.BR_CANCODER_OFFSET;
+        break;
+      default:
+        break;
+    }
+
+    double ret_angle = angle.getValue() * 360 - offset;
+    return ret_angle % 360;
   }
 
   /**
@@ -191,6 +212,25 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder
     {
       return false;
     }
+
+    switch(encoder.getDeviceID())
+    {
+      case Constants.Swerve.FR_CANCODER_ID: //front right
+        offset = Constants.Swerve.FR_CANCODER_OFFSET;
+        break;
+      case Constants.Swerve.FL_CANCODER_ID: //front left
+        offset = Constants.Swerve.FL_CANCODER_OFFSET;
+        break;
+      case Constants.Swerve.BL_CANCODER_ID: //back left
+        offset = Constants.Swerve.BL_CANCODER_OFFSET;
+        break;
+      case Constants.Swerve.BR_CANCODER_ID: //back right
+        offset = Constants.Swerve.BR_CANCODER_OFFSET;
+        break;
+      default:
+        break;
+    }
+
     error = cfg.apply(magCfg.withMagnetOffset(offset / 360));
     cannotSetOffset.setText(
         "Failure to set CANCoder "

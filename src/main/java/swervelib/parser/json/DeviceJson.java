@@ -1,5 +1,9 @@
 package swervelib.parser.json;
 
+import static swervelib.telemetry.SwerveDriveTelemetry.canIdWarning;
+import static swervelib.telemetry.SwerveDriveTelemetry.i2cLockupWarning;
+import static swervelib.telemetry.SwerveDriveTelemetry.serialCommsIssueWarning;
+
 import com.revrobotics.SparkRelativeEncoder.Type;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
@@ -7,6 +11,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import swervelib.encoders.AnalogAbsoluteEncoderSwerve;
 import swervelib.encoders.CANCoderSwerve;
+import swervelib.encoders.CanAndCoderSwerve;
 import swervelib.encoders.PWMDutyCycleEncoderSwerve;
 import swervelib.encoders.SparkMaxAnalogEncoderSwerve;
 import swervelib.encoders.SparkMaxEncoderSwerve;
@@ -15,15 +20,16 @@ import swervelib.imu.ADIS16448Swerve;
 import swervelib.imu.ADIS16470Swerve;
 import swervelib.imu.ADXRS450Swerve;
 import swervelib.imu.AnalogGyroSwerve;
+import swervelib.imu.NavXSwerve;
 import swervelib.imu.Pigeon2Swerve;
+import swervelib.imu.PigeonSwerve;
 import swervelib.imu.SwerveIMU;
 import swervelib.motors.SparkFlexSwerve;
 import swervelib.motors.SparkMaxBrushedMotorSwerve;
 import swervelib.motors.SparkMaxSwerve;
 import swervelib.motors.SwerveMotor;
 import swervelib.motors.TalonFXSwerve;
-import swervelib.telemetry.Alert;
-import swervelib.telemetry.Alert.AlertType;
+import swervelib.motors.TalonSRXSwerve;
 
 /**
  * Device JSON parsed class. Used to access the JSON data.
@@ -32,35 +38,17 @@ public class DeviceJson
 {
 
   /**
-   * An {@link Alert} for if the CAN ID is greater than 40.
-   */
-  private final Alert  canIdWarning            = new Alert("JSON",
-                                                           "CAN IDs greater than 40 can cause undefined behaviour, please use a CAN ID below 40!",
-                                                           Alert.AlertType.WARNING);
-  /**
-   * An {@link Alert} for if there is an I2C lockup issue on the roboRIO.
-   */
-  private final Alert  i2cLockupWarning        = new Alert("IMU",
-                                                           "I2C lockup issue detected on roboRIO. Check console for more information.",
-                                                           Alert.AlertType.WARNING);
-  /**
-   * NavX serial comm issue.
-   */
-  private final Alert  serialCommsIssueWarning = new Alert("IMU",
-                                                           "Serial comms is interrupted with USB and other serial traffic and causes intermittent connected/disconnection issues. Please consider another protocol or be mindful of this.",
-                                                           AlertType.WARNING);
-  /**
    * The device type, e.g. pigeon/pigeon2/sparkmax/talonfx/navx
    */
-  public        String type;
+  public String type;
   /**
    * The CAN ID or pin ID of the device.
    */
-  public        int    id;
+  public int    id;
   /**
    * The CAN bus name which the device resides on if using CAN.
    */
-  public        String canbus                  = "";
+  public String canbus = "";
 
   /**
    * Create a {@link SwerveAbsoluteEncoder} from the current configuration.
@@ -86,8 +74,8 @@ public class DeviceJson
         return new SparkMaxAnalogEncoderSwerve(motor);
       case "canandcoder":
         return new SparkMaxEncoderSwerve(motor, 360);
-      /* case "canandcoder_can":
-        return new CanAndCoderSwerve(id); */
+      case "canandcoder_can":
+        return new CanAndCoderSwerve(id);
       case "ctre_mag":
       case "rev_hex":
       case "throughbore":
@@ -127,26 +115,26 @@ public class DeviceJson
       case "analog":
         return new AnalogGyroSwerve(id);
       case "navx":
-      /* case "navx_spi":
-        return new NavXSwerve(SPI.Port.kMXP); */
-      /* case "navx_i2c":
+      case "navx_spi":
+        return new NavXSwerve(SPI.Port.kMXP);
+      case "navx_i2c":
         DriverStation.reportWarning(
             "WARNING: There exists an I2C lockup issue on the roboRIO that could occur, more information here: " +
             "\nhttps://docs.wpilib.org/en/stable/docs/yearly-overview/known-issues" +
             ".html#onboard-i2c-causing-system-lockups",
             false);
         i2cLockupWarning.set(true);
-        return new NavXSwerve(I2C.Port.kMXP); */
-      /* case "navx_usb":
+        return new NavXSwerve(I2C.Port.kMXP);
+      case "navx_usb":
         DriverStation.reportWarning("WARNING: There is issues when using USB camera's and the NavX like this!\n" +
                                     "https://pdocs.kauailabs.com/navx-mxp/guidance/selecting-an-interface/", false);
         serialCommsIssueWarning.set(true);
-        return new NavXSwerve(Port.kUSB); */
-      /* case "navx_mxp_serial":
+        return new NavXSwerve(Port.kUSB);
+      case "navx_mxp_serial":
         serialCommsIssueWarning.set(true);
-        return new NavXSwerve(Port.kMXP); */
-      /* case "pigeon":
-        return new PigeonSwerve(id); */
+        return new NavXSwerve(Port.kMXP);
+      case "pigeon":
+        return new PigeonSwerve(id);
       case "pigeon2":
         return new Pigeon2Swerve(id, canbus != null ? canbus : "");
       default:
@@ -199,8 +187,8 @@ public class DeviceJson
       case "falcon":
       case "talonfx":
         return new TalonFXSwerve(id, canbus != null ? canbus : "", isDriveMotor);
-      /* case "talonsrx":
-        return new TalonSRXSwerve(id, isDriveMotor); */
+      case "talonsrx":
+        return new TalonSRXSwerve(id, isDriveMotor);
       default:
         throw new RuntimeException(type + " is not a recognized motor type.");
     }

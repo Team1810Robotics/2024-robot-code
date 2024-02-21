@@ -22,6 +22,13 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import swervelib.encoders.CANCoderSwerve;
 import swervelib.imu.Pigeon2Swerve;
 import swervelib.imu.SwerveIMU;
@@ -32,17 +39,9 @@ import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.simulation.SwerveIMUSimulation;
 import swervelib.telemetry.Alert;
-import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.Alert.AlertType;
+import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Swerve Drive class representing and controlling the swerve drive.
@@ -223,7 +222,7 @@ public class SwerveDrive
     checkIfTunerXCompatible();
   }
 
-/**
+  /**
    * Update the cache validity period for the robot.
    *
    * @param imu             IMU reading cache validity period in milliseconds.
@@ -1139,6 +1138,21 @@ public class SwerveDrive
     for (SwerveModule module : swerveModules)
     {
       module.restoreInternalOffset();
+    }
+  }
+
+  /**
+   * Enable or disable the {@link swervelib.parser.SwerveModuleConfiguration#useCosineCompensator} for all
+   * {@link SwerveModule}'s in the swerve drive. The cosine compensator will slow down or speed up modules that are
+   * close to their desired state in theory.
+   *
+   * @param enabled Usage of the cosine compensator.
+   */
+  public void setCosineCompensator(boolean enabled)
+  {
+    for (SwerveModule module : swerveModules)
+    {
+      module.configuration.useCosineCompensator = enabled;
     }
   }
 

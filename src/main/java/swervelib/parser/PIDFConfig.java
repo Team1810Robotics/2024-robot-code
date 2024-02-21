@@ -41,7 +41,7 @@ public class PIDFConfig
   public PIDFConfig()
   {
   }
- 
+
   /**
    * PIDF Config constructor to contain the values.
    *

@@ -4,11 +4,9 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
-
+import java.util.function.Supplier;
 import swervelib.motors.SwerveMotor;
 import swervelib.telemetry.Alert;
-
-import java.util.function.Supplier;
 
 /**
  * SparkMax absolute encoder, attached through the data port.
@@ -37,6 +35,14 @@ public class SparkMaxEncoderSwerve extends SwerveAbsoluteEncoder
    */
   public SparkMaxEncoderSwerve(SwerveMotor motor, int conversionFactor)
   {
+    failureConfiguring = new Alert(
+        "Encoders",
+        "Failure configuring SparkMax Analog Encoder",
+        Alert.AlertType.WARNING_TRACE);
+    offsetFailure = new Alert(
+        "Encoders",
+        "Failure to set Absolute Encoder Offset",
+        Alert.AlertType.WARNING_TRACE);
     if (motor.getMotor() instanceof CANSparkMax)
     {
       encoder = ((CANSparkMax) motor.getMotor()).getAbsoluteEncoder(Type.kDutyCycle);
@@ -46,14 +52,6 @@ public class SparkMaxEncoderSwerve extends SwerveAbsoluteEncoder
     {
       throw new RuntimeException("Motor given to instantiate SparkMaxEncoder is not a CANSparkMax");
     }
-    failureConfiguring = new Alert(
-        "Encoders",
-        "Failure configuring SparkMax Analog Encoder",
-        Alert.AlertType.WARNING_TRACE);
-    offsetFailure = new Alert(
-        "Encoders",
-        "Failure to set Absolute Encoder Offset",
-        Alert.AlertType.WARNING_TRACE);
   }
 
   /**

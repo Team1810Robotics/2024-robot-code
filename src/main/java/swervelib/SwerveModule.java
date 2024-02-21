@@ -4,7 +4,6 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import swervelib.encoders.SwerveAbsoluteEncoder;
 import swervelib.math.SwerveMath;
@@ -29,15 +28,15 @@ public class SwerveModule
   /**
    * Absolute encoder position cache.
    */
-  public final  Cache<Double>          absolutePositionCache;
+  public final  Cache<Double>             absolutePositionCache;
   /**
    * Drive motor position cache.
    */
-  public final  Cache<Double>          drivePositionCache;
+  public final  Cache<Double>             drivePositionCache;
   /**
    * Drive motor velocity cache.
    */
-  public final  Cache<Double>          driveVelocityCache;
+  public final  Cache<Double>             driveVelocityCache;
   /**
    * Swerve Motors.
    */
@@ -54,6 +53,26 @@ public class SwerveModule
    * An {@link Alert} for if there is no Absolute Encoder on the module.
    */
   private final Alert                  noEncoderWarning;
+  /**
+   * NT3 Raw Absolute Angle publisher for the absolute encoder.
+   */
+  private final String                 rawAbsoluteAngleName;
+  /**
+   * NT3 Adjusted Absolute angle publisher for the absolute encoder.
+   */
+  private final String                 adjAbsoluteAngleName;
+  /**
+   * NT3 Absolute encoder read issue.
+   */
+  private final String                 absoluteEncoderIssueName;
+  /**
+   * NT3 raw angle motor.
+   */
+  private final String                 rawAngleName;
+  /**
+   * NT3 Raw drive motor.
+   */
+  private final String                 rawDriveName;
   /**
    * Module number for kinematics, usually 0 to 3. front left -> front right -> back left -> back right.
    */
@@ -177,6 +196,12 @@ public class SwerveModule
                                      "Pushing the Absolute Encoder offset to the encoder failed on module #" +
                                      moduleNumber,
                                      Alert.AlertType.WARNING);
+
+    rawAbsoluteAngleName = "Module[" + configuration.name + "] Raw Absolute Encoder";
+    adjAbsoluteAngleName = "Module[" + configuration.name + "] Adjusted Absolute Encoder";
+    absoluteEncoderIssueName = "Module[" + configuration.name + "] Absolute Encoder Read Issue";
+    rawAngleName = "Module[" + configuration.name + "] Raw Angle Encoder";
+    rawDriveName = "Module[" + configuration.name + "] Raw Drive Encoder";
   }
 
   /**
@@ -223,6 +248,14 @@ public class SwerveModule
   public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop, boolean force)
   {
     desiredState = SwerveModuleState.optimize(desiredState, Rotation2d.fromDegrees(getAbsolutePosition()));
+
+    // If we are forcing the angle
+    if (!force)
+    {
+      // Prevents module rotation if speed is less than 1%
+      SwerveMath.antiJitter(desiredState, lastState, Math.min(maxSpeed, 4));
+    }
+
     // Cosine compensation.
     double velocity = configuration.useCosineCompensator
                       ? getCosineCompensatedVelocity(desiredState)
@@ -235,13 +268,7 @@ public class SwerveModule
     } else
     {
       driveMotor.setReference(velocity, feedforward.calculate(velocity));
-    }
-
-    // If we are forcing the angle
-    if (!force)
-    {
-      // Prevents module rotation if speed is less than 1%
-      SwerveMath.antiJitter(desiredState, lastState, Math.min(maxSpeed, 4));
+      desiredState.speedMetersPerSecond = velocity;
     }
 
     // Prevent module rotation if angle is the same as the previous angle.
@@ -290,14 +317,15 @@ public class SwerveModule
     // https://api.ctr-electronics.com/phoenix6/release/java/src-html/com/ctre/phoenix6/mechanisms/swerve/SwerveModule.html#line.46
     /* From FRC 900's whitepaper, we add a cosine compensator to the applied drive velocity */
     /* To reduce the "skew" that occurs when changing direction */
-    double steerMotorError = desiredState.angle.getDegrees() - getAbsolutePosition();
     /* If error is close to 0 rotations, we're already there, so apply full power */
     /* If the error is close to 0.25 rotations, then we're 90 degrees, so movement doesn't help us at all */
-    cosineScalar = Math.cos(Units.degreesToRadians(steerMotorError));
+    cosineScalar = Rotation2d.fromDegrees(desiredState.angle.getDegrees())
+                             .minus(Rotation2d.fromDegrees(getAbsolutePosition()))
+                             .getCos(); // TODO: Investigate angle modulus by 180.
     /* Make sure we don't invert our drive, even though we shouldn't ever target over 90 degrees anyway */
     if (cosineScalar < 0.0)
     {
-      cosineScalar = 0.0;
+      cosineScalar = 1;
     }
 
     return desiredState.speedMetersPerSecond * (cosineScalar);
@@ -526,13 +554,11 @@ public class SwerveModule
   {
     if (absoluteEncoder != null)
     {
-      SmartDashboard.putNumber("Module[" + configuration.name + "] Raw Absolute Encoder",
-                               absoluteEncoder.getAbsolutePosition());
+      SmartDashboard.putNumber(rawAbsoluteAngleName, absoluteEncoder.getAbsolutePosition());
     }
-    SmartDashboard.putNumber("Module[" + configuration.name + "] Raw Angle Encoder", angleMotor.getPosition());
-    SmartDashboard.putNumber("Module[" + configuration.name + "] Raw Drive Encoder", driveMotor.getPosition());
-    SmartDashboard.putNumber("Module[" + configuration.name + "] Adjusted Absolute Encoder", getAbsolutePosition());
-    SmartDashboard.putNumber("Module[" + configuration.name + "] Absolute Encoder Read Issue",
-                             getAbsoluteEncoderReadIssue() ? 1 : 0);
+    SmartDashboard.putNumber(rawAngleName, angleMotor.getPosition());
+    SmartDashboard.putNumber(rawDriveName, driveMotor.getPosition());
+    SmartDashboard.putNumber(adjAbsoluteAngleName, getAbsolutePosition());
+    SmartDashboard.putNumber(absoluteEncoderIssueName, getAbsoluteEncoderReadIssue() ? 1 : 0);
   }
 }
