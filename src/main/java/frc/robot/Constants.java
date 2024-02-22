@@ -40,14 +40,11 @@ public final class Constants
         public static final double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75, 1024);
         public static final double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(12.8, 4096);
 
-        public static final double FL_CANCODER_OFFSET = 0;
-        public static final double FR_CANCODER_OFFSET = 0;
-        public static final double BL_CANCODER_OFFSET = 0;
-        public static final double BR_CANCODER_OFFSET = 0;
-        // public static final double FL_CANCODER_OFFSET = 80.419;
-        // public static final double FR_CANCODER_OFFSET = 334.160;
-        // public static final double BL_CANCODER_OFFSET = 45.439;
-        // public static final double BR_CANCODER_OFFSET = 103.535;
+        
+        public static final double FL_CANCODER_OFFSET = 259;
+        public static final double FR_CANCODER_OFFSET = 151;
+        public static final double BL_CANCODER_OFFSET = 211;
+        public static final double BR_CANCODER_OFFSET = 283;
 
         public static final int FL_CANCODER_ID = 12;
         public static final int FR_CANCODER_ID = 11;
@@ -55,7 +52,7 @@ public final class Constants
         public static final int BR_CANCODER_ID = 9;
     }
 
-  public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
+  public static final double ROBOT_MASS = (148 - 20.3) * 0.453592;
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
 

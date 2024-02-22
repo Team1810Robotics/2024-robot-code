@@ -190,9 +190,6 @@ public class SwerveSubsystem extends SubsystemBase
                                          // Default path replanning config. See the API for the options here
         ),
         () -> {
-          // Boolean supplier that controls when the path will be mirrored for the red alliance
-          // This will flip the path being followed to the red side of the field.
-          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
           var alliance = DriverStation.getAlliance();
           return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
         },
@@ -200,12 +197,6 @@ public class SwerveSubsystem extends SubsystemBase
    );
   }
 
-  /**
-   * Aim the robot at the target returned by PhotonVision.
-   *
-   * @param camera {@link PhotonCamera} to communicate with.
-   * @return A {@link Command} which will run the alignment.
-   */
   public Command aimAtTarget(PhotonCamera camera)
   {
     return run(() -> {
@@ -215,7 +206,7 @@ public class SwerveSubsystem extends SubsystemBase
         drive(getTargetSpeeds(0,
                               0,
                               Rotation2d.fromDegrees(result.getBestTarget()
-                                                           .getYaw()))); // Not sure if this will work, more math may be required.
+                                                           .getYaw())));
       }
     });
   }

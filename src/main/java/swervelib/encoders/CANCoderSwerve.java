@@ -9,9 +9,9 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.MagnetHealthValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import swervelib.telemetry.Alert;
 
 import frc.robot.Constants;
-import swervelib.telemetry.Alert;
 
 /**
  * Swerve Absolute Encoder for CTRE CANCoders.
@@ -163,23 +163,35 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder
     }
 
     double offset = 0.0;
-    switch(encoder.getDeviceID())
-    {
-      case Constants.Swerve.FR_CANCODER_ID: //front right
-        offset = Constants.Swerve.FR_CANCODER_OFFSET;
-        break;
-      case Constants.Swerve.FL_CANCODER_ID: //front left
+    switch(encoder.getDeviceID()){//TODO Test if works - One thing I changed
+      case Constants.Swerve.FL_CANCODER_ID:
         offset = Constants.Swerve.FL_CANCODER_OFFSET;
         break;
-      case Constants.Swerve.BL_CANCODER_ID: //back left
+      case Constants.Swerve.FR_CANCODER_ID:
+        offset = Constants.Swerve.FR_CANCODER_OFFSET;
+        break;
+      case Constants.Swerve.BL_CANCODER_ID:
         offset = Constants.Swerve.BL_CANCODER_OFFSET;
         break;
-      case Constants.Swerve.BR_CANCODER_ID: //back right
+      case Constants.Swerve.BR_CANCODER_ID:
         offset = Constants.Swerve.BR_CANCODER_OFFSET;
         break;
-      default:
-        break;
     }
+    /* double offset = 0.0;
+    switch(encoder.getDeviceID()){
+      case 9:
+        offset = 283;
+        break;
+      case 10:
+        offset = 211;
+        break;
+      case 11:
+        offset = 151;
+        break;
+      case 12:
+        offset = 259;
+        break;
+    } */
 
     double ret_angle = angle.getValue() * 360 - offset;
     return ret_angle % 360;
@@ -212,25 +224,6 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder
     {
       return false;
     }
-
-    switch(encoder.getDeviceID())
-    {
-      case Constants.Swerve.FR_CANCODER_ID: //front right
-        offset = Constants.Swerve.FR_CANCODER_OFFSET;
-        break;
-      case Constants.Swerve.FL_CANCODER_ID: //front left
-        offset = Constants.Swerve.FL_CANCODER_OFFSET;
-        break;
-      case Constants.Swerve.BL_CANCODER_ID: //back left
-        offset = Constants.Swerve.BL_CANCODER_OFFSET;
-        break;
-      case Constants.Swerve.BR_CANCODER_ID: //back right
-        offset = Constants.Swerve.BR_CANCODER_OFFSET;
-        break;
-      default:
-        break;
-    }
-
     error = cfg.apply(magCfg.withMagnetOffset(offset / 360));
     cannotSetOffset.setText(
         "Failure to set CANCoder "
