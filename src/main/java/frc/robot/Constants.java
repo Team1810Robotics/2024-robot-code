@@ -32,6 +32,7 @@ public final class Constants
         public static final int driveOmegaAxis = 2;
         public static final int resetGyroButton = 9;
         public static final int driveModeButton = 7;
+        public static final double ROTATION_DEADBAND = 0;
     }
 
     public static class Swerve {
@@ -51,6 +52,15 @@ public final class Constants
         public static final int BL_CANCODER_ID = 10;
         public static final int BR_CANCODER_ID = 9;
     }
+
+    public static final class VisionConstants {
+      public static final double CAMERA_HEIGHT = 0;
+      public static final double CAMERA_PITCH = 0;
+      public static final double APRILTAG_ANGLE = 0;
+
+      public static final int APRILTAG_RED_SHOOTER_ID = 4;
+      public static final double APRILTAG_RED_SHOOTER_HEIGHT = 1.32;
+  }
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592;
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);

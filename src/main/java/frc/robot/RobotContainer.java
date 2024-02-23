@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IO;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.swervedrive.TeleopDrive;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 
@@ -25,9 +26,13 @@ public class RobotContainer{
   CommandJoystick rotationController = new CommandJoystick(1);
 
   CommandJoystick driverController = new CommandJoystick(1); //Same?
-  XboxController driverXbox = new XboxController(0); 
+  XboxController driverXbox = new XboxController(1);
+
+  VisionSubsystem visionSubsystem = new VisionSubsystem();
 
   SendableChooser<Command> autoChooser;
+
+  boolean joystickMode = false;
 
   public RobotContainer(){
     //driveChooser.setDefaultOption(null, null);
@@ -39,23 +44,20 @@ public class RobotContainer{
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> -MathUtil.applyDeadband(driver.getRawAxis(IO.driveOmegaAxis), 0.5),
+      () -> -MathUtil.applyDeadband(driver.getRawAxis(IO.driveOmegaAxis), IO.ROTATION_DEADBAND),
       () -> !driver.button(IO.driveModeButton).getAsBoolean()  
     );
     Command teleopDrive_twoJoy = new TeleopDrive(
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-      () -> -MathUtil.applyDeadband(rotationController.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> -MathUtil.applyDeadband(driver.getRawAxis(IO.driveOmegaAxis), 0.5),
+      () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
+      () -> -MathUtil.applyDeadband(rotationController.getRawAxis(IO.driveOmegaAxis), IO.ROTATION_DEADBAND),
       () -> !driver.button(IO.driveModeButton).getAsBoolean()  
     );
 
-    /* Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> driver.getRawAxis(2)); */
-
     drivebase.setDefaultCommand(teleopDrive);
+
+    //if(driverController.button(5).toggleOnFalse(joystickMode))
 
     autoChooser = AutoBuilder.buildAutoChooser();
     Shuffleboard.getTab("Autonomous").add(autoChooser);
@@ -66,6 +68,7 @@ public class RobotContainer{
     driver.button(IO.resetGyroButton).onTrue(new InstantCommand(drivebase::zeroGyro));
 
     new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
+    new JoystickButton(driverXbox, 4).whileTrue(drivebase.aimAtTarget(visionSubsystem.getCamera()));
   }
 
   public Command getAutonomousCommand(){
