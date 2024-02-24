@@ -26,7 +26,7 @@ public class VisionSubsystem extends SubsystemBase {
     
     PhotonCamera camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
     AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-    Transform3d robotToCam = new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0,0,0));
+    Transform3d robotToCam = new Transform3d(new        Translation3d(0.0, 0.0, 0.0), new Rotation3d(0,0,0));
     
     PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camera, robotToCam);
 
