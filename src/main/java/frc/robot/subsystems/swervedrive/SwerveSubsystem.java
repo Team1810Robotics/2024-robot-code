@@ -1,16 +1,9 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.swervedrive;
-
-//import frc.robot.subsystems.swervedrive.data;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.ReplanningConfig;
 
@@ -52,26 +45,16 @@ import frc.robot.subsystems.VisionSubsystem;
 public class SwerveSubsystem extends SubsystemBase
 {
 
-  /**
-   * Swerve drive object.
-   */
   private final SwerveDrive swerveDrive;
-  /**
-   * Maximum speed of the robot in meters per second, used to limit acceleration.
-   */
+
   public double maximumSpeed = Units.feetToMeters(14.5);
 
   public CommandJoystick driver = RobotContainer.driver;
 
   // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
-  //  In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
-  //  The encoder resolution per motor revolution is 1 per motor revolution.
   double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(12.8);
 
   // Motor conversion factor is (PI * WHEEL DIAMETER IN METERS) / (GEAR RATIO * ENCODER RESOLUTION).
-  //  In this case the wheel diameter is 4 inches, which must be converted to meters to get meters/second.
-  //  The gear ratio is 6.75 motor revolutions per wheel rotation.
-  //  The encoder resolution per motor revolution is 1 per motor revolution.
   double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75);
 
   public Pigeon2 gyro = new Pigeon2(13);
@@ -80,14 +63,8 @@ public class SwerveSubsystem extends SubsystemBase
 
   VisionSubsystem visionSubsystem = new VisionSubsystem();
 
-  /**
-   * Initialize {@link SwerveDrive} with the directory provided.
-   *
-   * @param directory Directory of swerve drive config files.
-   */
   public SwerveSubsystem(File directory){
 
-    // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 
     try
@@ -106,66 +83,7 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setCosineCompensator(!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
     setupPathPlanner();
 
-    Shuffleboard.getTab("swerve").addNumber("FL Cancoder", () -> swerveDrive.getModulePositions()[0].angle.getDegrees());
-    Shuffleboard.getTab("swerve").addNumber("FR Cancoder", () -> swerveDrive.getModulePositions()[1].angle.getDegrees());
-    Shuffleboard.getTab("swerve").addNumber("BL Cancoder", () -> swerveDrive.getModulePositions()[2].angle.getDegrees());
-    Shuffleboard.getTab("swerve").addNumber("BR Cancoder", () -> swerveDrive.getModulePositions()[3].angle.getDegrees());
-
-    //swerveDrive.restoreInternalOffset();
-    swerveDrive.pushOffsetsToControllers();
-
-    SmartDashboard.putData("rotPID", rotPidController);
-
-    SmartDashboard.putData("Swerve Visualizer - actual", new Sendable() {
-
-        @Override
-        public void initSendable(SendableBuilder builder) {
-            //Set widget type to swerve
-            builder.setSmartDashboardType("SwerveDrive");
-
-            //Wheel angles for Elastic
-            builder.addDoubleProperty("Front Left Angle", () ->  swerveDrive.getModulePositions()[0].angle.getDegrees(), null);
-            builder.addDoubleProperty("Front Right Angle", () ->  swerveDrive.getModulePositions()[1].angle.getDegrees(), null);
-            builder.addDoubleProperty("Back Left Angle", () ->  swerveDrive.getModulePositions()[2].angle.getDegrees(), null);
-            builder.addDoubleProperty("Back Right Angle", () ->  swerveDrive.getModulePositions()[3].angle.getDegrees(), null);
- 
-            //Wheel speeds for Elastic
-            builder.addDoubleProperty("Front Left Velocity", () -> SwerveDriveTelemetry.measuredStates[1], null);
-            builder.addDoubleProperty("Front Right Velocity", () -> SwerveDriveTelemetry.measuredStates[3], null);
-            builder.addDoubleProperty("Back Left Velocity", () -> SwerveDriveTelemetry.measuredStates[5], null);
-            builder.addDoubleProperty("Back Right Velocity", () -> SwerveDriveTelemetry.measuredStates[7], null);
-
-            //Adds rotation to the widget - Comment out to stop, fourm said it might cause issues
-            //builder.addDoubleProperty("Robot Angle", () -> gyro.getAngle(), null);
-
-        }
-    });
-    SmartDashboard.putData("Swerve Visualizer - desired", new Sendable() {
-
-        @Override
-        public void initSendable(SendableBuilder builder) {
-            //Set widget type to swerve
-            builder.setSmartDashboardType("SwerveDrive");
-
-            //swerveDrive.get
-
-            //Wheel angles for Elastic
-            builder.addDoubleProperty("Front Left Angle", () ->  SwerveDriveTelemetry.desiredStates[0], null);
-            builder.addDoubleProperty("Front Right Angle", () ->  SwerveDriveTelemetry.desiredStates[2], null);
-            builder.addDoubleProperty("Back Left Angle", () ->  SwerveDriveTelemetry.desiredStates[4], null);
-            builder.addDoubleProperty("Back Right Angle", () ->  SwerveDriveTelemetry.desiredStates[6], null);
- 
-            //Wheel speeds for Elastic
-            builder.addDoubleProperty("Front Left Velocity", () -> SwerveDriveTelemetry.desiredStates[1], null);
-            builder.addDoubleProperty("Front Right Velocity", () -> SwerveDriveTelemetry.measuredStates[3], null);
-            builder.addDoubleProperty("Back Left Velocity", () -> SwerveDriveTelemetry.measuredStates[5], null);
-            builder.addDoubleProperty("Back Right Velocity", () -> SwerveDriveTelemetry.measuredStates[7], null);
-
-            //Adds rotation to the widget - Comment out to stop, fourm said it might cause issues
-            //builder.addDoubleProperty("Robot Angle", () -> gyro.getAngle(), null);
-
-        }
-    });
+    setupElastic();
   }
 
   
@@ -180,9 +98,6 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive = new SwerveDrive(driveCfg, controllerCfg, maximumSpeed);
   }
 
-  /**
-   * Setup AutoBuilder for PathPlanner.
-   */
   public void setupPathPlanner()
   {
     AutoBuilder.configureHolonomic(
@@ -240,32 +155,20 @@ public class SwerveSubsystem extends SubsystemBase
     }
   }
 
-  /**
-   * Get the path follower with events.
-   *
-   * @param pathName       PathPlanner path name.
-   * @return {@link AutoBuilder#followPath(PathPlannerPath)} path command.
-   */
   public Command getAutonomousCommand(String pathName)
   {
     // Create a path following command using AutoBuilder. This will also trigger event markers.
     return new PathPlannerAuto(pathName);
   }
 
-  /**
-   * Use PathPlanner Path finding to go to a point on the field.
-   *
-   * @param pose Target {@link Pose2d} to go to.
-   * @return PathFinding command
-   */
   public Command driveToPose(Pose2d pose)
   {
-// Create the constraints to use while pathfinding
+    // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
         swerveDrive.getMaximumVelocity(), 4.0,
         swerveDrive.getMaximumAngularVelocity(), Units.degreesToRadians(720));
 
-// Since AutoBuilder is configured, we can use it to build pathfinding commands
+    // Since AutoBuilder is configured, we can use it to build pathfinding commands
     return AutoBuilder.pathfindToPose(
         pose,
         constraints,
@@ -274,15 +177,6 @@ public class SwerveSubsystem extends SubsystemBase
                                      );
   }
 
-  /**
-   * Command to drive the robot using translative values and heading as a setpoint.
-   *
-   * @param translationX Translation in the X direction. Cubed for smoother controls.
-   * @param translationY Translation in the Y direction. Cubed for smoother controls.
-   * @param headingX     Heading X to calculate angle of the joystick.
-   * @param headingY     Heading Y to calculate angle of the joystick.
-   * @return Drive command.
-   */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
                               DoubleSupplier headingY)
   {
@@ -299,14 +193,6 @@ public class SwerveSubsystem extends SubsystemBase
     });
   }
 
-  /**
-   * Command to drive the robot using translative values and heading as a setpoint.
-   *
-   * @param translationX Translation in the X direction.
-   * @param translationY Translation in the Y direction.
-   * @param rotation     Rotation as a value between [-1, 1] converted to radians.
-   * @return Drive command.
-   */
   public Command simDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotation)
   {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
@@ -320,11 +206,6 @@ public class SwerveSubsystem extends SubsystemBase
     });
   }
 
-  /**
-   * Command to characterize the robot drive motors using SysId
-   *
-   * @return SysId Drive Command
-   */
   public Command sysIdDriveMotorCommand()
   {
     return SwerveDriveTest.generateSysIdCommand(
@@ -334,11 +215,6 @@ public class SwerveSubsystem extends SubsystemBase
         3.0, 5.0, 3.0);
   }
 
-  /**
-   * Command to characterize the robot angle motors using SysId
-   *
-   * @return SysId Angle Command
-   */
   public Command sysIdAngleMotorCommand()
   {
     return SwerveDriveTest.generateSysIdCommand(
@@ -348,14 +224,6 @@ public class SwerveSubsystem extends SubsystemBase
         3.0, 5.0, 3.0);
   }
 
-  /**
-   * Command to drive the robot using translative values and heading as angular velocity.
-   *
-   * @param translationX     Translation in the X direction. Cubed for smoother controls.
-   * @param translationY     Translation in the Y direction. Cubed for smoother controls.
-   * @param angularRotationX Angular velocity of the robot to set. Cubed for smoother controls.
-   * @return Drive command.
-   */
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
   {
     return run(() -> {
@@ -368,20 +236,6 @@ public class SwerveSubsystem extends SubsystemBase
     });
   }
 
-  /**
-   * The primary method for controlling the drivebase.  Takes a {@link Translation2d} and a rotation rate, and
-   * calculates and commands module states accordingly.  Can use either open-loop or closed-loop velocity control for
-   * the wheel velocities.  Also has field- and robot-relative modes, which affect how the translation vector is used.
-   *
-   * @param translation   {@link Translation2d} that is the commanded linear velocity of the robot, in meters per
-   *                      second. In robot-relative mode, positive x is torwards the bow (front) and positive y is
-   *                      torwards port (left).  In field-relative mode, positive x is away from the alliance wall
-   *                      (field North) and positive y is torwards the left wall when looking through the driver station
-   *                      glass (field West).
-   * @param rotation      Robot angular rate, in radians per second. CCW positive.  Unaffected by field/robot
-   *                      relativity.
-   * @param fieldRelative Drive mode.  True for field-relative, false for robot-relative.
-   */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative)
   {
     swerveDrive.drive(translation,
@@ -430,13 +284,6 @@ public class SwerveSubsystem extends SubsystemBase
     return swerveDrive.kinematics;
   }
 
-  /**
-   * Resets odometry to the given pose. Gyro angle and module positions do not need to be reset when calling this
-   * method.  However, if either gyro angle or module position is reset, this must be called in order for odometry to
-   * keep working.
-   *
-   * @param initialHolonomicPose The pose to set the odometry to
-   */
   public void resetOdometry(Pose2d initialHolonomicPose)
   {
     swerveDrive.resetOdometry(initialHolonomicPose);
@@ -472,45 +319,21 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.postTrajectory(trajectory);
   }
 
-  /**
-   * Resets the gyro angle to zero and resets odometry to the same position, but facing toward 0.
-   */
   public void zeroGyro()
   {
     swerveDrive.zeroGyro();
   }
 
-  /**
-   * Sets the drive motors to brake/coast mode.
-   *
-   * @param brake True to set motors to brake mode, false for coast.
-   */
   public void setMotorBrake(boolean brake)
   {
     swerveDrive.setMotorIdleMode(brake);
   }
 
-  /**
-   * Gets the current yaw angle of the robot, as reported by the swerve pose estimator in the underlying drivebase.
-   * Note, this is not the raw gyro reading, this may be corrected from calls to resetOdometry().
-   *
-   * @return The yaw angle
-   */
   public Rotation2d getHeading()
   {
     return getPose().getRotation();
   }
 
-  /**
-   * Get the chassis speeds based on controller input of 2 joysticks. One for speeds in which direction. The other for
-   * the angle of the robot.
-   *
-   * @param xInput   X joystick input for the robot to move in the X direction.
-   * @param yInput   Y joystick input for the robot to move in the Y direction.
-   * @param headingX X joystick which controls the angle of the robot.
-   * @param headingY Y joystick which controls the angle of the robot.
-   * @return {@link ChassisSpeeds} which can be sent to the Swerve Drive.
-   */
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY)
   {
     xInput = Math.pow(xInput, 3);
@@ -523,15 +346,6 @@ public class SwerveSubsystem extends SubsystemBase
                                                         maximumSpeed);
   }
 
-  /**
-   * Get the chassis speeds based on controller input of 1 joystick and one angle. Control the robot at an offset of
-   * 90deg.
-   *
-   * @param xInput X joystick input for the robot to move in the X direction.
-   * @param yInput Y joystick input for the robot to move in the Y direction.
-   * @param angle  The angle in as a {@link Rotation2d}.
-   * @return {@link ChassisSpeeds} which can be sent to the Swerve Drive.
-   */
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle)
   {
     xInput = Math.pow(xInput, 3);
@@ -607,5 +421,67 @@ public class SwerveSubsystem extends SubsystemBase
   public void addFakeVisionReading()
   {
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
+  }
+
+  public void setupElastic(){
+    Shuffleboard.getTab("swerve").addNumber("FL Cancoder", () -> swerveDrive.getModulePositions()[0].angle.getDegrees());
+    Shuffleboard.getTab("swerve").addNumber("FR Cancoder", () -> swerveDrive.getModulePositions()[1].angle.getDegrees());
+    Shuffleboard.getTab("swerve").addNumber("BL Cancoder", () -> swerveDrive.getModulePositions()[2].angle.getDegrees());
+    Shuffleboard.getTab("swerve").addNumber("BR Cancoder", () -> swerveDrive.getModulePositions()[3].angle.getDegrees());
+
+    //swerveDrive.restoreInternalOffset();
+    swerveDrive.pushOffsetsToControllers();
+
+    SmartDashboard.putData("rotPID", rotPidController);
+
+    SmartDashboard.putData("Swerve Visualizer - actual", new Sendable() {
+
+        @Override
+        public void initSendable(SendableBuilder builder) {
+            //Set widget type to swerve
+            builder.setSmartDashboardType("SwerveDrive");
+
+            //Wheel angles for Elastic
+            builder.addDoubleProperty("Front Left Angle", () ->  swerveDrive.getModulePositions()[0].angle.getDegrees(), null);
+            builder.addDoubleProperty("Front Right Angle", () ->  swerveDrive.getModulePositions()[1].angle.getDegrees(), null);
+            builder.addDoubleProperty("Back Left Angle", () ->  swerveDrive.getModulePositions()[2].angle.getDegrees(), null);
+            builder.addDoubleProperty("Back Right Angle", () ->  swerveDrive.getModulePositions()[3].angle.getDegrees(), null);
+ 
+            //Wheel speeds for Elastic
+            builder.addDoubleProperty("Front Left Velocity", () -> SwerveDriveTelemetry.measuredStates[1], null);
+            builder.addDoubleProperty("Front Right Velocity", () -> SwerveDriveTelemetry.measuredStates[3], null);
+            builder.addDoubleProperty("Back Left Velocity", () -> SwerveDriveTelemetry.measuredStates[5], null);
+            builder.addDoubleProperty("Back Right Velocity", () -> SwerveDriveTelemetry.measuredStates[7], null);
+
+            //Adds rotation to the widget - Comment out to stop, fourm said it might cause issues
+            //builder.addDoubleProperty("Robot Angle", () -> gyro.getAngle(), null);
+
+        }
+    });
+    SmartDashboard.putData("Swerve Visualizer - desired", new Sendable() {
+
+        @Override
+        public void initSendable(SendableBuilder builder) {
+            //Set widget type to swerve
+            builder.setSmartDashboardType("SwerveDrive");
+
+            //swerveDrive.get
+
+            //Wheel angles for Elastic
+            builder.addDoubleProperty("Front Left Angle", () ->  SwerveDriveTelemetry.desiredStates[0], null);
+            builder.addDoubleProperty("Front Right Angle", () ->  SwerveDriveTelemetry.desiredStates[2], null);
+            builder.addDoubleProperty("Back Left Angle", () ->  SwerveDriveTelemetry.desiredStates[4], null);
+            builder.addDoubleProperty("Back Right Angle", () ->  SwerveDriveTelemetry.desiredStates[6], null);
+ 
+            //Wheel speeds for Elastic
+            builder.addDoubleProperty("Front Left Velocity", () -> SwerveDriveTelemetry.desiredStates[1], null);
+            builder.addDoubleProperty("Front Right Velocity", () -> SwerveDriveTelemetry.measuredStates[3], null);
+            builder.addDoubleProperty("Back Left Velocity", () -> SwerveDriveTelemetry.measuredStates[5], null);
+            builder.addDoubleProperty("Back Right Velocity", () -> SwerveDriveTelemetry.measuredStates[7], null);
+
+            //Adds rotation to the widget - Comment out to stop, fourm said it might cause issues
+            //builder.addDoubleProperty("Robot Angle", () -> gyro.getAngle(), null);
+        }
+    });
   }
 }

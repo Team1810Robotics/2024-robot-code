@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.OperatorConstants;
@@ -24,8 +23,8 @@ public class RobotContainer{
   public static CommandJoystick driver = new CommandJoystick(0);
   CommandJoystick rotationController = new CommandJoystick(1);
 
-  CommandJoystick driverController = new CommandJoystick(1); //Same?
-  XboxController driverXbox = new XboxController(1);
+  CommandJoystick driverController = new CommandJoystick(1);
+  XboxController joshBox = new XboxController(3);
 
   VisionSubsystem visionSubsystem = new VisionSubsystem();
 
@@ -34,9 +33,9 @@ public class RobotContainer{
   Command visionDrive;
   Command teleopDrive;
   Command teleopDrive_twoJoy;
+  Command driveFieldOrientedAnglularVelocity;
 
   public RobotContainer(){
-    //driveChooser.setDefaultOption(null, null);
 
     // Configure the trigger bindings
     configureBindings();
@@ -68,11 +67,11 @@ public class RobotContainer{
       () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
 
-    /* Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
+    driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
         () -> MathUtil.applyDeadband(driver.getY
         (), OperatorConstants.LEFT_Y_DEADBAND),
         () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> driver.getRawAxis(2)); */
+        () -> driver.getRawAxis(2));
 
     drivebase.setDefaultCommand(teleopDrive_twoJoy);
 
@@ -82,21 +81,19 @@ public class RobotContainer{
 
   private void configureBindings(){
 
-    driver.button(IOConstants.resetGyroButton).onTrue(new InstantCommand(drivebase::zeroGyro));
+    /* driver.button(IOConstants.resetGyroButton).onTrue(new InstantCommand(drivebase::zeroGyro));
 
     IO.manipulatorXbox_Start.onTrue(new InstantCommand(drivebase::addFakeVisionReading));
     IO.manipulatorXbox_Y.whileTrue(drivebase.aimAtTarget());
 
-    IO.leftJoystick_trigger.whileTrue(visionDrive);
+    IO.leftJoystick_trigger.whileTrue(visionDrive); */
   }
 
   public Command getAutonomousCommand(){
-
     return autoChooser.getSelected();
   }
 
   public void setMotorBrake(boolean brake){
-    
     drivebase.setMotorBrake(brake);
   }
 }

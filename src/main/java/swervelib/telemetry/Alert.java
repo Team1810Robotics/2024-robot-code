@@ -41,6 +41,7 @@ import java.util.Map;
 /**
  * Class for managing persistent alerts to be sent over NetworkTables.
  */
+@SuppressWarnings("unused")
 public class Alert
 {
 
