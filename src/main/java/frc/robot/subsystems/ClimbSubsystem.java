@@ -19,8 +19,7 @@ public class ClimbSubsystem extends SubsystemBase {
     DigitalInput leftTop = new DigitalInput(Constants.ClimbConstants.LEFT_TOP_LS);
     DigitalInput rightTop = new DigitalInput(Constants.ClimbConstants.RIGHT_TOP_LS);
 
-    
-    public void setMotorSpeed(double motorSpeed){
+    public void setMotorSpeed(double motorSpeed) {
         leftMotor.set(motorSpeed);
         rightMotor.set(motorSpeed);
     }

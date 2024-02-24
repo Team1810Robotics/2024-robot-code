@@ -26,21 +26,15 @@ public class ClimbCommand extends Command {
         // FIXME: This is an infinate loop in an infinite loop, which is not good.
         while (climbSpeed != 0) {
 
-            if(rightBottom = true){
-                climbSubsystem.setMotorSpeed(0);   
-            } 
-
-            else if(leftBottom = true){
-                climbSubsystem.setMotorSpeed(0);   
-            } 
-
-            else if(rightTop = true){
-                climbSubsystem.setMotorSpeed(0);   
-            } 
-
-            else if(leftTop = true){
-                climbSubsystem.setMotorSpeed(0);   
-            } 
+            if (rightBottom = true) {
+                climbSubsystem.setMotorSpeed(0);
+            } else if (leftBottom = true) {
+                climbSubsystem.setMotorSpeed(0);
+            } else if (rightTop = true) {
+                climbSubsystem.setMotorSpeed(0);
+            } else if (leftTop = true) {
+                climbSubsystem.setMotorSpeed(0);
+            }
         }
     }
 }
