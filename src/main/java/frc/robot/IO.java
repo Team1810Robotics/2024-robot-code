@@ -36,10 +36,8 @@ public final class IO {
     public static final JoystickButton rightJoystick_button7 = new JoystickButton(leftJoystick, 7);
     public static final JoystickButton rightJoystick_button8 = new JoystickButton(leftJoystick, 8);
     public static final JoystickButton rightJoystick_button9 = new JoystickButton(leftJoystick, 9);
-    public static final JoystickButton rightJoystick_button10 =
-            new JoystickButton(leftJoystick, 10);
-    public static final JoystickButton rightJoystick_button11 =
-            new JoystickButton(leftJoystick, 11);
+    public static final JoystickButton rightJoystick_button10 = new JoystickButton(leftJoystick, 10);
+    public static final JoystickButton rightJoystick_button11 = new JoystickButton(leftJoystick, 11);
 
     // Xbox buttons
     public static final JoystickButton manipulatorXbox_A =
