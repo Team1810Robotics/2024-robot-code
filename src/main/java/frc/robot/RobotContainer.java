@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.Constants.IOConstants;
@@ -67,13 +68,24 @@ public class RobotContainer{
       () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
 
-    driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(driver.getY
-        (), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> driver.getRawAxis(2));
+    /**YAGSL build in field oriented drive*/
+    driveFieldOrientedAnglularVelocity = drivebase.driveCommand( //TODO Test? - Might be useful for visionDrive
+      () -> MathUtil.applyDeadband(driver.getY
+      (), OperatorConstants.LEFT_Y_DEADBAND),
+      () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),
+      () -> driver.getRawAxis(2));
 
-    drivebase.setDefaultCommand(teleopDrive_twoJoy);
+    // Create a SendableChooser to select the drive command
+    SendableChooser<Command> driveChooser = new SendableChooser<>();
+    driveChooser.setDefaultOption("Vision Drive", visionDrive);
+    driveChooser.addOption("Teleop Drive",teleopDrive);
+    driveChooser.addOption("Teleop Drive (Two Joysticks)", teleopDrive_twoJoy);
+    driveChooser.addOption("Drive Field Oriented (Needs Testing)", driveFieldOrientedAnglularVelocity);
+    Shuffleboard.getTab("Teleoperated").add("Drive Command", driveChooser);
+
+    //Shuffleboard.getTab("Teleoperated").add("Camera", visionSubsystem.getCamera());
+
+    drivebase.setDefaultCommand(driveChooser.getSelected());
 
     autoChooser = AutoBuilder.buildAutoChooser();
     Shuffleboard.getTab("Autonomous").add(autoChooser);
