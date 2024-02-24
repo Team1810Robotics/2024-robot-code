@@ -4,32 +4,30 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmSubsystem;
 
-public class ArmCommand extends Command  {
+public class ArmCommand extends Command {
 
-    ArmSubsystem armSubsystem;
+    private ArmSubsystem armSubsystem;
+    private double armSetpoint;
 
-    double arm;
-
-    public ArmCommand(ArmSubsystem armSubsystem, double arm){
-        this.arm = arm;
+    public ArmCommand(ArmSubsystem armSubsystem, double armSetpoint) {
+        this.armSetpoint = armSetpoint;
         this.armSubsystem = armSubsystem;
 
         addRequirements(armSubsystem);
     }
-    
-    public void initialize(){
+
+    @Override
+    public void initialize() {
         armSubsystem.setGoal(ArmConstants.INITIAL_POSITION);
     }
 
-    public void execute(){
+    @Override
+    public void execute() {
         armSubsystem.setGoal(ArmConstants.INTAKE_POSITION);
     }
 
-    public void end(){
-        armSubsystem.setGoal(ArmConstants.INITIAL_POSITION);
+    @Override
+    public void end(boolean interrupted) {
+        armSubsystem.stop();
     }
-
-    
 }
-
-

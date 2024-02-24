@@ -3,15 +3,12 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class IntakeCommand extends Command{
-    
-    
-    IntakeSubsystem intakeSubsystem;
+public class IntakeCommand extends Command {
+    private IntakeSubsystem intakeSubsystem;
+    private double intakeSpeed;
 
-    double intake;
-
-    public IntakeCommand(IntakeSubsystem intakeSubsystem, double intake){
-        this.intake = intake;
+    public IntakeCommand(IntakeSubsystem intakeSubsystem, double intakeSpeed) {
+        this.intakeSpeed = intakeSpeed;
         this.intakeSubsystem = intakeSubsystem;
 
         addRequirements(intakeSubsystem);
@@ -26,15 +23,14 @@ public class IntakeCommand extends Command{
         }
     }
 
-    public void end(){
+    @Override
+    public void end(boolean interrupted) {
         intakeSubsystem.setSpeed(0);
     }
+
+    /* @Override
     public boolean isFinished(){
-        if (intakeSubsystem.getBeamBreak()){
-       
-        return true;
-        }
-        return false;
-    }
+        return (intakeSubsystem.getBeamBreak());
+    } */
 
 }
