@@ -6,7 +6,7 @@ import frc.robot.subsystems.ClimbSubsystem;
 public class ClimbCommand extends Command{
 
     private ClimbSubsystem climbSubsystem;
-    private double climbSpeed; // CHANGE: changed name to better reflect the purpose of the variable
+    private double climbSpeed;
 
     public ClimbCommand(ClimbSubsystem climbSubsystem, double climbSpeed) {
         this.climbSpeed = climbSpeed;
@@ -23,7 +23,7 @@ public class ClimbCommand extends Command{
         boolean rightTop = climbSubsystem.getRightBottomlimit();
         boolean leftTop = climbSubsystem.getRightBottomlimit();
 
-
+        // FIXME: This is an infinate loop in an infinite loop, which is not good.
         while (climbSpeed != 0) {
 
             if(rightBottom = true){

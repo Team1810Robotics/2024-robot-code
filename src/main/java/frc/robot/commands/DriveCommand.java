@@ -1,4 +1,4 @@
-package frc.robot.commands.swervedrive;
+package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -6,10 +6,10 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveController;
 
-public class TeleopDrive extends Command{
+public class DriveCommand extends Command{
     private final SwerveSubsystem drivetrain;
     private final DoubleSupplier vX;
     private final DoubleSupplier vY;
@@ -17,7 +17,7 @@ public class TeleopDrive extends Command{
     private final BooleanSupplier driveMode;
     private final SwerveController controller;
 
-    public TeleopDrive(SwerveSubsystem drivetrain, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier omega, BooleanSupplier driveMode) {
+    public DriveCommand(SwerveSubsystem drivetrain, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier omega, BooleanSupplier driveMode) {
         this.drivetrain = drivetrain;
         this.vX = vX;
         this.vY = vY;
@@ -47,8 +47,4 @@ public class TeleopDrive extends Command{
 
     @Override
     public void end(boolean interrupted) {}
-
-    @Override
-    public boolean isFinished() {return false;}
-    
 }

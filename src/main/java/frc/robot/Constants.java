@@ -1,18 +1,8 @@
-
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import java.io.File;
 
 import com.pathplanner.lib.util.PIDConstants;
 
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Filesystem;
-import swervelib.math.Matter;
 import swervelib.math.SwerveMath;
 
 /**
@@ -23,25 +13,8 @@ import swervelib.math.SwerveMath;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
-
-public final class Constants
-{
-  public static class IO {
-        public static final double swerveDeadband = 0.3;
-        public static final int driveXAxis = 1;
-        public static final int driveYAxis = 0;
-        public static final int driveOmegaAxis = 2;
-        public static final int resetGyroButton = 9;
-        public static final int driveModeButton = 7;
-    }
-
-  public static class Swerve {
-        public static final File directory = new File(Filesystem.getDeployDirectory(), "swerve");
-        public static final double maxVelocity = 5;
-        public static final double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75, 1024);
-        public static final double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(12.8, 4096);
-
-
+public final class Constants {
+    public static class SwerveConstants {
         public static final double FL_CANCODER_OFFSET = 259;
         public static final double FR_CANCODER_OFFSET = 151;
         public static final double BL_CANCODER_OFFSET = 211;
@@ -51,77 +24,78 @@ public final class Constants
         public static final int FR_CANCODER_ID = 11;
         public static final int BL_CANCODER_ID = 10;
         public static final int BR_CANCODER_ID = 9;
+
+        public static final int WHEEL_LOCK_TIME = 10; // in seconds
+
+        /**
+         * Maximum speed of the robot in meters per second, used to limit acceleration.
+         */
+        public static final double MAX_SPEED = Units.feetToMeters(14.5);
+
+        // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
+        //  In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
+        //  The encoder resolution per motor revolution is 1 per motor revolution.
+        public static final double ANGLE_CONVERSION_FACTOR = SwerveMath.calculateDegreesPerSteeringRotation(12.8);
+
+        // Motor conversion factor is (PI * WHEEL DIAMETER IN METERS) / (GEAR RATIO * ENCODER RESOLUTION).
+        //  In this case the wheel diameter is 4 inches, which must be converted to meters to get meters/second.
+        //  The gear ratio is 6.75 motor revolutions per wheel rotation.
+        //  The encoder resolution per motor revolution is 1 per motor revolution.
+        public static final double DRIVE_CONVERSION_FACTOR = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75);
     }
 
-  public static final double ROBOT_MASS = (148 - 20.3) * 0.453592;
-  public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
-  public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
+    public static final class AutoConstants {
+        public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
+        public static final PIDConstants ANGLE_PID   = new PIDConstants(0.4, 0, 0.01);
+    }
 
-  public static final class AutonConstants
-  {
-    public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
-    public static final PIDConstants ANGLE_PID   = new PIDConstants(0.4, 0, 0.01);
-  }
+    public static final class ArmConstants {
+        public static final int MOTOR1_ID = 0;
+        public static final int MOTOR2_ID = 0;
 
- public static final class DrivebaseConstants
-  {
-    // Hold time on motor brakes when disabled
-    public static final double WHEEL_LOCK_TIME = 10; // seconds
-  }
-
-  public static class OperatorConstants
-  {
-    // Joystick Deadband
-    public static final double LEFT_X_DEADBAND  = 0.1;
-    public static final double LEFT_Y_DEADBAND  = 0.1;
-    public static final double RIGHT_X_DEADBAND = 0.1;
-    public static final double TURN_CONSTANT    = 6;
-  }
-
-  public static final class ArmConstants 
-  {
-        public static final int MOTOR1_PORT = 0;
-        public static final int MOTOR2_PORT = 0;
+        public static final int CANCODER_ID = 0;
 
         public static final double INITIAL_POSITION = 0.0;
         public static final double INTAKE_POSITION = 0;
-	 
+
         //TODO: tune values
-        public static final double kP = 0.0; 
+        public static final double kP = 0.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
-	
-        public static final Constraints CONSTRAINTS = new Constraints(0, 0);
+    }
 
-   }
-
-
-  public static final class IntakeConstants 
-  {
-        public static final int MOTOR_PORT = 0;
+    public static final class IntakeConstants {
+        public static final int MOTOR_ID = 0;
         public static final int BEAM_BREAK_PORT = 0;
-   }
+    }
 
-  public static final class ShooterConstants {
-        public static final int TOP_MOTOR_PORT = 0;
-        public static final int BOTTOM_MOTOR_PORT = 0;
-   }
+    public static final class ShooterConstants {
+        public static final int TOP_MOTOR_ID = 0;
+        public static final int BOTTOM_MOTOR_ID = 0;
+    }
 
-  public static final class ExtenderConstants 
-  {
-        public static final int MOTOR_PORT = 0;
+    public static final class ExtenderConstants {
+        public static final int MOTOR_ID = 0;
         public static final int TOP_LS_PORT = 0;
         public static final int BOTTOM_LS_PORT = 0;
-  }
+    }
 
-  public static final class ClimbConstants 
-  {
-        public static final int LEFT_MOTOR_PORT = 0;
-        public static final int RIGHT_MOTOR_PORT = 0;
+    public static final class ClimbConstants {
+        // right and left relative to the bot's perspective
+        public static final int LEFT_MOTOR_ID = 0;
+        public static final int RIGHT_MOTOR_ID = 0;
 
         public static final int LEFT_TOP_LS = 0;
         public static final int LEFT_BOTTOM_LS = 0;
         public static final int RIGHT_TOP_LS = 0;
         public static final int RIGHT_BOTTOM_LS = 0;
-  }
+    }
+
+    public static final class IOConstants {
+        public static final int LEFT_JOYSTICK_PORT = 0;
+        public static final int RIGHT_JOYSTICK_PORT = 1;
+        public static final int MANIPULATOR_XBOX_PORT = 2;
+
+        public static final double DEADBAND = 0.3;
+    }
 }

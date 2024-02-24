@@ -16,10 +16,10 @@ public class ArmSubsystem extends SubsystemBase {
      * added motor & canCoder ids from constants
      * added pid controller constants
      */
-    private CANSparkMax armMotor = new CANSparkMax(MOTOR1_PORT, MotorType.kBrushless);
-    private CANSparkMax motor2 = new CANSparkMax (MOTOR2_PORT, MotorType.kBrushless);
+    private CANSparkMax armMotor = new CANSparkMax(MOTOR1_ID, MotorType.kBrushless);
+    private CANSparkMax motor2 = new CANSparkMax (MOTOR2_ID, MotorType.kBrushless);
 
-    private CANcoder canCoder = new CANcoder(CANCODER_PORT);
+    private CANcoder canCoder = new CANcoder(CANCODER_ID);
 
     private PIDController pid = new PIDController(kP, kI, kD);
 

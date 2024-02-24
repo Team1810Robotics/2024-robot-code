@@ -8,8 +8,8 @@ import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    CANSparkMax bottomMotor = new CANSparkMax(Constants.ShooterConstants.BOTTOM_MOTOR_PORT, MotorType.kBrushless);
-    CANSparkMax topMotor = new CANSparkMax(Constants.ShooterConstants.TOP_MOTOR_PORT, MotorType.kBrushless);
+    CANSparkMax bottomMotor = new CANSparkMax(Constants.ShooterConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
+    CANSparkMax topMotor = new CANSparkMax(Constants.ShooterConstants.TOP_MOTOR_ID, MotorType.kBrushless);
 
     public ShooterSubsystem() {
         topMotor.setInverted(true);
