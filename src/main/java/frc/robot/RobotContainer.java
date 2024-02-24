@@ -8,15 +8,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.swervedrive.TeleopDrive;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
-
-import frc.robot.IO;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -44,6 +41,7 @@ public class RobotContainer{
     // Configure the trigger bindings
     configureBindings();
 
+    /**Drive with 2 joysticks, automatically rotating toward a target AprilTag */
     visionDrive = new TeleopDrive(
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
@@ -52,6 +50,7 @@ public class RobotContainer{
       () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
    
+    /**Drive on one joystick */
     teleopDrive = new TeleopDrive(
        drivebase,
        () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
@@ -60,6 +59,7 @@ public class RobotContainer{
        () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
 
+    /**Drive with two joysticks */
     teleopDrive_twoJoy = new TeleopDrive(
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
