@@ -6,7 +6,7 @@ import frc.robot.subsystems.ArmSubsystem;
 public class ManualCommand extends Command {
 
     private ArmSubsystem armSubsystem;
-    private double armSpeed; // CHANGE: changed name to better reflect the purpose of the variable
+    private double armSpeed;
 
     public ManualCommand(ArmSubsystem armSubsystem, double armSpeed) {
         this.armSpeed = armSpeed;

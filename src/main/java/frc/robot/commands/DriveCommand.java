@@ -1,15 +1,14 @@
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveSubsystem;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 
-public class DriveCommand extends Command{
+public class DriveCommand extends Command {
     private final SwerveSubsystem drivetrain;
     private final DoubleSupplier vX;
     private final DoubleSupplier vY;
@@ -17,7 +16,12 @@ public class DriveCommand extends Command{
     private final BooleanSupplier driveMode;
     private final SwerveController controller;
 
-    public DriveCommand(SwerveSubsystem drivetrain, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier omega, BooleanSupplier driveMode) {
+    public DriveCommand(
+            SwerveSubsystem drivetrain,
+            DoubleSupplier vX,
+            DoubleSupplier vY,
+            DoubleSupplier omega,
+            BooleanSupplier driveMode) {
         this.drivetrain = drivetrain;
         this.vX = vX;
         this.vY = vY;
@@ -40,9 +44,10 @@ public class DriveCommand extends Command{
         SmartDashboard.putNumber("vY", yVelocity);
         SmartDashboard.putNumber("omega", angVelocity);
 
-        drivetrain.drive(new Translation2d(xVelocity * 5, yVelocity * 5),
-                         angVelocity * controller.config.maxAngularVelocity,
-                         driveMode.getAsBoolean());
+        drivetrain.drive(
+                new Translation2d(xVelocity * 5, yVelocity * 5),
+                angVelocity * controller.config.maxAngularVelocity,
+                driveMode.getAsBoolean());
     }
 
     @Override

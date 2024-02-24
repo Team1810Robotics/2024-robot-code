@@ -1,23 +1,16 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.ctre.phoenix6.hardware.CANcoder;
-
 import static frc.robot.Constants.ArmConstants.*;
 
-public class ArmSubsystem extends SubsystemBase {
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-    /*
-     * CHANGE:
-     * changed name of armMotor to better reflect the purpose of the variable
-     * added motor & canCoder ids from constants
-     * added pid controller constants
-     */
+public class ArmSubsystem extends SubsystemBase {
     private CANSparkMax armMotor = new CANSparkMax(MOTOR1_ID, MotorType.kBrushless);
-    private CANSparkMax motor2 = new CANSparkMax (MOTOR2_ID, MotorType.kBrushless);
+    private CANSparkMax motor2 = new CANSparkMax(MOTOR2_ID, MotorType.kBrushless);
 
     private CANcoder canCoder = new CANcoder(CANCODER_ID);
 
@@ -35,12 +28,11 @@ public class ArmSubsystem extends SubsystemBase {
         return canCoder.getPosition().getValue();
     }
 
-    public void stop(){
+    public void stop() {
         armMotor.stopMotor();
     }
 
-    public void setGoal(double setpoint){
+    public void setGoal(double setpoint) {
         armMotor.set(pid.calculate(getposition(), setpoint));
     }
-
 }

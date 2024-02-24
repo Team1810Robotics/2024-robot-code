@@ -9,7 +9,7 @@ public class ArmCommand extends Command {
     private ArmSubsystem armSubsystem;
     private double armSetpoint;
 
-    public ArmCommand(ArmSubsystem armSubsystem, double armSetpoint){
+    public ArmCommand(ArmSubsystem armSubsystem, double armSetpoint) {
         this.armSetpoint = armSetpoint;
         this.armSubsystem = armSubsystem;
 
@@ -31,5 +31,3 @@ public class ArmCommand extends Command {
         armSubsystem.stop();
     }
 }
-
-
