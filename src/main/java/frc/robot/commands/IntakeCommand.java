@@ -14,11 +14,11 @@ public class IntakeCommand extends Command {
         addRequirements(intakeSubsystem);
     }
 
-    public void execute(){
+    public void execute() {
         intakeSubsystem.setSpeed(intakeSpeed);
         boolean beam = intakeSubsystem.getBeamBreak();
-        
-        if (beam = true){
+
+        if (beam = true) {
             intakeSubsystem.setSpeed(0);
         }
     }
