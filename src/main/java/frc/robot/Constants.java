@@ -25,13 +25,17 @@ import swervelib.math.SwerveMath;
 public final class Constants
 {
 
-  public static class IO {
+  public static class IOConstants {
         public static final double swerveDeadband = 0.3;
         public static final int driveXAxis = 1;
         public static final int driveYAxis = 0;
         public static final int driveOmegaAxis = 2;
         public static final int resetGyroButton = 9;
         public static final int driveModeButton = 7;
+
+        public static final int LEFT_JOYSTICK_PORT = 0;
+        public static final int RIGHT_JOYSTICK_PORT = 1;
+        public static final int MANIPULATOR_XBOX_PORT = 2;
     }
 
     public static class Swerve {
