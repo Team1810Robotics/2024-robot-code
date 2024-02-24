@@ -11,6 +11,7 @@ import swervelib.telemetry.Alert;
 /**
  * SparkMax absolute encoder, attached through the data port analog pin.
  */
+@SuppressWarnings("unused")
 public class SparkMaxAnalogEncoderSwerve extends SwerveAbsoluteEncoder
 {
 

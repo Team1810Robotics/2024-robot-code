@@ -20,6 +20,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 /**
  * An implementation of {@link CANSparkMax} as a {@link SwerveMotor}.
  */
+@SuppressWarnings("unused")
 public class SparkMaxSwerve extends SwerveMotor
 {
 

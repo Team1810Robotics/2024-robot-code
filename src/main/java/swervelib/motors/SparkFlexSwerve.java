@@ -21,6 +21,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 /**
  * An implementation of {@link CANSparkFlex} as a {@link SwerveMotor}.
  */
+@SuppressWarnings("unused")
 public class SparkFlexSwerve extends SwerveMotor
 {
 

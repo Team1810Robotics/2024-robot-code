@@ -14,6 +14,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 /**
  * {@link com.ctre.phoenix6.hardware.TalonFX} Swerve Motor. Made by Team 1466 WebbRobotics.
  */
+@SuppressWarnings("unused")
 public class TalonFXSwerve extends SwerveMotor
 {
 
