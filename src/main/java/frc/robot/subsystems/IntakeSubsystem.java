@@ -21,4 +21,8 @@ public class IntakeSubsystem extends SubsystemBase {
     public boolean getBeamBreak(){
         return input.get();
     }
+
+    public IntakeSubsystem(){
+        
+    }
 }
