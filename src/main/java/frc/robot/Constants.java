@@ -99,4 +99,8 @@ public final class Constants {
 
         public static final double DEADBAND = 0.3;
     }
+
+    public static final class TrapConstants {
+        public static final int VICTOR_MOTOR_PORT = 0;
+    }
 }

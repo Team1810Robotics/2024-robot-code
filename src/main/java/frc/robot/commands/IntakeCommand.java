@@ -14,9 +14,13 @@ public class IntakeCommand extends Command {
         addRequirements(intakeSubsystem);
     }
 
-    @Override
     public void execute() {
         intakeSubsystem.setSpeed(intakeSpeed);
+        boolean beam = intakeSubsystem.getBeamBreak();
+
+        if (beam = true) {
+            intakeSubsystem.setSpeed(0);
+        }
     }
 
     @Override
