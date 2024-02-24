@@ -228,13 +228,13 @@ public class SwerveSubsystem extends SubsystemBase
     });
   }
 
-  public double rotAAA(){
+  public double rotAAA(double joystickInput){
     PhotonPipelineResult result = visionSubsystem.getResult();
     if(result.hasTargets()) {
       System.out.println(result.getBestTarget().getYaw());
       return rotPidController.calculate(result.getBestTarget().getYaw());
     } else {
-      return -MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), 0.5);
+      return joystickInput;
     }
   }
 

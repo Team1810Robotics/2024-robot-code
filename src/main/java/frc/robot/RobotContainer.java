@@ -16,6 +16,8 @@ import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 
+import frc.robot.IO;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 
 public class RobotContainer{
@@ -32,21 +34,25 @@ public class RobotContainer{
 
   SendableChooser<Command> autoChooser;
 
+  Command visionDrive;
+  Command teleopDrive;
+  Command teleopDrive_twoJoy;
+
   public RobotContainer(){
     //driveChooser.setDefaultOption(null, null);
 
     // Configure the trigger bindings
     configureBindings();
 
-    Command visionDrive = new TeleopDrive(
+    visionDrive = new TeleopDrive(
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> drivebase.rotAAA(),
+      () -> drivebase.rotAAA(-MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), 0.5)),
       () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
    
-    Command teleopDrive = new TeleopDrive(
+    teleopDrive = new TeleopDrive(
        drivebase,
        () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
        () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
@@ -54,7 +60,7 @@ public class RobotContainer{
        () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
 
-    Command teleopDrive_twoJoy = new TeleopDrive(
+    teleopDrive_twoJoy = new TeleopDrive(
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
@@ -78,8 +84,10 @@ public class RobotContainer{
 
     driver.button(IOConstants.resetGyroButton).onTrue(new InstantCommand(drivebase::zeroGyro));
 
-    new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-    new JoystickButton(driverXbox, 4).whileTrue(drivebase.aimAtTarget(visionSubsystem.getCamera()));
+    IO.manipulatorXbox_Start.onTrue(new InstantCommand(drivebase::addFakeVisionReading));
+    IO.manipulatorXbox_Y.whileTrue(drivebase.aimAtTarget(visionSubsystem.getCamera()));
+
+    IO.leftJoystick_trigger.whileTrue(visionDrive);
   }
 
   public Command getAutonomousCommand(){
