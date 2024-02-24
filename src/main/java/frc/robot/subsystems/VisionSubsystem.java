@@ -70,6 +70,15 @@ public class VisionSubsystem extends SubsystemBase {
     public PhotonPipelineResult getResult() {
         return result;
     }
+
+    /** @return the yaw offset of the best target */
+    public double getYaw(){
+        if(hasTarget()) {
+            return result.getBestTarget().getYaw();
+        } else {
+            return 0.0;
+        }
+    }
     
     /** WARNING: Currently causes a loop overrun, do not use
      * @return a Pose3d representing the robot's position on the field*/

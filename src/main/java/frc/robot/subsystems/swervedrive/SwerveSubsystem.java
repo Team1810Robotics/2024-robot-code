@@ -37,8 +37,6 @@ import frc.robot.Constants.AutonConstants;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
-import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -212,27 +210,33 @@ public class SwerveSubsystem extends SubsystemBase
    );
   }
 
-  public Command aimAtTarget(PhotonCamera camera) {
+  /** Stops the drivetrain and rotates to face the best target */
+  public Command aimAtTarget() {
     return run(() -> {
-      PhotonPipelineResult result = visionSubsystem.getResult();
-      if (result.hasTargets())
+      if (visionSubsystem.hasTarget())
       {
-        drive(new Translation2d(0, 0), -rotPidController.calculate(-result.getBestTarget().getYaw()), false);
-
-        System.out.println(result.getBestTarget().getYaw());
+        drive(new Translation2d(0, 0), -visionTargetPIDCalc(0), false);
       } else {
         drive(new Translation2d(0, 0), 0, false);
       }
     });
   }
 
-  public double rotAAA(double joystickInput){
-    PhotonPipelineResult result = visionSubsystem.getResult();
-    if(result.hasTargets()) {
-      System.out.println(result.getBestTarget().getYaw());
-      return rotPidController.calculate(result.getBestTarget().getYaw());
+  /** @return the PID output to rotate toward the best AprilTag target
+   *  @param altRotation rotation speed when no target is detected
+   */
+  public double visionTargetPIDCalc(double altRotation){
+    boolean target = visionSubsystem.hasTarget();
+    double yaw = visionSubsystem.getYaw();
+
+    //TODO: Change to Shuffleboard logging
+    System.out.println(yaw);
+
+    if(target) {
+      System.out.println(yaw);
+      return rotPidController.calculate(yaw);
     } else {
-      return joystickInput;
+      return altRotation;
     }
   }
 

@@ -46,7 +46,7 @@ public class RobotContainer{
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> drivebase.rotAAA(-MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), 0.5)),
+      () -> drivebase.visionTargetPIDCalc(-MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), 0.5)),
       () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
    
@@ -85,7 +85,7 @@ public class RobotContainer{
     driver.button(IOConstants.resetGyroButton).onTrue(new InstantCommand(drivebase::zeroGyro));
 
     IO.manipulatorXbox_Start.onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-    IO.manipulatorXbox_Y.whileTrue(drivebase.aimAtTarget(visionSubsystem.getCamera()));
+    IO.manipulatorXbox_Y.whileTrue(drivebase.aimAtTarget());
 
     IO.leftJoystick_trigger.whileTrue(visionDrive);
   }
