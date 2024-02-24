@@ -8,6 +8,8 @@ import java.io.File;
 
 import com.pathplanner.lib.util.PIDConstants;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -60,12 +62,10 @@ public final class Constants
     }
 
     public static final class VisionConstants {
-      public static final double CAMERA_HEIGHT = 0;
-      public static final double CAMERA_PITCH = 0;
-      public static final double APRILTAG_ANGLE = 0;
+      public static Transform3d CAMERA_OFFSET = new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0,0,0));
 
-      public static final int APRILTAG_RED_SHOOTER_ID = 4;
-      public static final double APRILTAG_RED_SHOOTER_HEIGHT = 1.32;
+      public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
+
   }
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592;
