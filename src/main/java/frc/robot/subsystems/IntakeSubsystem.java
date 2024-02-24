@@ -19,7 +19,7 @@ public class IntakeSubsystem extends SubsystemBase {
         motor.stopMotor();
     }
     public boolean getBeamBreak(){
-        return input.get();
+        return beam.get();
     }
 
     public IntakeSubsystem(){
