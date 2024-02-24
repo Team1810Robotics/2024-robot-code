@@ -13,6 +13,9 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.ReplanningConfig;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -28,8 +31,12 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.IO;
+
 import java.io.File;
 import java.util.function.DoubleSupplier;
 import org.photonvision.PhotonCamera;
@@ -44,6 +51,8 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
+import frc.robot.subsystems.VisionSubsystem;
+
 public class SwerveSubsystem extends SubsystemBase
 {
 
@@ -55,6 +64,8 @@ public class SwerveSubsystem extends SubsystemBase
    * Maximum speed of the robot in meters per second, used to limit acceleration.
    */
   public double maximumSpeed = Units.feetToMeters(14.5);
+
+  public CommandJoystick driver = RobotContainer.driver;
 
   // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
   //  In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
@@ -68,6 +79,10 @@ public class SwerveSubsystem extends SubsystemBase
   double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75);
 
   public Pigeon2 gyro = new Pigeon2(13);
+
+  PIDController rotPidController = new PIDController(0.08, 0.05, 0);
+
+  VisionSubsystem visionSubsystem = new VisionSubsystem();
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -102,6 +117,8 @@ public class SwerveSubsystem extends SubsystemBase
 
     //swerveDrive.restoreInternalOffset();
     swerveDrive.pushOffsetsToControllers();
+
+    SmartDashboard.putData("rotPID", rotPidController);
 
     SmartDashboard.putData("Swerve Visualizer - actual", new Sendable() {
 
@@ -197,18 +214,28 @@ public class SwerveSubsystem extends SubsystemBase
    );
   }
 
-  public Command aimAtTarget(PhotonCamera camera)
-  {
+  public Command aimAtTarget(PhotonCamera camera) {
     return run(() -> {
-      PhotonPipelineResult result = camera.getLatestResult();
+      PhotonPipelineResult result = visionSubsystem.getResult();
       if (result.hasTargets())
       {
-        drive(getTargetSpeeds(0,
-                              0,
-                              Rotation2d.fromDegrees(result.getBestTarget()
-                                                           .getYaw())));
+        drive(new Translation2d(0, 0), -rotPidController.calculate(-result.getBestTarget().getYaw()), false);
+
+        System.out.println(result.getBestTarget().getYaw());
+      } else {
+        drive(new Translation2d(0, 0), 0, false);
       }
     });
+  }
+
+  public double rotAAA(){
+    PhotonPipelineResult result = visionSubsystem.getResult();
+    if(result.hasTargets()) {
+      System.out.println(result.getBestTarget().getYaw());
+      return rotPidController.calculate(result.getBestTarget().getYaw());
+    } else {
+      return -MathUtil.applyDeadband(driver.getRawAxis(IO.driveOmegaAxis), 0.5);
+    }
   }
 
   /**

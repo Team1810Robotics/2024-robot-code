@@ -16,13 +16,15 @@ import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 
+import org.photonvision.PhotonCamera;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 
 public class RobotContainer{
 
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/neo"));
   
-  CommandJoystick driver = new CommandJoystick(0);
+  public static CommandJoystick driver = new CommandJoystick(0);
   CommandJoystick rotationController = new CommandJoystick(1);
 
   CommandJoystick driverController = new CommandJoystick(1); //Same?
@@ -32,32 +34,43 @@ public class RobotContainer{
 
   SendableChooser<Command> autoChooser;
 
-  boolean joystickMode = false;
-
   public RobotContainer(){
     //driveChooser.setDefaultOption(null, null);
 
     // Configure the trigger bindings
     configureBindings();
 
-    Command teleopDrive = new TeleopDrive(
+    Command visionDrive = new TeleopDrive(
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> -MathUtil.applyDeadband(driver.getRawAxis(IO.driveOmegaAxis), IO.ROTATION_DEADBAND),
+      () -> drivebase.rotAAA(),
       () -> !driver.button(IO.driveModeButton).getAsBoolean()  
     );
+   
+    Command teleopDrive = new TeleopDrive(
+       drivebase,
+       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
+       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
+       () -> -MathUtil.applyDeadband(driver.getRawAxis(IO.driveOmegaAxis), 0.5),
+       () -> !driver.button(IO.driveModeButton).getAsBoolean()  
+    );
+
     Command teleopDrive_twoJoy = new TeleopDrive(
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> -MathUtil.applyDeadband(rotationController.getRawAxis(IO.driveOmegaAxis), IO.ROTATION_DEADBAND),
+      () -> -MathUtil.applyDeadband(rotationController.getRawAxis(IO.driveOmegaAxis), 0.5),
       () -> !driver.button(IO.driveModeButton).getAsBoolean()  
     );
 
-    drivebase.setDefaultCommand(teleopDrive);
+    /* Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
+        () -> MathUtil.applyDeadband(driver.getY
+        (), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> driver.getRawAxis(2)); */
 
-    //if(driverController.button(5).toggleOnFalse(joystickMode))
+    drivebase.setDefaultCommand(teleopDrive_twoJoy);
 
     autoChooser = AutoBuilder.buildAutoChooser();
     Shuffleboard.getTab("Autonomous").add(autoChooser);

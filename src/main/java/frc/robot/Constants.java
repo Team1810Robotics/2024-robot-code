@@ -32,7 +32,6 @@ public final class Constants
         public static final int driveOmegaAxis = 2;
         public static final int resetGyroButton = 9;
         public static final int driveModeButton = 7;
-        public static final double ROTATION_DEADBAND = 0;
     }
 
     public static class Swerve {
@@ -41,11 +40,14 @@ public final class Constants
         public static final double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75, 1024);
         public static final double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(12.8, 4096);
 
-        
-        public static final double FL_CANCODER_OFFSET = 259;
+        public static final double FL_CANCODER_OFFSET = 80.771;
+        public static final double FR_CANCODER_OFFSET = 310.429;
+        public static final double BL_CANCODER_OFFSET = 0.615;
+        public static final double BR_CANCODER_OFFSET = 103.271;
+        /* public static final double FL_CANCODER_OFFSET = 259;
         public static final double FR_CANCODER_OFFSET = 151;
         public static final double BL_CANCODER_OFFSET = 211;
-        public static final double BR_CANCODER_OFFSET = 283;
+        public static final double BR_CANCODER_OFFSET = 283; */
 
         public static final int FL_CANCODER_ID = 12;
         public static final int FR_CANCODER_ID = 11;
