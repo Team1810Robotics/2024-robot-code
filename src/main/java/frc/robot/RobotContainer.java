@@ -40,14 +40,16 @@ public class RobotContainer{
     // Configure the trigger bindings
     configureBindings();
 
+    /**Drive with 2 joysticks, automatically rotating toward a target AprilTag */
     visionDrive = new TeleopDrive(
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> drivebase.rotAAA(-MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), 0.5)),
+      () -> drivebase.visionTargetPIDCalc(-MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), 0.5)),
       () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
    
+    /**Drive on one joystick */
     teleopDrive = new TeleopDrive(
        drivebase,
        () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
@@ -56,6 +58,7 @@ public class RobotContainer{
        () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
 
+    /**Drive with two joysticks */
     teleopDrive_twoJoy = new TeleopDrive(
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
@@ -81,7 +84,7 @@ public class RobotContainer{
     /* driver.button(IOConstants.resetGyroButton).onTrue(new InstantCommand(drivebase::zeroGyro));
 
     IO.manipulatorXbox_Start.onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-    IO.manipulatorXbox_Y.whileTrue(drivebase.aimAtTarget(visionSubsystem.getCamera()));
+    IO.manipulatorXbox_Y.whileTrue(drivebase.aimAtTarget());
 
     IO.leftJoystick_trigger.whileTrue(visionDrive); */
   }

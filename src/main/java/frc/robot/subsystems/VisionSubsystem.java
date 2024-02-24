@@ -14,38 +14,38 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 
 public class VisionSubsystem extends SubsystemBase {
     
-    
-    PhotonCamera camera = new PhotonCamera("Arducam_OV9281_USB_Camera");
     AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-    Transform3d robotToCam = new Transform3d(new        Translation3d(0.0, 0.0, 0.0), new Rotation3d(0,0,0));
     
-    PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camera, robotToCam);
+    Transform3d robotToCam = VisionConstants.CAMERA_OFFSET;
 
+    PhotonCamera camera;
+    PhotonPoseEstimator photonPoseEstimator;
     PhotonPipelineResult result;
 
     public VisionSubsystem() {
-        /* SmartDashboard.putBoolean("has target", hasTarget());
-        SmartDashboard.putNumber("best target ID", getTargetId()); */
+        camera = new PhotonCamera(VisionConstants.CAMERA_NAME);
+        photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camera, robotToCam);
     }
 
-    
+    /** @return whether or not an AprilTag is detected */
     public boolean hasTarget() {
         return result.hasTargets();
     }
 
+    /** (don't use this unless you're desperate)
+     * @return the PhotonCamera object*/
     public PhotonCamera getCamera() {
         return camera;
     }
 
+    /** @return the best target's ID */
     public int getTargetId() {
         return result.getBestTarget().getFiducialId();
     }
@@ -54,34 +54,41 @@ public class VisionSubsystem extends SubsystemBase {
         return result.getTargets();
     }
 
+    /** @return the distance from the target in meters */
     public double getPoseFromTarget() {
         PhotonTrackedTarget target = getTargets().get(0);
         double range = PhotonUtils.calculateDistanceToTargetMeters(
-            VisionConstants.CAMERA_HEIGHT,
-            VisionConstants.APRILTAG_RED_SHOOTER_HEIGHT,
-            VisionConstants.CAMERA_PITCH,
+            robotToCam.getZ(),
+            target.getBestCameraToTarget().getZ(),
+            robotToCam.getRotation().getZ(),
             Units.degreesToRadians(target.getPitch()));
 
         return range;
     }
 
+    /** @returns the vision pipeline's result (all of its data) */
+    public PhotonPipelineResult getResult() {
+        return result;
+    }
+
+    /** @return the yaw offset of the best target */
+    public double getYaw(){
+        if(hasTarget()) {
+            return result.getBestTarget().getYaw();
+        } else {
+            return 0.0;
+        }
+    }
     
-    double getRangeMeters() {
-        double range = PhotonUtils.calculateDistanceToTargetMeters(0, 0, 0, 0);
-        return range;
+    /** WARNING: Currently causes a loop overrun, do not use
+     * @return a Pose3d representing the robot's position on the field*/
+    public Pose3d getRobotPose() {
+        Optional<EstimatedRobotPose> pose = photonPoseEstimator.update();
+        return pose.get().estimatedPose;
     }
 
     @Override
     public void periodic() {
         result = camera.getLatestResult();
-    }
-
-    public PhotonPipelineResult getResult() {
-        return result;
-    }
-
-    public Pose3d getRobotPose() {
-        Optional<EstimatedRobotPose> pose = photonPoseEstimator.update();
-        return pose.get().estimatedPose;
     }
 }
