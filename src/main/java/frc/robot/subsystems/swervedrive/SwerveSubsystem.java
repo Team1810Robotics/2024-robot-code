@@ -35,7 +35,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.AutonConstants;
-import frc.robot.Constants.IO;
+import frc.robot.Constants.IOConstants;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
@@ -234,7 +234,7 @@ public class SwerveSubsystem extends SubsystemBase
       System.out.println(result.getBestTarget().getYaw());
       return rotPidController.calculate(result.getBestTarget().getYaw());
     } else {
-      return -MathUtil.applyDeadband(driver.getRawAxis(IO.driveOmegaAxis), 0.5);
+      return -MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), 0.5);
     }
   }
 
