@@ -9,8 +9,8 @@ import frc.robot.Constants;
 
 public class ClimbSubsystem extends SubsystemBase {
 
-    CANSparkMax leftMotor = new CANSparkMax(Constants.ClimbConstants.LEFT_MOTOR_PORT, MotorType.kBrushless);
-    CANSparkMax rightMotor = new CANSparkMax(Constants.ClimbConstants.RIGHT_MOTOR_PORT, MotorType.kBrushless);
+    CANSparkMax leftMotor = new CANSparkMax(Constants.ClimbConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
+    CANSparkMax rightMotor = new CANSparkMax(Constants.ClimbConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
 
     DigitalInput leftBottom = new DigitalInput(Constants.ClimbConstants.LEFT_BOTTOM_LS);
     DigitalInput rightBottom = new DigitalInput(Constants.ClimbConstants.RIGHT_BOTTOM_LS);

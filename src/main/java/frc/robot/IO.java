@@ -4,26 +4,39 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
-import static frc.robot.Constants.OIConstants;
+import static frc.robot.Constants.IOConstants;
 
 /** Class that "hides" the button bindings */
 public final class IO {
 
-    public static final Joystick joystick = new Joystick(OIConstants.DRIVER_JOYSTICK_PORT);
-    public static final XboxController xboxController = new XboxController(OIConstants.MANIPULATOR_XBOX_PORT);
+    public static final Joystick leftJoystick = new Joystick(IOConstants.LEFT_JOYSTICK_PORT);
+    public static final Joystick rightJoystick = new Joystick(IOConstants.RIGHT_JOYSTICK_PORT);
+    public static final XboxController xboxController = new XboxController(IOConstants.MANIPULATOR_XBOX_PORT);
 
     // Joystick Buttons
-    public static final JoystickButton joystick_trigger  = new JoystickButton(joystick, 1);
-    public static final JoystickButton joystick_button2  = new JoystickButton(joystick, 2);
-    public static final JoystickButton joystick_button3  = new JoystickButton(joystick, 3);
-    public static final JoystickButton joystick_button4  = new JoystickButton(joystick, 4);
-    public static final JoystickButton joystick_button5  = new JoystickButton(joystick, 5);
-    public static final JoystickButton joystick_button6  = new JoystickButton(joystick, 6);
-    public static final JoystickButton joystick_button7  = new JoystickButton(joystick, 7);
-    public static final JoystickButton joystick_button8  = new JoystickButton(joystick, 8);
-    public static final JoystickButton joystick_button9  = new JoystickButton(joystick, 9);
-    public static final JoystickButton joystick_button10 = new JoystickButton(joystick, 10);
-    public static final JoystickButton joystick_button11 = new JoystickButton(joystick, 11);
+    public static final JoystickButton leftJoystick_trigger   = new JoystickButton(leftJoystick, 1);
+    public static final JoystickButton leftJoystick_button2   = new JoystickButton(leftJoystick, 2);
+    public static final JoystickButton leftJoystick_button3   = new JoystickButton(leftJoystick, 3);
+    public static final JoystickButton leftJoystick_button4   = new JoystickButton(leftJoystick, 4);
+    public static final JoystickButton leftJoystick_button5   = new JoystickButton(leftJoystick, 5);
+    public static final JoystickButton leftJoystick_button6   = new JoystickButton(leftJoystick, 6);
+    public static final JoystickButton leftJoystick_button7   = new JoystickButton(leftJoystick, 7);
+    public static final JoystickButton leftJoystick_button8   = new JoystickButton(leftJoystick, 8);
+    public static final JoystickButton leftJoystick_button9   = new JoystickButton(leftJoystick, 9);
+    public static final JoystickButton leftJoystick_button10  = new JoystickButton(leftJoystick, 10);
+    public static final JoystickButton leftJoystick_button11  = new JoystickButton(leftJoystick, 11);
+
+    public static final JoystickButton rightJoystick_trigger  = new JoystickButton(leftJoystick, 1);
+    public static final JoystickButton rightJoystick_button2  = new JoystickButton(leftJoystick, 2);
+    public static final JoystickButton rightJoystick_button3  = new JoystickButton(leftJoystick, 3);
+    public static final JoystickButton rightJoystick_button4  = new JoystickButton(leftJoystick, 4);
+    public static final JoystickButton rightJoystick_button5  = new JoystickButton(leftJoystick, 5);
+    public static final JoystickButton rightJoystick_button6  = new JoystickButton(leftJoystick, 6);
+    public static final JoystickButton rightJoystick_button7  = new JoystickButton(leftJoystick, 7);
+    public static final JoystickButton rightJoystick_button8  = new JoystickButton(leftJoystick, 8);
+    public static final JoystickButton rightJoystick_button9  = new JoystickButton(leftJoystick, 9);
+    public static final JoystickButton rightJoystick_button10 = new JoystickButton(leftJoystick, 10);
+    public static final JoystickButton rightJoystick_button11 = new JoystickButton(leftJoystick, 11);
 
     // Xbox buttons
     public static final JoystickButton manipulatorXbox_A      = new JoystickButton(xboxController, XboxController.Button.kA.value);

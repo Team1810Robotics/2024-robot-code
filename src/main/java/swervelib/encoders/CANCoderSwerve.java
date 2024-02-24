@@ -11,7 +11,7 @@ import com.ctre.phoenix6.signals.MagnetHealthValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import swervelib.telemetry.Alert;
 
-import frc.robot.Constants;
+import static frc.robot.Constants.*;
 
 /**
  * Swerve Absolute Encoder for CTRE CANCoders.
@@ -164,17 +164,17 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder
 
     double offset = 0.0;
     switch(encoder.getDeviceID()){//TODO Test if works - One thing I changed
-      case Constants.Swerve.FL_CANCODER_ID:
-        offset = Constants.Swerve.FL_CANCODER_OFFSET;
+      case SwerveConstants.FL_CANCODER_ID:
+        offset = SwerveConstants.FL_CANCODER_OFFSET;
         break;
-      case Constants.Swerve.FR_CANCODER_ID:
-        offset = Constants.Swerve.FR_CANCODER_OFFSET;
+      case SwerveConstants.FR_CANCODER_ID:
+        offset = SwerveConstants.FR_CANCODER_OFFSET;
         break;
-      case Constants.Swerve.BL_CANCODER_ID:
-        offset = Constants.Swerve.BL_CANCODER_OFFSET;
+      case SwerveConstants.BL_CANCODER_ID:
+        offset = SwerveConstants.BL_CANCODER_OFFSET;
         break;
-      case Constants.Swerve.BR_CANCODER_ID:
-        offset = Constants.Swerve.BR_CANCODER_OFFSET;
+      case SwerveConstants.BR_CANCODER_ID:
+        offset = SwerveConstants.BR_CANCODER_OFFSET;
         break;
     }
     /* double offset = 0.0;
