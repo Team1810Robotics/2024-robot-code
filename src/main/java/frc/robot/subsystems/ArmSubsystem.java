@@ -21,32 +21,31 @@ ArmFeedforward feedforward = new ArmFeedforward(0, 0, 0);
 
 PIDController pid = new PIDController(0, 0, 0);
 
-    public ArmSubsystem() {
-     
-     motor2.follow(motor);
-    }
+     public ArmSubsystem() {
+          motor2.follow(motor);
+     }
 
-   public void setSpeed(double motorSpeed){    
-        motor.set(motorSpeed);
+     public void setSpeed(double motorSpeed){    
+          motor.set(motorSpeed);
 
-}
+     }
 
-   public double getposition(){
-        can.getPosition();
+     public double getposition(){
+          can.getPosition();
 
-        return can.getPosition().getValue();
-}
+          return can.getPosition().getValue();
+     }
 
-   public void stop(){
-        motor.stopMotor();
-}
+     public void stop(){
+          motor.stopMotor();
+     }
 
-   public void setGoal(double setpoint){
-        motor.set(pid.calculate(getposition(), setpoint));
+     public void setGoal(double setpoint){
+          motor.set(pid.calculate(getposition(), setpoint));
 
-  }
+     }
 
  
-    }
+}
     
 

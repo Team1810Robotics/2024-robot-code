@@ -24,19 +24,16 @@ public class ClimbSubsystem extends SubsystemBase {
 
     
     public void setMotorSpeed(double motorSpeed){
-    
         leftMotor.set(motorSpeed);
         rightMotor.set(motorSpeed);
-}
+    }
 
     public boolean getLeftBottomlimit(){
-
         leftBottom.get();
         return leftBottom.get();
     }
 
-     public boolean getRightBottomlimit(){
-
+    public boolean getRightBottomlimit(){
         rightBottom.get();
         return rightBottom.get();
     }

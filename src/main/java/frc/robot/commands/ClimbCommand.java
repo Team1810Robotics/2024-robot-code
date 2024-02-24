@@ -35,11 +35,11 @@ public class ClimbCommand extends Command{
                 climbSubsystem.setMotorSpeed(0);   
             } 
 
-             else if(rightTop = true){
+            else if(rightTop = true){
                 climbSubsystem.setMotorSpeed(0);   
             } 
 
-             else if(leftTop = true){
+            else if(leftTop = true){
                 climbSubsystem.setMotorSpeed(0);   
             } 
         }

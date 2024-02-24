@@ -19,6 +19,11 @@ public class IntakeCommand extends Command{
 
     public void execute(){
         intakeSubsystem.setSpeed(intake);
+        boolean beam = intakeSubsystem.getBeamBreak();
+        
+        if (beam = true){
+            intakeSubsystem.setSpeed(0);
+        }
     }
 
     public void end(){

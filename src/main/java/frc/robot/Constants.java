@@ -86,4 +86,8 @@ public final class Constants {
         public static final int RIGHT_TOP_LS = 0;
         public static final int RIGHT_BOTTOM_LS = 0;
     }
+
+    public static final class TrapConstants {
+        public static final int VICTOR_MOTOR_PORT = 0;
+    }
 }
