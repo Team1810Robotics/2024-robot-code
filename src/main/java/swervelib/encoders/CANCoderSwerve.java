@@ -163,7 +163,7 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder
     }
 
     double offset = 0.0;
-    switch(encoder.getDeviceID()){//TODO Test if works - One thing I changed
+    switch(encoder.getDeviceID()){
       case Constants.Swerve.FL_CANCODER_ID:
         offset = Constants.Swerve.FL_CANCODER_OFFSET;
         break;

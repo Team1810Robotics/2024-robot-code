@@ -321,7 +321,7 @@ public class SwerveModule
     /* If the error is close to 0.25 rotations, then we're 90 degrees, so movement doesn't help us at all */
     cosineScalar = Rotation2d.fromDegrees(desiredState.angle.getDegrees())
                              .minus(Rotation2d.fromDegrees(getAbsolutePosition()))
-                             .getCos(); // TODO: Investigate angle modulus by 180.
+                             .getCos();
     /* Make sure we don't invert our drive, even though we shouldn't ever target over 90 degrees anyway */
     if (cosineScalar < 0.0)
     {
