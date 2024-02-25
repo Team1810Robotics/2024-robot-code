@@ -14,6 +14,7 @@ public final class IO {
     public static final XboxController xboxController =
             new XboxController(IOConstants.MANIPULATOR_XBOX_PORT);
 
+    // toggle:off
     // Joystick Buttons
     public static final JoystickButton leftJoystick_trigger = new JoystickButton(leftJoystick, 1);
     public static final JoystickButton leftJoystick_button2 = new JoystickButton(leftJoystick, 2);
@@ -62,6 +63,8 @@ public final class IO {
             new JoystickButton(xboxController, XboxController.Button.kLeftStick.value);
     public static final JoystickButton manipulatorXbox_RStick =
             new JoystickButton(xboxController, XboxController.Button.kRightStick.value);
+
+    // toggle:on
 
     private IO() {
         /* what does sleep feel like */
