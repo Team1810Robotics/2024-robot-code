@@ -29,6 +29,8 @@ public final class Constants
 
   public static class IOConstants {
         public static final double swerveDeadband = 0.3;
+        public static final double rotationDeadband = 0.4;
+        public static final int driveSpeedModAxis = 4; //TODO find right axis if needed - if nothing is happening check this
         public static final int driveXAxis = 1;
         public static final int driveYAxis = 0;
         public static final int driveOmegaAxis = 2;
@@ -50,10 +52,6 @@ public final class Constants
         public static final double FR_CANCODER_OFFSET = 310.429;
         public static final double BL_CANCODER_OFFSET = 0.615;
         public static final double BR_CANCODER_OFFSET = 103.271;
-        /* public static final double FL_CANCODER_OFFSET = 259;
-        public static final double FR_CANCODER_OFFSET = 151;
-        public static final double BL_CANCODER_OFFSET = 211;
-        public static final double BR_CANCODER_OFFSET = 283; */
 
         public static final int FL_CANCODER_ID = 12;
         public static final int FR_CANCODER_ID = 11;
@@ -65,6 +63,8 @@ public final class Constants
       public static Transform3d CAMERA_OFFSET = new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0,0,0));
 
       public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
+
+      public static final double TARGET_LOCK_RANGE = 2;
 
   }
 

@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.VisionConstants;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
@@ -62,6 +63,7 @@ public class SwerveSubsystem extends SubsystemBase
   PIDController rotPidController = new PIDController(0.08, 0.05, 0);
 
   VisionSubsystem visionSubsystem = new VisionSubsystem();
+  public boolean visHasTarget = false; 
 
   public SwerveSubsystem(File directory){
 
@@ -130,8 +132,10 @@ public class SwerveSubsystem extends SubsystemBase
     return run(() -> {
       if (visionSubsystem.hasTarget())
       {
+        visHasTarget = true;
         drive(new Translation2d(0, 0), -visionTargetPIDCalc(0), false);
       } else {
+        visHasTarget = false;
         drive(new Translation2d(0, 0), 0, false);
       }
     });
@@ -144,13 +148,14 @@ public class SwerveSubsystem extends SubsystemBase
     boolean target = visionSubsystem.hasTarget();
     double yaw = visionSubsystem.getYaw();
 
-    //TODO: Change to Shuffleboard logging
-    System.out.println(yaw);
+    //System.out.println(yaw); // Added to elastic
 
     if(target) {
+      visHasTarget = true;
       System.out.println(yaw);
       return rotPidController.calculate(yaw);
     } else {
+      visHasTarget = false;
       return altRotation;
     }
   }
@@ -432,7 +437,14 @@ public class SwerveSubsystem extends SubsystemBase
     //swerveDrive.restoreInternalOffset();
     swerveDrive.pushOffsetsToControllers();
 
-    SmartDashboard.putData("rotPID", rotPidController);
+    SmartDashboard.putData("Vision Rotation PID", rotPidController);
+
+    Shuffleboard.getTab("Teleoperated").addBoolean("Target In Range", () -> visHasTarget);
+
+    Shuffleboard.getTab("Teleoperated").addBoolean("Target Lock", () ->
+      ((visionSubsystem.getYaw() <= VisionConstants.TARGET_LOCK_RANGE) & (visionSubsystem.getYaw() >= -VisionConstants.TARGET_LOCK_RANGE)) & (visHasTarget == true));
+
+    Shuffleboard.getTab("swerve").addDouble("Vision YAW", () -> visionSubsystem.getYaw());
 
     SmartDashboard.putData("Swerve Visualizer - actual", new Sendable() {
 
