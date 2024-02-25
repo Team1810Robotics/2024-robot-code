@@ -101,6 +101,7 @@ public final class Constants {
     }
 
     public static final class TrapConstants {
+        // FIXME: should say ID instead of PORT because it's a CAN ID
         public static final int VICTOR_MOTOR_PORT = 0;
     }
 }

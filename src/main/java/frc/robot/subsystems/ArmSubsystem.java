@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/** I still would recommend using a {@link edu.wpi.first.wpilibj2.command.PIDSubsystem} */
 public class ArmSubsystem extends SubsystemBase {
     private CANSparkMax armMotor = new CANSparkMax(MOTOR1_ID, MotorType.kBrushless);
     private CANSparkMax motor2 = new CANSparkMax(MOTOR2_ID, MotorType.kBrushless);

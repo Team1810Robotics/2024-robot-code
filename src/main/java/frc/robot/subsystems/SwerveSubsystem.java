@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-// import frc.robot.subsystems.swervedrive.data;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathConstraints;
@@ -64,13 +62,11 @@ public class SwerveSubsystem extends SubsystemBase {
             throw new RuntimeException(e);
         }
 
-        swerveDrive.setHeadingCorrection(
-                false); // Heading correction should only be used while controlling the robot via
-        // angle.
-        swerveDrive.setCosineCompensator(
-                !SwerveDriveTelemetry
-                        .isSimulation); // Disables cosine compensation for simulations since it
-        // causes discrepancies not seen in real life.
+        // Heading correction should only be used while controlling the robot via angle
+        swerveDrive.setHeadingCorrection(false);
+        // Disables cosine compensation for simulations since it causes discrepancies not seen in
+        // real life
+        swerveDrive.setCosineCompensator(!SwerveDriveTelemetry.isSimulation);
         swerveDrive.pushOffsetsToControllers();
 
         setupPathPlanner();

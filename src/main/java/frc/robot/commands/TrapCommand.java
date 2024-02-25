@@ -5,8 +5,10 @@ import frc.robot.subsystems.TrapSubsystem;
 
 public class TrapCommand extends Command {
 
+    // FIXME: both member variables should be private and final (if possible)
     TrapSubsystem trapsubsystem;
 
+    // FIXME: this name is not descriptive, would recommend using something like "trapSpeed"
     double trap;
 
     public TrapCommand(TrapSubsystem trapSubsystem, double trap) {

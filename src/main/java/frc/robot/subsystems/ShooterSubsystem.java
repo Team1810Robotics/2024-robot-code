@@ -1,16 +1,16 @@
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.*;
+
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
     CANSparkMax bottomMotor =
-            new CANSparkMax(Constants.ShooterConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
-    CANSparkMax topMotor =
-            new CANSparkMax(Constants.ShooterConstants.TOP_MOTOR_ID, MotorType.kBrushless);
+            new CANSparkMax(ShooterConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
+    CANSparkMax topMotor = new CANSparkMax(ShooterConstants.TOP_MOTOR_ID, MotorType.kBrushless);
 
     public ShooterSubsystem() {
         topMotor.setInverted(true);
@@ -25,6 +25,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     // FIXME: doesn't set both speeds?
+    // FIXME: rename to setSpeed() to keep consistent with other subsystems
     public void setBothSpeed(double motorSpeed) {
         topMotor.set(motorSpeed);
     }

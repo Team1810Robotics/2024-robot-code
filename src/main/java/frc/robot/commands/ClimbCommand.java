@@ -5,6 +5,7 @@ import frc.robot.subsystems.ClimbSubsystem;
 
 public class ClimbCommand extends Command {
 
+    // FIXME: both member variables should be private and final (if possible)
     private ClimbSubsystem climbSubsystem;
     private double climbSpeed;
 
@@ -26,6 +27,7 @@ public class ClimbCommand extends Command {
         // FIXME: This is an infinate loop in an infinite loop, which is not good.
         while (climbSpeed != 0) {
 
+            // FIXME: these are assignments, not comparisons. Use == instead of =
             if (rightBottom = true) {
                 climbSubsystem.setMotorSpeed(0);
             } else if (leftBottom = true) {
