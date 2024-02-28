@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.swervedrive.TeleopDrive;
-import frc.robot.commands.swervedrive.TeleopDrive_speedTest;
+import frc.robot.commands.swervedrive.TeleopDriveSpeed;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
@@ -38,7 +38,6 @@ public class RobotContainer{
   Command teleopDrive;
   Command teleopDrive_twoJoy;
   Command driveFieldOrientedAnglularVelocity;
-
   Command speedDriveTest;
 
   public RobotContainer(){
@@ -46,10 +45,11 @@ public class RobotContainer{
     // Configure the trigger bindings
     configureBindings();
 
-    /**Drive on one joystick */
-    speedDriveTest = new TeleopDrive_speedTest(
+    /**Speed Control - Drive on one joystick */
+    speedDriveTest = new TeleopDriveSpeed(
        drivebase,
        () -> driver.getRawAxis(IOConstants.driveSpeedModAxis),
+       () -> rotationController.getRawAxis(IOConstants.angleSpeedModAxis),
        () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
        () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
        () -> -MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband),
@@ -61,7 +61,7 @@ public class RobotContainer{
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> drivebase.visionTargetPIDCalc(-MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), 0.5)),
+      () -> drivebase.visionTargetPIDCalc(-MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband)),
       () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
    
@@ -70,7 +70,7 @@ public class RobotContainer{
        drivebase,
        () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
        () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-       () -> -MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), 0.5),
+       () -> -MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband),
        () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
 
@@ -79,14 +79,13 @@ public class RobotContainer{
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> -MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), 0.5),
+      () -> -MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband),
       () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
 
     /**YAGSL build in field oriented drive*/
     driveFieldOrientedAnglularVelocity = drivebase.driveCommand( //TODO Test? - Might be useful for visionDrive
-      () -> MathUtil.applyDeadband(driver.getY
-      (), OperatorConstants.LEFT_Y_DEADBAND),
+      () -> MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),
       () -> driver.getRawAxis(2));
 
@@ -102,7 +101,7 @@ public class RobotContainer{
     drivebase.setDefaultCommand(driveChooser.getSelected());
 
     autoChooser = AutoBuilder.buildAutoChooser();
-    Shuffleboard.getTab("Autonomous").add(autoChooser);
+    Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
   }
 
   private void configureBindings(){

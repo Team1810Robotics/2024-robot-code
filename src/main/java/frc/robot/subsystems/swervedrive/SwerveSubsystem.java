@@ -2,6 +2,7 @@ package frc.robot.subsystems.swervedrive;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -20,13 +21,12 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.VisionConstants;
 
 import java.io.File;
@@ -64,6 +64,8 @@ public class SwerveSubsystem extends SubsystemBase
 
   VisionSubsystem visionSubsystem = new VisionSubsystem();
   public boolean visHasTarget = false; 
+
+  private double deviation = 0; // How far on average are the swerve drives off target
 
   public SwerveSubsystem(File directory){
 
@@ -108,9 +110,9 @@ public class SwerveSubsystem extends SubsystemBase
         this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::setChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                                         AutonConstants.TRANSLATION_PID,
+                                         AutoConstants.TRANSLATION_PID,
                                          // Translation PID constants
-                                         AutonConstants.ANGLE_PID,
+                                         AutoConstants.ANGLE_PID,
                                          // Rotation PID constants
                                          4.5,
                                          // Max module speed, in m/s
@@ -428,25 +430,41 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
   }
 
+  /**
+   * Finds the average average of wheel angle positions from actual and desired
+   * Math could be wrong
+   * 
+   * @return the average deviation value
+   */
+  public double getAverageEncoderDivation(){
+    deviation = 0;
+    for (int i = 0; i < 4; i++) {
+      deviation += (swerveDrive.getModulePositions()[i].angle.getDegrees() + SwerveDriveTelemetry.measuredStates[(i * 2) + 1]) / 2;
+    }
+    return deviation / 4;
+  }
+
   public void setupElastic(){
     Shuffleboard.getTab("swerve").addNumber("FL Cancoder", () -> swerveDrive.getModulePositions()[0].angle.getDegrees());
     Shuffleboard.getTab("swerve").addNumber("FR Cancoder", () -> swerveDrive.getModulePositions()[1].angle.getDegrees());
     Shuffleboard.getTab("swerve").addNumber("BL Cancoder", () -> swerveDrive.getModulePositions()[2].angle.getDegrees());
     Shuffleboard.getTab("swerve").addNumber("BR Cancoder", () -> swerveDrive.getModulePositions()[3].angle.getDegrees());
 
-    //swerveDrive.restoreInternalOffset();
-    swerveDrive.pushOffsetsToControllers();
+    // swerveDrive.restoreInternalOffset();    // Sets encoder offsets to 0
+    swerveDrive.pushOffsetsToControllers();    // Sets encoder offsets to valuse in the constants file
 
-    SmartDashboard.putData("Vision Rotation PID", rotPidController);
+    //Adds a command that Pathplanner can use
+    NamedCommands.registerCommand("Aim At Target", aimAtTarget()); //Call aimAtTarget from Pathplanner
 
-    Shuffleboard.getTab("Teleoperated").addBoolean("Target In Range", () -> visHasTarget);
-
+    Shuffleboard.getTab("Teleoperated").add("Look at AprilTag", aimAtTarget()); // Command button that toggles aimAtTarget command.
+    Shuffleboard.getTab("Teleoperated").add("Vision Rotation PID", rotPidController); // Pid for vision aim on swerve drive
+    Shuffleboard.getTab("Teleoperated").addBoolean("Target In Range", () -> visHasTarget); // True/False display for if the camera can see a AprilTag
     Shuffleboard.getTab("Teleoperated").addBoolean("Target Lock", () ->
-      ((visionSubsystem.getYaw() <= VisionConstants.TARGET_LOCK_RANGE) & (visionSubsystem.getYaw() >= -VisionConstants.TARGET_LOCK_RANGE)) & (visHasTarget == true));
+      ((visionSubsystem.getYaw() <= VisionConstants.TARGET_LOCK_RANGE) & (visionSubsystem.getYaw() >= -VisionConstants.TARGET_LOCK_RANGE)) & (visHasTarget == true)); // Show if the robot is aimed at the target within set range from Constrants
 
-    Shuffleboard.getTab("swerve").addDouble("Vision YAW", () -> visionSubsystem.getYaw());
-
-    SmartDashboard.putData("Swerve Visualizer - actual", new Sendable() {
+    Shuffleboard.getTab("swerve").addDouble("Vision YAW", () -> visionSubsystem.getYaw()); // Display location of one April Tag releative to the camera
+    Shuffleboard.getTab("swerve").addDouble("Swerve average deviation", () -> getAverageEncoderDivation()); // Should display the average deviation for the swerve modules based on actual and desired states from YAGSL
+    Shuffleboard.getTab("swerve").add("Swerve Visualizer - actual", new Sendable() { // Add a visual for what the swerve subsystem is currently doing 
 
         @Override
         public void initSendable(SendableBuilder builder) {
@@ -467,10 +485,10 @@ public class SwerveSubsystem extends SubsystemBase
 
             //Adds rotation to the widget - Comment out to stop, fourm said it might cause issues
             //builder.addDoubleProperty("Robot Angle", () -> gyro.getAngle(), null);
-
         }
     });
-    SmartDashboard.putData("Swerve Visualizer - desired", new Sendable() {
+
+    Shuffleboard.getTab("swerve").add("Swerve Visualizer - desired", new Sendable() { // Add a visual for what the swerve subsystem should be doing
 
         @Override
         public void initSendable(SendableBuilder builder) {

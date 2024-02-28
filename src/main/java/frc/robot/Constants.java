@@ -29,8 +29,9 @@ public final class Constants
 
   public static class IOConstants {
         public static final double swerveDeadband = 0.3;
-        public static final double rotationDeadband = 0.4;
-        public static final int driveSpeedModAxis = 4; //TODO find right axis if needed - if nothing is happening check this
+        public static final double rotationDeadband = 0.3;
+        public static final int driveSpeedModAxis = 4; //Drive Controller Speed //TODO find right axis if needed - if nothing is happening check this
+        public static final int angleSpeedModAxis = 4; //Angle Controller Speed
         public static final int driveXAxis = 1;
         public static final int driveYAxis = 0;
         public static final int driveOmegaAxis = 2;
@@ -64,6 +65,8 @@ public final class Constants
 
       public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
 
+      //How off can the AprilTag be and still alright
+      //Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
       public static final double TARGET_LOCK_RANGE = 2;
 
   }
@@ -72,7 +75,7 @@ public final class Constants
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
 
-  public static final class AutonConstants
+  public static final class AutoConstants
   {
 
     public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
