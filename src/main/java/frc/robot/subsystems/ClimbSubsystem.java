@@ -8,10 +8,9 @@ import frc.robot.Constants;
 
 public class ClimbSubsystem extends SubsystemBase {
 
-    // FIXME: all should be private
-    CANSparkMax leftMotor =
+    private CANSparkMax leftMotor =
             new CANSparkMax(Constants.ClimbConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
-    CANSparkMax rightMotor =
+    private CANSparkMax rightMotor =
             new CANSparkMax(Constants.ClimbConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
 
     DigitalInput leftBottom = new DigitalInput(Constants.ClimbConstants.LEFT_BOTTOM_LS);
@@ -20,8 +19,7 @@ public class ClimbSubsystem extends SubsystemBase {
     DigitalInput leftTop = new DigitalInput(Constants.ClimbConstants.LEFT_TOP_LS);
     DigitalInput rightTop = new DigitalInput(Constants.ClimbConstants.RIGHT_TOP_LS);
 
-    // FIXME: rename to setSpeed() to keep consistent with other subsystems
-    public void setMotorSpeed(double motorSpeed) {
+    public void setSpeed(double motorSpeed) {
         leftMotor.set(motorSpeed);
         rightMotor.set(motorSpeed);
     }

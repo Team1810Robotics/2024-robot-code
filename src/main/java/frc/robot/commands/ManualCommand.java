@@ -5,9 +5,8 @@ import frc.robot.subsystems.ArmSubsystem;
 
 public class ManualCommand extends Command {
 
-    // FIXME: both member variables should be private and final (if possible)
-    private ArmSubsystem armSubsystem;
-    private double armSpeed;
+    private final ArmSubsystem armSubsystem;
+    private final double armSpeed;
 
     public ManualCommand(ArmSubsystem armSubsystem, double armSpeed) {
         this.armSpeed = armSpeed;
@@ -23,7 +22,6 @@ public class ManualCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        // FIXME: use stop() instead of setSpeed(0) because it's more clear
-        armSubsystem.setSpeed(0);
+        armSubsystem.stop();
     }
 }

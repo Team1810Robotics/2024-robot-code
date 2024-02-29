@@ -6,9 +6,8 @@ import frc.robot.subsystems.ArmSubsystem;
 
 public class ArmCommand extends Command {
 
-    // FIXME: both member variables should be private and final (if possible)
-    private ArmSubsystem armSubsystem;
-    private double armSetpoint;
+    private final ArmSubsystem armSubsystem;
+    private final double armSetpoint;
 
     public ArmCommand(ArmSubsystem armSubsystem, double armSetpoint) {
         this.armSetpoint = armSetpoint;
