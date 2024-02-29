@@ -22,15 +22,15 @@ public class ClimbCommand extends Command {
         boolean leftBottom = climbSubsystem.getRightBottomlimit();
         boolean rightTop = climbSubsystem.getRightBottomlimit();
         boolean leftTop = climbSubsystem.getRightBottomlimit();
-       
-            if (rightBottom == true && climbSpeed != 0) {
-                climbSubsystem.setSpeed(0);
-            } else if (leftBottom == true && climbSpeed != 0) {
-                climbSubsystem.setSpeed(0);
-            } else if (rightTop == true && climbSpeed != 0) {
-                climbSubsystem.setSpeed(0);
-            } else if (leftTop == true && climbSpeed != 0) {
-                climbSubsystem.setSpeed(0);
-            }
+
+        if (rightBottom == true && climbSpeed != 0) {
+            climbSubsystem.setSpeed(0);
+        } else if (leftBottom == true && climbSpeed != 0) {
+            climbSubsystem.setSpeed(0);
+        } else if (rightTop == true && climbSpeed != 0) {
+            climbSubsystem.setSpeed(0);
+        } else if (leftTop == true && climbSpeed != 0) {
+            climbSubsystem.setSpeed(0);
         }
     }
+}

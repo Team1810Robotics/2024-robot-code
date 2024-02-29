@@ -6,7 +6,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class ShooterCommand extends Command {
 
     private final ShooterSubsystem shooterSubsystem;
-    private final  double shooterSpeed;
+    private final double shooterSpeed;
 
     public ShooterCommand(ShooterSubsystem shooterSubsystem, double shooterSpeed) {
         this.shooterSpeed = shooterSpeed;

@@ -9,7 +9,6 @@ public class TrapSubsystem extends SubsystemBase {
 
     VictorSPX victor = new VictorSPX(Constants.TrapConstants.VICTOR_MOTOR_ID);
 
-
     public void setSpeed(double victorSpeed) {
         victor.set(ControlMode.PercentOutput, victorSpeed);
     }

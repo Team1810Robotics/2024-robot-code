@@ -8,7 +8,8 @@ import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-    private CANSparkMax motor = new CANSparkMax(Constants.IntakeConstants.MOTOR_ID, MotorType.kBrushless);
+    private CANSparkMax motor =
+            new CANSparkMax(Constants.IntakeConstants.MOTOR_ID, MotorType.kBrushless);
     private DigitalInput beam = new DigitalInput(Constants.IntakeConstants.BEAM_BREAK_PORT);
 
     public void setSpeed(double motorSpeed) {
