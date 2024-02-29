@@ -1,8 +1,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.util.PIDConstants;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.SwerveMath;
 
@@ -102,18 +100,7 @@ public final class Constants {
         public static final double DEADBAND = 0.3;
     }
 
-    public static final class VisionConstants {
-        public static final double CAMERA_HEIGHT = 0.0;
-        public static final double APRILTAG_RED_SHOOTER_HEIGHT = 0.0;
-        public static final double CAMERA_PITCH = 0.0;
-        public static final String CAMERA_NAME = "photonvision";
-
-        public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT =
-                AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-    }
-
     public static final class TrapConstants {
-        // FIXME: should say ID instead of PORT because it's a CAN ID
-        public static final int VICTOR_MOTOR_PORT = 0;
+        public static final int VICTOR_MOTOR_ID = 0;
     }
 }
