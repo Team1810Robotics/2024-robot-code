@@ -49,15 +49,15 @@ public final class Constants
         public static final double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75, 1024);
         public static final double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(12.8, 4096);
 
-        public static final double FL_CANCODER_OFFSET = 80.771;
-        public static final double FR_CANCODER_OFFSET = 310.429;
-        public static final double BL_CANCODER_OFFSET = 0.615;
-        public static final double BR_CANCODER_OFFSET = 103.271;
+        public static final double FL_CANCODER_OFFSET = 306.474;
+        public static final double FR_CANCODER_OFFSET = 13.359;
+        public static final double BL_CANCODER_OFFSET = 184.746;
+        public static final double BR_CANCODER_OFFSET = 142.294;
 
-        public static final int FL_CANCODER_ID = 12;
-        public static final int FR_CANCODER_ID = 11;
-        public static final int BL_CANCODER_ID = 10;
-        public static final int BR_CANCODER_ID = 9;
+        public static final int FL_CANCODER_ID = 10;
+        public static final int FR_CANCODER_ID = 9;
+        public static final int BL_CANCODER_ID = 12;
+        public static final int BR_CANCODER_ID = 11;
     }
 
     public static final class VisionConstants {

@@ -22,7 +22,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 public class RobotContainer{
 
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/neo"));
+  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
   
   public static CommandJoystick driver = new CommandJoystick(0);
   CommandJoystick rotationController = new CommandJoystick(1);
@@ -61,16 +61,16 @@ public class RobotContainer{
       drivebase,
       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> drivebase.visionTargetPIDCalc(-MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband)),
+      () -> -drivebase.visionTargetPIDCalc(-MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband)),
       () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
    
     /**Drive on one joystick */
     teleopDrive = new TeleopDrive(
        drivebase,
-       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-       () -> -MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband),
+       () -> MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
+       () -> MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
+       () -> MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband),
        () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
     );
 
@@ -106,12 +106,12 @@ public class RobotContainer{
 
   private void configureBindings(){
 
-    driver.button(IOConstants.resetGyroButton).onTrue(new InstantCommand(drivebase::zeroGyro));
+    /* driver.button(IOConstants.resetGyroButton).onTrue(new InstantCommand(drivebase::zeroGyro));
 
     IO.manipulatorXbox_Start.onTrue(new InstantCommand(drivebase::addFakeVisionReading));
     IO.manipulatorXbox_Y.whileTrue(drivebase.aimAtTarget());
 
-    IO.leftJoystick_trigger.whileTrue(visionDrive);
+    IO.leftJoystick_trigger.whileTrue(visionDrive); */
   }
 
   public Command getAutonomousCommand(){
