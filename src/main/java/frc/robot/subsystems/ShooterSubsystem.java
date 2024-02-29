@@ -24,9 +24,12 @@ public class ShooterSubsystem extends SubsystemBase {
         topMotor.set(topSpeed);
     }
 
-    // FIXME: doesn't set both speeds?
-    // FIXME: rename to setSpeed() to keep consistent with other subsystems
-    public void setBothSpeed(double motorSpeed) {
+    public void setSpeed(double motorSpeed) {
         topMotor.set(motorSpeed);
+    }
+
+     public void stop() {
+        topMotor.set(0);
+        bottomMotor.set(0);
     }
 }
