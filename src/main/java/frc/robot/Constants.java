@@ -1,6 +1,11 @@
 package frc.robot;
 
 import com.pathplanner.lib.util.PIDConstants;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.SwerveMath;
 
@@ -98,6 +103,20 @@ public final class Constants {
         public static final int MANIPULATOR_XBOX_PORT = 2;
 
         public static final double DEADBAND = 0.3;
+    }
+
+    public static final class VisionConstants {
+        public static final double CAMERA_HEIGHT = 0.0;
+        public static final double APRILTAG_RED_SHOOTER_HEIGHT = 0.0;
+        public static final double CAMERA_PITCH = 0.0;
+        public static final String CAMERA_NAME = "photonvision";
+
+        public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT =
+                AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+
+        public static final double APRILTAG_AMBIGUITY_THRESHOLD = 0.2;
+        public static final Transform3d CAMERA_TO_ROBOT =
+                new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0, 0, 0));
     }
 
     public static final class TrapConstants {
