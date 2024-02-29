@@ -1,24 +1,24 @@
 {
   "drive": {
     "type": "talonfx",
-    "id": 4,
+    "id": 8,
     "canbus": "rio"
   },
   "angle": {
     "type": "talonfx",
-    "id": 3,
+    "id": 7,
     "canbus": "rio"
   },
   "encoder": {
     "type": "cancoder",
-    "id": 10,
+    "id": 12,
     "canbus": "rio"
   },
   "inverted": {
     "drive": false,
     "angle": false
   },
-  "absoluteEncoderOffset": 0,
+  "absoluteEncoderOffset": 184.746,
   "location": {
     "front": -9.125,
     "left": 9.125

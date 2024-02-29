@@ -11,8 +11,6 @@ import com.ctre.phoenix6.signals.MagnetHealthValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import swervelib.telemetry.Alert;
 
-import frc.robot.Constants;
-
 /**
  * Swerve Absolute Encoder for CTRE CANCoders.
  */
@@ -162,7 +160,7 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder
       readingIgnored.set(false);
     }
 
-    double offset = 0.0;
+    /* double offset = 0.0;
     switch(encoder.getDeviceID()){
       case Constants.Swerve.FL_CANCODER_ID:
         offset = Constants.Swerve.FL_CANCODER_OFFSET;
@@ -193,8 +191,10 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder
         break;
     } */
 
-    double ret_angle = angle.getValue() * 360 - offset;
-    return ret_angle % 360;
+    /*double ret_angle = angle.getValue() * 360 - offset;
+    return ret_angle % 360; */
+
+    return angle.getValue() * 360;
   }
 
   /**
