@@ -1,124 +1,68 @@
 package frc.robot;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.XboxController;
+import static frc.robot.IO.*;
+
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-
-import frc.robot.Constants.IOConstants;
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.swervedrive.TeleopDrive;
-import frc.robot.commands.swervedrive.TeleopDriveSpeed;
+import frc.robot.Constants.SwerveConstants;
+import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClimbSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
-import java.io.File;
+public class RobotContainer {
 
-import com.pathplanner.lib.auto.AutoBuilder;
+    private final ArmSubsystem armSubsystem = new ArmSubsystem();
+    private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+    private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
+    private final DriveSubsystem driveSubsystem = new DriveSubsystem(SwerveConstants.DIRECTORY);
+    private final VisionSubsystem visionSubsystem = new VisionSubsystem(driveSubsystem);
 
-public class RobotContainer{
+    private final DriveCommands drive = new DriveCommands(driveSubsystem, visionSubsystem);
 
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
-  
-  public static CommandJoystick driver = new CommandJoystick(0);
-  CommandJoystick rotationController = new CommandJoystick(1);
+    private final SendableChooser<Command> autoChooser;
 
-  CommandJoystick driverController = new CommandJoystick(1);
-  XboxController joshBox = new XboxController(3);
+    public RobotContainer() {
 
-  VisionSubsystem visionSubsystem = new VisionSubsystem();
+        // Configure the trigger bindings
+        configureBindings();
 
-  SendableChooser<Command> autoChooser;
+        // Create a SendableChooser to select the drive command
+        SendableChooser<Command> driveChooser = new SendableChooser<>();
+        driveChooser.setDefaultOption("Vision Drive", drive.visionDrive);
+        driveChooser.addOption("Teleop Drive", drive.teleopDrive);
+        driveChooser.addOption("Teleop Drive (Two Joysticks)", drive.teleopDrive_twoJoy);
+        driveChooser.addOption("Drive Field Oriented (Needs Testing)", drive.fieldOrientedAngVel);
+        driveChooser.addOption("Speed Mod Test", drive.speedDriveTest);
+        Shuffleboard.getTab("Teleoperated").add("Drive Command", driveChooser);
 
-  Command visionDrive;
-  Command teleopDrive;
-  Command teleopDrive_twoJoy;
-  Command driveFieldOrientedAnglularVelocity;
-  Command speedDriveTest;
+        driveSubsystem.setDefaultCommand(driveChooser.getSelected());
 
-  public RobotContainer(){
+        autoChooser = AutoBuilder.buildAutoChooser();
+        Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
+    }
 
-    // Configure the trigger bindings
-    configureBindings();
+    private void configureBindings() {
+        driver_button9.onTrue(new InstantCommand(driveSubsystem::zeroGyro));
 
-    /**Speed Control - Drive on one joystick */
-    speedDriveTest = new TeleopDriveSpeed(
-       drivebase,
-       () -> driver.getRawAxis(IOConstants.driveSpeedModAxis),
-       () -> rotationController.getRawAxis(IOConstants.angleSpeedModAxis),
-       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-       () -> -MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband),
-       () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
-    );
+        manipulatorXbox_Start.onTrue(new InstantCommand(driveSubsystem::addFakeVisionReading));
+        manipulatorXbox_Y.whileTrue(driveSubsystem.aimAtTarget(visionSubsystem));
 
-    /**Drive with 2 joysticks, automatically rotating toward a target AprilTag */
-    visionDrive = new TeleopDrive(
-      drivebase,
-      () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-      () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> drivebase.visionTargetPIDCalc(-MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband)),
-      () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
-    );
-   
-    /**Drive on one joystick */
-    teleopDrive = new TeleopDrive(
-       drivebase,
-       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-       () -> -MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband),
-       () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
-    );
+        rotation_trigger.whileTrue(drive.visionDrive);
+    }
 
-    /**Drive with two joysticks */
-    teleopDrive_twoJoy = new TeleopDrive(
-      drivebase,
-      () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-      () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> -MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband),
-      () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
-    );
+    public Command getAutonomousCommand() {
+        return autoChooser.getSelected();
+    }
 
-    /**YAGSL build in field oriented drive*/
-    driveFieldOrientedAnglularVelocity = drivebase.driveCommand( //TODO Test? - Might be useful for visionDrive
-      () -> MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-      () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),
-      () -> driver.getRawAxis(2));
-
-    // Create a SendableChooser to select the drive command
-    SendableChooser<Command> driveChooser = new SendableChooser<>();
-    driveChooser.setDefaultOption("Vision Drive", visionDrive);
-    driveChooser.addOption("Teleop Drive",teleopDrive);
-    driveChooser.addOption("Teleop Drive (Two Joysticks)", teleopDrive_twoJoy);
-    driveChooser.addOption("Drive Field Oriented (Needs Testing)", driveFieldOrientedAnglularVelocity);
-    driveChooser.addOption("Speed Mod Test", speedDriveTest);
-    Shuffleboard.getTab("Teleoperated").add("Drive Command", driveChooser);
-
-    drivebase.setDefaultCommand(driveChooser.getSelected());
-
-    autoChooser = AutoBuilder.buildAutoChooser();
-    Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
-  }
-
-  private void configureBindings(){
-
-    driver.button(IOConstants.resetGyroButton).onTrue(new InstantCommand(drivebase::zeroGyro));
-
-    IO.manipulatorXbox_Start.onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-    IO.manipulatorXbox_Y.whileTrue(drivebase.aimAtTarget());
-
-    IO.leftJoystick_trigger.whileTrue(visionDrive);
-  }
-
-  public Command getAutonomousCommand(){
-    return autoChooser.getSelected();
-  }
-
-  public void setMotorBrake(boolean brake){
-    drivebase.setMotorBrake(brake);
-  }
+    public void setMotorBrake(boolean brake) {
+        driveSubsystem.setMotorBrake(brake);
+    }
 }

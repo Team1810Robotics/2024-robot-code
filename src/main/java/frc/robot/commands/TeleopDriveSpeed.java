@@ -1,16 +1,15 @@
-package frc.robot.commands.swervedrive;
-
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
+package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.Swerve;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.Constants.SwerveConstants;
+import frc.robot.subsystems.DriveSubsystem;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 
-public class TeleopDriveSpeed extends Command{
-    private final SwerveSubsystem drivetrain;
+public class TeleopDriveSpeed extends Command {
+    private final DriveSubsystem drivetrain;
     private final DoubleSupplier driveSpeed;
     private final DoubleSupplier rotationSpeed;
     private final DoubleSupplier vX;
@@ -19,7 +18,14 @@ public class TeleopDriveSpeed extends Command{
     private final BooleanSupplier driveMode;
     private final SwerveController controller;
 
-    public TeleopDriveSpeed(SwerveSubsystem drivetrain, DoubleSupplier driveSpeed, DoubleSupplier rotationSpeed, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier omega, BooleanSupplier driveMode) {
+    public TeleopDriveSpeed(
+            DriveSubsystem drivetrain,
+            DoubleSupplier driveSpeed,
+            DoubleSupplier rotationSpeed,
+            DoubleSupplier vX,
+            DoubleSupplier vY,
+            DoubleSupplier omega,
+            BooleanSupplier driveMode) {
         this.drivetrain = drivetrain;
         this.driveSpeed = driveSpeed;
         this.rotationSpeed = rotationSpeed;
@@ -37,25 +43,30 @@ public class TeleopDriveSpeed extends Command{
 
     @Override
     public void execute() {
-        double speedMult = (driveSpeed.getAsDouble() + 1) / 2;  // Make axis value 0 to 1 instead of -1 to 1
+        double speedMult =
+                (driveSpeed.getAsDouble() + 1) / 2; // Make axis value 0 to 1 instead of -1 to 1
         double rotationMult = (rotationSpeed.getAsDouble() + 1) / 2;
         double xVelocity = vX.getAsDouble() * speedMult;
         double yVelocity = vY.getAsDouble() * speedMult;
         double angVelocity = omega.getAsDouble() * rotationMult;
-        
+
         /* SmartDashboard.putNumber("vX", xVelocity);
         SmartDashboard.putNumber("vY", yVelocity);
         SmartDashboard.putNumber("omega", angVelocity); */
 
-        drivetrain.drive(new Translation2d(xVelocity * Swerve.maxVelocity, yVelocity * Swerve.maxVelocity),
-                         angVelocity * controller.config.maxAngularVelocity,
-                         driveMode.getAsBoolean());
+        drivetrain.drive(
+                new Translation2d(
+                        xVelocity * SwerveConstants.maxVelocity,
+                        yVelocity * SwerveConstants.maxVelocity),
+                angVelocity * controller.config.maxAngularVelocity,
+                driveMode.getAsBoolean());
     }
 
     @Override
     public void end(boolean interrupted) {}
 
     @Override
-    public boolean isFinished() {return false;}
-    
+    public boolean isFinished() {
+        return false;
+    }
 }
