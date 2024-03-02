@@ -68,8 +68,8 @@ public final class IO {
     public static final JoystickButton box_autoTarget = new JoystickButton(box, autoTarget.value);
     public static final JoystickButton box_trimUp = new JoystickButton(box, trimUp.value);
     public static final JoystickButton box_trimDown = new JoystickButton(box, trimDown.value);
-    public static final JoystickButton box_in = new JoystickButton(box, in.value);
-    public static final JoystickButton box_out = new JoystickButton(box, out.value);
+    public static final JoystickButton box_intake = new JoystickButton(box, in.value);
+    public static final JoystickButton box_outtake = new JoystickButton(box, out.value);
     public static final JoystickButton box_shoot = new JoystickButton(box, shoot.value);
     public static final JoystickButton box_unused = new JoystickButton(box, unused.value);
 

@@ -104,40 +104,57 @@ public final class Constants {
     }
 
     public static final class ArmConstants {
-        public static final int MOTOR1_ID = 0;
-        public static final int MOTOR2_ID = 0;
+        public static final int MOTOR_A_ID = 17;
+        public static final int MOTOR_B_ID = 18;
 
-        public static final int CANCODER_ID = 0;
+        public static final int CANCODER_ID = 23;
+        public static final double CANCODER_OFFSET = 0.0; // degrees
 
         public static final double INITIAL_POSITION = 0.0;
-        public static final double INTAKE_POSITION = 0;
+        public static final double INTAKE_POSITION = 0.0;
+        public static final double CLIMB_POSITION = 0.0;
 
         // TODO: tune values
         public static final double kP = 0.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
+
+        public static final double ks = 0.0;
+        public static final double kg = 0.0;
+        public static final double kv = 0.0;
+
+        public static final double ARM_TOLERANCE = 0.1; // FIXME
+        public static final double TICKS_TO_DEG_CONVERSION = 360.0;
     }
 
     public static final class IntakeConstants {
-        public static final int MOTOR_ID = 0;
-        public static final int BEAM_BREAK_PORT = 0;
+        public static final int MOTOR_ID = 16;
+        public static final int BEAM_BREAK_PORT = 0; // TODO
     }
 
     public static final class ShooterConstants {
-        public static final int TOP_MOTOR_ID = 0;
-        public static final int BOTTOM_MOTOR_ID = 0;
+        public static final int TOP_MOTOR_ID = 14;
+        public static final int BOTTOM_MOTOR_ID = 15;
+
+        public static final double kP = 0; // FIXME: tune
+        public static final double kI = 0; // FIXME: tune
+        public static final double kD = 0; // FIXME: tune
+        public static final double TOLERANCE = 0; // FIXME: tune
+
+        public static final double SET_SPEED = 0; // rotations per min // FIXME: tune
+        public static final double HALF_SET_SPEED = SET_SPEED / 2.0;
     }
 
     public static final class ExtenderConstants {
-        public static final int MOTOR_ID = 0;
-        public static final int TOP_LS_PORT = 0;
-        public static final int BOTTOM_LS_PORT = 0;
+        public static final int MOTOR_ID = 22;
+        public static final int TOP_LS_PORT = 0; // TODO
+        public static final int BOTTOM_LS_PORT = 0; // TODO
     }
 
     public static final class ClimbConstants {
-        // right and left relative to the bot's perspective
-        public static final int LEFT_MOTOR_ID = 0;
-        public static final int RIGHT_MOTOR_ID = 0;
+        // right and left relative to the bot's perspective - forward being shooter side
+        public static final int LEFT_MOTOR_ID = 19;
+        public static final int RIGHT_MOTOR_ID = 20;
 
         public static final int LEFT_TOP_LS = 0;
         public static final int LEFT_BOTTOM_LS = 0;

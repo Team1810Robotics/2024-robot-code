@@ -6,9 +6,13 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -44,6 +48,9 @@ public class RobotContainer {
         Shuffleboard.getTab("Teleoperated").add("Drive Command", driveChooser);
 
         driveSubsystem.setDefaultCommand(driveChooser.getSelected());
+        shooterSubsystem.setDefaultCommand(
+                Commands.runOnce(
+                        () -> shooterSubsystem.setSetpoint(ShooterConstants.HALF_SET_SPEED)));
 
         autoChooser = AutoBuilder.buildAutoChooser();
         Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
@@ -52,10 +59,17 @@ public class RobotContainer {
     private void configureBindings() {
         driver_button9.onTrue(new InstantCommand(driveSubsystem::zeroGyro));
 
-        manipulatorXbox_Start.onTrue(new InstantCommand(driveSubsystem::addFakeVisionReading));
         manipulatorXbox_Y.whileTrue(driveSubsystem.aimAtTarget(visionSubsystem));
-
         rotation_trigger.whileTrue(drive.visionDrive);
+
+        box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 1.0));
+        box_outtake.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
+        box_low.onTrue(
+                Commands.runOnce(() -> armSubsystem.setSetpoint(ArmConstants.INTAKE_POSITION)));
+        box_climb.onTrue(
+                Commands.runOnce(() -> armSubsystem.setSetpoint(ArmConstants.CLIMB_POSITION)));
+        box_shoot.onTrue(
+                Commands.runOnce(() -> shooterSubsystem.setSetpoint(ShooterConstants.SET_SPEED)));
     }
 
     public Command getAutonomousCommand() {
