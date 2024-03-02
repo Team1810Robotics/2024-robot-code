@@ -32,6 +32,7 @@ public class VisionSubsystem extends SubsystemBase {
     public VisionSubsystem() {
         camera = new PhotonCamera(VisionConstants.CAMERA_NAME);
         photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camera, robotToCam);
+        result = camera.getLatestResult();
     }
 
     /** @return whether or not an AprilTag is detected */

@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -11,34 +10,35 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 
 import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.Swerve;
 import frc.robot.commands.swervedrive.TeleopDrive;
 import frc.robot.commands.swervedrive.TeleopDriveSpeed;
+import frc.robot.commands.swervedrive.VisionDrive;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-
-import java.io.File;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
 public class RobotContainer{
 
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
+  public final static SwerveSubsystem drivebase = new SwerveSubsystem(Swerve.directory); // All reference to the swervedrive should use this instance. AKA: RobotContainer.drivebase.action... instead of making a new instance 
   
   public static CommandJoystick driver = new CommandJoystick(0);
-  CommandJoystick rotationController = new CommandJoystick(1);
+  public static CommandJoystick rotationController = new CommandJoystick(1);
 
   CommandJoystick driverController = new CommandJoystick(1);
   XboxController joshBox = new XboxController(3);
 
-  VisionSubsystem visionSubsystem = new VisionSubsystem();
+  VisionSubsystem visionSubsystem = new VisionSubsystem(); //Commenting out did not fix overrun
 
   SendableChooser<Command> autoChooser;
+  public SendableChooser<Command> driveChooser = new SendableChooser<>();
 
   Command visionDrive;
   Command teleopDrive;
   Command teleopDrive_twoJoy;
-  Command driveFieldOrientedAnglularVelocity;
   Command speedDriveTest;
+  Command testDrive;
 
   public RobotContainer(){
 
@@ -52,17 +52,15 @@ public class RobotContainer{
        () -> rotationController.getRawAxis(IOConstants.angleSpeedModAxis),
        () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
        () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-       () -> -MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband),
-       () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
+       () -> -MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband)
     );
 
     /**Drive with 2 joysticks, automatically rotating toward a target AprilTag */
-    visionDrive = new TeleopDrive(
+    visionDrive = new VisionDrive(
       drivebase,
-      () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-      () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> -drivebase.visionTargetPIDCalc(-MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband)),
-      () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
+      () -> MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
+      () -> MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
+      () -> -drivebase.visionTargetPIDCalc(-MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband))
     );
    
     /**Drive on one joystick */
@@ -70,32 +68,27 @@ public class RobotContainer{
        drivebase,
        () -> MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
        () -> MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-       () -> MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband),
-       () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
+       () -> MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband)
     );
 
     /**Drive with two joysticks */
     teleopDrive_twoJoy = new TeleopDrive(
       drivebase,
-      () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-      () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> -MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband),
-      () -> !driver.button(IOConstants.driveModeButton).getAsBoolean()  
+      () -> MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
+      () -> MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
+      () -> MathUtil.applyDeadband(rotationController.getX(), IOConstants.rotationDeadband)
     );
 
-    /**YAGSL build in field oriented drive*/
-    driveFieldOrientedAnglularVelocity = drivebase.driveCommand( //TODO Test? - Might be useful for visionDrive
-      () -> MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-      () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),
-      () -> driver.getRawAxis(2));
+    /**Test*/
+    testDrive = new TeleopDrive(drivebase, () -> 0, () -> 0, () -> 0);
 
     // Create a SendableChooser to select the drive command
-    SendableChooser<Command> driveChooser = new SendableChooser<>();
-    driveChooser.setDefaultOption("Vision Drive", visionDrive);
-    driveChooser.addOption("Teleop Drive",teleopDrive);
-    driveChooser.addOption("Teleop Drive (Two Joysticks)", teleopDrive_twoJoy);
-    driveChooser.addOption("Drive Field Oriented (Needs Testing)", driveFieldOrientedAnglularVelocity);
+    driveChooser.setDefaultOption("Two Drive", testDrive);
+    driveChooser.addOption("Vision Drive", visionDrive);
+    driveChooser.addOption("One Drive",teleopDrive);
+    driveChooser.addOption("Two Drive", teleopDrive_twoJoy);
     driveChooser.addOption("Speed Mod Test", speedDriveTest);
+    driveChooser.addOption("test", testDrive);
     Shuffleboard.getTab("Teleoperated").add("Drive Command", driveChooser);
 
     drivebase.setDefaultCommand(driveChooser.getSelected());
@@ -106,12 +99,13 @@ public class RobotContainer{
 
   private void configureBindings(){
 
-    /* driver.button(IOConstants.resetGyroButton).onTrue(new InstantCommand(drivebase::zeroGyro));
+    driver.button(IOConstants.resetGyroButton).onTrue(new InstantCommand(drivebase::zeroGyro));
+    //IO.rightJoystick_button9.onTrue(new InstantCommand(drivebase::zeroGyro));
 
-    IO.manipulatorXbox_Start.onTrue(new InstantCommand(drivebase::addFakeVisionReading));
-    IO.manipulatorXbox_Y.whileTrue(drivebase.aimAtTarget());
+    //IO.rightJoystick_button5.whileTrue(drivebase.aimAtTarget());
 
-    IO.leftJoystick_trigger.whileTrue(visionDrive); */
+    //IO.rightJoystick_trigger.whileTrue(visionDrive);
+    driver.trigger().whileTrue(drivebase.aimAtTarget());
   }
 
   public Command getAutonomousCommand(){

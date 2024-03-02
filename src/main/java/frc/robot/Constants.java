@@ -30,7 +30,7 @@ public final class Constants
   public static class IOConstants {
         public static final double swerveDeadband = 0.3;
         public static final double rotationDeadband = 0.3;
-        public static final int driveSpeedModAxis = 4; //Drive Controller Speed //TODO find right axis if needed - if nothing is happening check this
+        public static final int driveSpeedModAxis = 4; //Drive Controller Speed
         public static final int angleSpeedModAxis = 4; //Angle Controller Speed
         public static final int driveXAxis = 1;
         public static final int driveYAxis = 0;
@@ -44,15 +44,15 @@ public final class Constants
     }
 
     public static class Swerve {
-        public static final File directory = new File(Filesystem.getDeployDirectory(), "swerve");
+        public static final File directory = new File(Filesystem.getDeployDirectory(), "swerve/falcon");
         public static final double maxVelocity = 5;
         public static final double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75, 1024);
         public static final double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(12.8, 4096);
 
-        public static final double FL_CANCODER_OFFSET = 306.474;
-        public static final double FR_CANCODER_OFFSET = 13.359;
-        public static final double BL_CANCODER_OFFSET = 184.746;
-        public static final double BR_CANCODER_OFFSET = 142.294;
+        public static final double FL_CANCODER_OFFSET = 306.738;
+        public static final double FR_CANCODER_OFFSET = 13.095;
+        public static final double BL_CANCODER_OFFSET = 184.658;
+        public static final double BR_CANCODER_OFFSET = 141.064;
 
         public static final int FL_CANCODER_ID = 10;
         public static final int FR_CANCODER_ID = 9;
@@ -67,7 +67,11 @@ public final class Constants
 
       //How off can the AprilTag be and still alright
       //Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
-      public static final double TARGET_LOCK_RANGE = 2;
+      public static final double TARGET_LOCK_RANGE = 0.5;
+
+      public static final double kP = 0.15;
+      public static final double kI = 0.32;
+      public static final double kD = 0.006;
 
   }
 

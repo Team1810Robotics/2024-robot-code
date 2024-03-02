@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.VisionConstants;
 
 import java.io.File;
@@ -60,14 +61,14 @@ public class SwerveSubsystem extends SubsystemBase
 
   public Pigeon2 gyro = new Pigeon2(13);
 
-  PIDController rotPidController = new PIDController(0.08, 0.05, 0);
+  PIDController rotPidController = new PIDController(VisionConstants.kP, VisionConstants.kI, VisionConstants.kD);
 
   VisionSubsystem visionSubsystem = new VisionSubsystem();
-  public boolean visHasTarget = false; 
-
-  private double deviation = 0; // How far on average are the swerve drives off target
+  public boolean visHasTarget = false;
 
   public SwerveSubsystem(File directory){
+
+    rotPidController.setIZone(1);
 
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
 
@@ -135,10 +136,10 @@ public class SwerveSubsystem extends SubsystemBase
       if (visionSubsystem.hasTarget())
       {
         visHasTarget = true;
-        drive(new Translation2d(0, 0), -visionTargetPIDCalc(0), false);
+        drive(new Translation2d(0, 0), -visionTargetPIDCalc(0), true);
       } else {
         visHasTarget = false;
-        drive(new Translation2d(0, 0), 0, false);
+        drive(new Translation2d(0, 0), 0, true);
       }
     });
   }
@@ -262,6 +263,19 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   /**
+   * Test for getting button to work spefically for 
+   * 
+   * @return
+   */
+  public boolean fieldOriented(){
+    if (!driver.button(IOConstants.driveModeButton).getAsBoolean()) {
+      return true;
+    }else{
+      return true;
+    }
+  }
+
+  /**
    * Drive according to the chassis robot oriented velocity.
    *
    * @param velocity Robot oriented {@link ChassisSpeeds}
@@ -329,6 +343,10 @@ public class SwerveSubsystem extends SubsystemBase
   public void zeroGyro()
   {
     swerveDrive.zeroGyro();
+  }
+
+  public Command zeroGyroCmd() {
+    return run(()->zeroGyro());
   }
 
   public void setMotorBrake(boolean brake)
@@ -430,20 +448,6 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
   }
 
-  /**
-   * Finds the average average of wheel angle positions from actual and desired
-   * Math could be wrong
-   * 
-   * @return the average deviation value
-   */
-  public double getAverageEncoderDivation(){
-    deviation = 0;
-    for (int i = 0; i < 4; i++) {
-      deviation += (swerveDrive.getModulePositions()[i].angle.getDegrees() + SwerveDriveTelemetry.measuredStates[(i * 2) + 1]) / 2;
-    }
-    return deviation / 4;
-  }
-
   public void setupElastic(){
     Shuffleboard.getTab("swerve").addNumber("FL Cancoder", () -> swerveDrive.getModulePositions()[0].angle.getDegrees());
     Shuffleboard.getTab("swerve").addNumber("FR Cancoder", () -> swerveDrive.getModulePositions()[1].angle.getDegrees());
@@ -458,12 +462,12 @@ public class SwerveSubsystem extends SubsystemBase
 
     Shuffleboard.getTab("Teleoperated").add("Look at AprilTag", aimAtTarget()); // Command button that toggles aimAtTarget command.
     Shuffleboard.getTab("Teleoperated").add("Vision Rotation PID", rotPidController); // Pid for vision aim on swerve drive
-    Shuffleboard.getTab("Teleoperated").addBoolean("Target In Range", () -> visHasTarget); // True/False display for if the camera can see a AprilTag
+    Shuffleboard.getTab("Teleoperated").addBoolean("Target In Range", () -> visionSubsystem.hasTarget()); // True/False display for if the camera can see a AprilTag
+    Shuffleboard.getTab("swerve").add("Gyro Reset", zeroGyroCmd());
     Shuffleboard.getTab("Teleoperated").addBoolean("Target Lock", () ->
-      ((visionSubsystem.getYaw() <= VisionConstants.TARGET_LOCK_RANGE) & (visionSubsystem.getYaw() >= -VisionConstants.TARGET_LOCK_RANGE)) & (visHasTarget == true)); // Show if the robot is aimed at the target within set range from Constrants
-
-    Shuffleboard.getTab("swerve").addDouble("Vision YAW", () -> visionSubsystem.getYaw()); // Display location of one April Tag releative to the camera
-    Shuffleboard.getTab("swerve").addDouble("Swerve average deviation", () -> getAverageEncoderDivation()); // Should display the average deviation for the swerve modules based on actual and desired states from YAGSL
+      (((visionSubsystem.getYaw() <= VisionConstants.TARGET_LOCK_RANGE) & (visionSubsystem.getYaw() >= -VisionConstants.TARGET_LOCK_RANGE)) && visionSubsystem.hasTarget())); // Show if the robot is aimed at the target within set range from Constrants
+    Shuffleboard.getTab("Teleoperated").addDouble("Vision YAW", () -> visionSubsystem.getYaw()); // Display location of one April Tag releative to the camera
+    
     Shuffleboard.getTab("swerve").add("Swerve Visualizer - actual", new Sendable() { // Add a visual for what the swerve subsystem is currently doing 
 
         @Override
