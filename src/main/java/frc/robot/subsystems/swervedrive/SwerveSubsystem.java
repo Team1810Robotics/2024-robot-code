@@ -135,10 +135,8 @@ public class SwerveSubsystem extends SubsystemBase
     return run(() -> {
       if (visionSubsystem.hasTarget())
       {
-        visHasTarget = true;
-        drive(new Translation2d(0, 0), -visionTargetPIDCalc(0), true);
+        drive(new Translation2d(0, 0), -visionTargetPIDCalc(0, true), true);
       } else {
-        visHasTarget = false;
         drive(new Translation2d(0, 0), 0, true);
       }
     });
@@ -147,18 +145,13 @@ public class SwerveSubsystem extends SubsystemBase
   /** @return the PID output to rotate toward the best AprilTag target
    *  @param altRotation rotation speed when no target is detected
    */
-  public double visionTargetPIDCalc(double altRotation){
+  public double visionTargetPIDCalc(double altRotation, boolean visionMode){
     boolean target = visionSubsystem.hasTarget();
     double yaw = visionSubsystem.getYaw();
 
-    //System.out.println(yaw); // Added to elastic
-
-    if(target) {
-      visHasTarget = true;
-      System.out.println(yaw);
+    if(target & visionMode) {
       return rotPidController.calculate(yaw);
     } else {
-      visHasTarget = false;
       return altRotation;
     }
   }

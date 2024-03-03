@@ -13,7 +13,6 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.Swerve;
 import frc.robot.commands.swervedrive.TeleopDrive;
 import frc.robot.commands.swervedrive.TeleopDriveSpeed;
-import frc.robot.commands.swervedrive.VisionDrive;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
@@ -50,17 +49,17 @@ public class RobotContainer{
        drivebase,
        () -> driver.getRawAxis(IOConstants.driveSpeedModAxis),
        () -> rotationController.getRawAxis(IOConstants.angleSpeedModAxis),
-       () -> -MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-       () -> -MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-       () -> -MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband)
+       () -> MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
+       () -> MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
+       () -> MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband)
     );
 
     /**Drive with 2 joysticks, automatically rotating toward a target AprilTag */
-    visionDrive = new VisionDrive(
+    visionDrive = new TeleopDrive(
       drivebase,
       () -> MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
       () -> MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-      () -> -drivebase.visionTargetPIDCalc(-MathUtil.applyDeadband(rotationController.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.rotationDeadband))
+      () -> -drivebase.visionTargetPIDCalc(-MathUtil.applyDeadband(/* rotationController.getRawAxis(IOConstants.driveOmegaAxis) */driver.getRawAxis(4), IOConstants.rotationDeadband), driver.button(1).getAsBoolean())
     );
    
     /**Drive on one joystick */
@@ -79,10 +78,10 @@ public class RobotContainer{
       () -> MathUtil.applyDeadband(rotationController.getX(), IOConstants.rotationDeadband)
     );
 
-    /**Test*/
+    /**Test - Used to stop drive form moving */
     testDrive = new TeleopDrive(drivebase, () -> 0, () -> 0, () -> 0);
 
-    // Create a SendableChooser to select the drive command
+    // Create a SendableChooser to select the drive command - Does not work
     driveChooser.setDefaultOption("Two Drive", testDrive);
     driveChooser.addOption("Vision Drive", visionDrive);
     driveChooser.addOption("One Drive",teleopDrive);
@@ -91,21 +90,18 @@ public class RobotContainer{
     driveChooser.addOption("test", testDrive);
     Shuffleboard.getTab("Teleoperated").add("Drive Command", driveChooser);
 
-    drivebase.setDefaultCommand(driveChooser.getSelected());
+    drivebase.setDefaultCommand(visionDrive);
 
     autoChooser = AutoBuilder.buildAutoChooser();
     Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
   }
 
   private void configureBindings(){
-
+    // Sets button 9 on Drive Joystick to zero gyro
     driver.button(IOConstants.resetGyroButton).onTrue(new InstantCommand(drivebase::zeroGyro));
-    //IO.rightJoystick_button9.onTrue(new InstantCommand(drivebase::zeroGyro));
 
-    //IO.rightJoystick_button5.whileTrue(drivebase.aimAtTarget());
-
-    //IO.rightJoystick_trigger.whileTrue(visionDrive);
-    driver.trigger().whileTrue(drivebase.aimAtTarget());
+    // A button that will interrupt drive and make the robot look at AprilTag
+    driver.button(4).whileTrue(drivebase.aimAtTarget());
   }
 
   public Command getAutonomousCommand(){
