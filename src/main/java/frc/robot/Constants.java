@@ -69,9 +69,7 @@ public final class Constants
       //Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
       public static final double TARGET_LOCK_RANGE = 0.5;
 
-      public static final double kP = 0.15;
-      public static final double kI = 0.32;
-      public static final double kD = 0.006;
+      public static final PIDConstants VISION_PID = new PIDConstants(0.15, 0.32, 0.006);
 
   }
 

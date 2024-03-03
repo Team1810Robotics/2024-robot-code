@@ -61,7 +61,7 @@ public class SwerveSubsystem extends SubsystemBase
 
   public Pigeon2 gyro = new Pigeon2(13);
 
-  PIDController rotPidController = new PIDController(VisionConstants.kP, VisionConstants.kI, VisionConstants.kD);
+  PIDController rotPidController = new PIDController(VisionConstants.VISION_PID.kP, VisionConstants.VISION_PID.kI, VisionConstants.VISION_PID.kD);
 
   VisionSubsystem visionSubsystem = new VisionSubsystem();
   public boolean visHasTarget = false;
