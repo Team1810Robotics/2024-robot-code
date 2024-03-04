@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import java.io.File;
@@ -16,27 +12,18 @@ import edu.wpi.first.wpilibj.Filesystem;
 import swervelib.math.Matter;
 import swervelib.math.SwerveMath;
 
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean constants. This
- * class should not be used for any other purpose. All constants should be declared globally (i.e. public static). Do
- * not put anything functional in this class.
- *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
- */
 public final class Constants
 {
 
   public static class IOConstants {
-        public static final double swerveDeadband = 0.3;
-        public static final double rotationDeadband = 0.3;
-        public static final int driveSpeedModAxis = 4; //Drive Controller Speed
-        public static final int angleSpeedModAxis = 4; //Angle Controller Speed
+        public static final double DEADBAND = 0.3;
+        public static final int driveSpeedModAxis = 4;
+        public static final int angleSpeedModAxis = 4;
         public static final int driveXAxis = 1;
         public static final int driveYAxis = 0;
         public static final int driveOmegaAxis = 2;
         public static final int resetGyroButton = 9;
-        public static final int driveModeButton = 7;
+        public static final int driveModeButton = 7; // I think we want it to always be Field Oriented - At least from when I last asked Evan M
 
         public static final int LEFT_JOYSTICK_PORT = 0;
         public static final int RIGHT_JOYSTICK_PORT = 1;
@@ -44,20 +31,10 @@ public final class Constants
     }
 
     public static class Swerve {
-        public static final File directory = new File(Filesystem.getDeployDirectory(), "swerve/falcon");
-        public static final double maxVelocity = 5;
+        public static final File directory = new File(Filesystem.getDeployDirectory(), "swerve/falcon"); //Falcons or Neos setting
+        public static final double maxVelocity = 4.5; //Neo L2 max speed - I think
         public static final double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75, 1024);
         public static final double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(12.8, 4096);
-
-        public static final double FL_CANCODER_OFFSET = 306.738;
-        public static final double FR_CANCODER_OFFSET = 13.095;
-        public static final double BL_CANCODER_OFFSET = 184.658;
-        public static final double BR_CANCODER_OFFSET = 141.064;
-
-        public static final int FL_CANCODER_ID = 10;
-        public static final int FR_CANCODER_ID = 9;
-        public static final int BL_CANCODER_ID = 12;
-        public static final int BR_CANCODER_ID = 11;
     }
 
     public static final class VisionConstants {
@@ -65,7 +42,7 @@ public final class Constants
 
       public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
 
-      //How off can the AprilTag be and still alright
+      //How far off can the Robot Yaw be from the Vision Yaw
       //Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
       public static final double TARGET_LOCK_RANGE = 0.5;
 
@@ -81,7 +58,7 @@ public final class Constants
   {
 
     public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
-    public static final PIDConstants ANGLE_PID   = new PIDConstants(0.4, 0, 0.01);
+    public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
   }
 
   public static final class DrivebaseConstants

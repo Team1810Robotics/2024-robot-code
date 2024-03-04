@@ -135,25 +135,26 @@ public class SwerveSubsystem extends SubsystemBase
     return run(() -> {
       if (visionSubsystem.hasTarget())
       {
-        drive(new Translation2d(0, 0), -visionTargetPIDCalc(0, true), true);
+        drive(new Translation2d(0, 0), -visionTargetPIDCalc(visionSubsystem, 0, true), true);
       } else {
         drive(new Translation2d(0, 0), 0, true);
       }
     });
   }
 
-  /** @return the PID output to rotate toward the best AprilTag target
-   *  @param altRotation rotation speed when no target is detected
-   */
-  public double visionTargetPIDCalc(double altRotation, boolean visionMode){
-    boolean target = visionSubsystem.hasTarget();
-    double yaw = visionSubsystem.getYaw();
+    /**
+     * @return the PID output to rotate toward the best AprilTag target
+     * @param altRotation rotation speed when no target is detected
+     */
+    public double visionTargetPIDCalc(VisionSubsystem vision, double altRotation, boolean visionMode) {
+      boolean target = vision.hasTarget();
+      double yaw = vision.getYaw();
 
-    if(target & visionMode) {
-      return rotPidController.calculate(yaw);
-    } else {
-      return altRotation;
-    }
+      if(target & visionMode) {
+          return rotPidController.calculate(yaw);
+      } else {
+          return altRotation;
+      }
   }
 
   public Command getAutonomousCommand(String pathName)
@@ -455,7 +456,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     Shuffleboard.getTab("Teleoperated").add("Look at AprilTag", aimAtTarget()); // Command button that toggles aimAtTarget command.
     Shuffleboard.getTab("Teleoperated").add("Vision Rotation PID", rotPidController); // Pid for vision aim on swerve drive
-    Shuffleboard.getTab("Teleoperated").addBoolean("Target In Range", () -> visionSubsystem.hasTarget()); // True/False display for if the camera can see a AprilTag
+    Shuffleboard.getTab("Teleoperated").addBoolean("Target In Range", () -> visionSubsystem.hasTarget()); // True/False display for if the camera can see a April0Tag
     Shuffleboard.getTab("swerve").add("Gyro Reset", zeroGyroCmd());
     Shuffleboard.getTab("Teleoperated").addBoolean("Target Lock", () ->
       (((visionSubsystem.getYaw() <= VisionConstants.TARGET_LOCK_RANGE) & (visionSubsystem.getYaw() >= -VisionConstants.TARGET_LOCK_RANGE)) && visionSubsystem.hasTarget())); // Show if the robot is aimed at the target within set range from Constrants
