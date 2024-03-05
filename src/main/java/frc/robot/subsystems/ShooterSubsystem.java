@@ -1,49 +1,62 @@
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.ShooterConstants.*;
+
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    private CANSparkMax top = new CANSparkMax(ShooterConstants.TOP_MOTOR_ID, MotorType.kBrushless);
-    private CANSparkMax bottom =
-            new CANSparkMax(ShooterConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
-    private final PIDController controller =
-            new PIDController(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD);
+    private final CANSparkMax top;
+    private final CANSparkMax bottom;
+    private final PIDController topPID;
+    private final PIDController bottomPID;
 
-    private double lastTime = Timer.getFPGATimestamp();
+    private double lastTopTime = Timer.getFPGATimestamp();
+    private double lastBottomTime = Timer.getFPGATimestamp();
     private double lastTopPosition = 0;
     private double lastBottomPosition = 0;
 
     public ShooterSubsystem() {
-        controller.setTolerance(ShooterConstants.TOLERANCE);
-        top.setInverted(true);
+        top = new CANSparkMax(TOP_MOTOR_ID, MotorType.kBrushless);
+        bottom = new CANSparkMax(BOTTOM_MOTOR_ID, MotorType.kBrushless);
 
-        setSetpoint(ShooterConstants.HALF_SET_SPEED);
+        topPID = new PIDController(Top.kP, Top.kI, Top.kD);
+        bottomPID = new PIDController(Bottom.kP, Bottom.kI, Bottom.kD);
+
+        setSetpoint(HALF_SET_SPEED);
+
+        // Shuffleboard.getTab("shooter").add("top shooter PID", topPID);
+        // Shuffleboard.getTab("shooter").add("bottom shooter PID", bottomPID);
     }
 
     @Override
     public void periodic() {
-        /**
-         * rev velocity calculation is broken at the moment so we are using the encoder position to
-         * calculate the velocity
-         */
-        double[] velocities = getVelocities();
 
-        top.set(controller.calculate(velocities[0], getSetpoint()));
-        bottom.set(controller.calculate(velocities[1], getSetpoint()));
+        double topVelocity = getTopVelocity();
+        top.set(-topPID.calculate(topVelocity, getTopSetpoint()));
+        double bottomVelocity = getBottomVelocity();
+        bottom.set(-bottomPID.calculate(bottomVelocity, getBottomSetpoint()));
+
+        SmartDashboard.putNumber("vel top", topVelocity);
+        SmartDashboard.putNumber("vel bot", bottomVelocity);
     }
 
     public void setSetpoint(double setpoint) {
-        controller.setSetpoint(setpoint);
+        topPID.setSetpoint(setpoint);
+        bottomPID.setSetpoint(setpoint);
     }
 
-    public double getSetpoint() {
-        return controller.getSetpoint();
+    public double getTopSetpoint() {
+        return topPID.getSetpoint();
+    }
+
+    public double getBottomSetpoint() {
+        return bottomPID.getSetpoint();
     }
 
     public void setSpeed(double motorSpeed) {
@@ -56,19 +69,31 @@ public class ShooterSubsystem extends SubsystemBase {
         bottom.stopMotor();
     }
 
-    public double[] getVelocities() {
+    public double getBottomVelocity() {
         double currentTime = Timer.getFPGATimestamp();
-        double topPosition = top.getEncoder().getPosition();
-        double bottomPosition = bottom.getEncoder().getPosition();
+        double pos = bottom.getEncoder().getPosition();
 
-        double deltaTime = currentTime - lastTime;
-        double topVelocity = (topPosition - lastTopPosition) / deltaTime;
-        double bottomVelocity = (bottomPosition - lastBottomPosition) / deltaTime;
+        double deltaTime = currentTime - lastBottomTime;
+        double deltaPosition = pos - lastBottomPosition;
+        double velocity = deltaPosition / deltaTime;
 
-        lastTime = currentTime;
-        lastTopPosition = topPosition;
-        lastBottomPosition = bottomPosition;
+        lastBottomTime = currentTime;
+        lastBottomPosition = pos;
 
-        return new double[] {topVelocity, bottomVelocity};
+        return velocity;
+    }
+
+    public double getTopVelocity() {
+        double currentTime = Timer.getFPGATimestamp();
+        double pos = top.getEncoder().getPosition();
+
+        double deltaTime = currentTime - lastTopTime;
+        double deltaPosition = pos - lastTopPosition;
+        double velocity = deltaPosition / deltaTime;
+
+        lastTopTime = currentTime;
+        lastTopPosition = pos;
+
+        return velocity;
     }
 }

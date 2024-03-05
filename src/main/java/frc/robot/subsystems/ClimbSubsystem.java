@@ -1,17 +1,15 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ClimbSubsystem extends SubsystemBase {
 
-    private CANSparkMax leftMotor =
-            new CANSparkMax(Constants.ClimbConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
-    private CANSparkMax rightMotor =
-            new CANSparkMax(Constants.ClimbConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
+    private VictorSPX leftMotor = new VictorSPX(Constants.ClimbConstants.LEFT_MOTOR_ID);
+    private VictorSPX rightMotor = new VictorSPX(Constants.ClimbConstants.RIGHT_MOTOR_ID);
 
     DigitalInput leftBottom = new DigitalInput(Constants.ClimbConstants.LEFT_BOTTOM_LS);
     DigitalInput rightBottom = new DigitalInput(Constants.ClimbConstants.RIGHT_BOTTOM_LS);
@@ -20,8 +18,8 @@ public class ClimbSubsystem extends SubsystemBase {
     DigitalInput rightTop = new DigitalInput(Constants.ClimbConstants.RIGHT_TOP_LS);
 
     public void setSpeed(double motorSpeed) {
-        leftMotor.set(motorSpeed);
-        rightMotor.set(motorSpeed);
+        leftMotor.set(ControlMode.PercentOutput, motorSpeed);
+        rightMotor.set(ControlMode.PercentOutput, motorSpeed);
     }
 
     public boolean getLeftBottomlimit() {

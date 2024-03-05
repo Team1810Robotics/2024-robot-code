@@ -21,7 +21,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     private PhotonCamera camera;
     private PhotonPoseEstimator photonPoseEstimator;
-    private PhotonPipelineResult result;
+    private PhotonPipelineResult result = new PhotonPipelineResult();
     private final DriveSubsystem drive;
 
     private final Field2d field = new Field2d();
@@ -114,7 +114,7 @@ public class VisionSubsystem extends SubsystemBase {
         PhotonPipelineResult pipelineResult = camera.getLatestResult();
         double resultTimestamp = pipelineResult.getTimestampSeconds();
 
-        if (resultTimestamp == previousPipelineTimestamp && !pipelineResult.hasTargets()) return;
+        if (resultTimestamp == previousPipelineTimestamp || !pipelineResult.hasTargets()) return;
         previousPipelineTimestamp = resultTimestamp;
         PhotonTrackedTarget target = pipelineResult.getBestTarget();
         int fiducialId = target.getFiducialId();

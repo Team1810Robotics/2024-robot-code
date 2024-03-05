@@ -41,17 +41,17 @@ public final class Constants {
 
     public static class SwerveConstants {
         public static final File DIRECTORY =
-                new File(Filesystem.getDeployDirectory(), "swerve/falcon");
+                new File(Filesystem.getDeployDirectory(), "swerve/neo");
         public static final double maxVelocity = 5;
         public static final double driveConversionFactor =
                 SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75, 1024);
         public static final double angleConversionFactor =
                 SwerveMath.calculateDegreesPerSteeringRotation(12.8, 4096);
 
-        public static final double FL_CANCODER_OFFSET = 80.771;
-        public static final double FR_CANCODER_OFFSET = 310.429;
-        public static final double BL_CANCODER_OFFSET = 0.615;
-        public static final double BR_CANCODER_OFFSET = 103.271;
+        public static final double FL_CANCODER_OFFSET = 260.771;
+        public static final double FR_CANCODER_OFFSET = 113.467;
+        public static final double BL_CANCODER_OFFSET = 155.127;
+        public static final double BR_CANCODER_OFFSET = 283.008;
 
         public static final int FL_CANCODER_ID = 12;
         public static final int FR_CANCODER_ID = 11;
@@ -80,7 +80,7 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
+        public static final String CAMERA_NAME = "USB_Camera";
 
         public static final double CAMERA_HEIGHT = 0.0;
         public static final double APRILTAG_RED_SHOOTER_HEIGHT = 0.0;
@@ -129,19 +129,26 @@ public final class Constants {
 
     public static final class IntakeConstants {
         public static final int MOTOR_ID = 16;
-        public static final int BEAM_BREAK_PORT = 0; // TODO
+        public static final int BEAM_BREAK_PORT = 0;
     }
 
     public static final class ShooterConstants {
         public static final int TOP_MOTOR_ID = 14;
         public static final int BOTTOM_MOTOR_ID = 15;
 
-        public static final double kP = 0; // FIXME: tune
-        public static final double kI = 0; // FIXME: tune
-        public static final double kD = 0; // FIXME: tune
-        public static final double TOLERANCE = 0; // FIXME: tune
+        public static final class Top {
+            public static final double kP = 0.075;
+            public static final double kI = 0.002;
+            public static final double kD = 0.001;
+        }
 
-        public static final double SET_SPEED = 0; // rotations per min // FIXME: tune
+        public static final class Bottom {
+            public static final double kP = 0.04;
+            public static final double kI = 0.01;
+            public static final double kD = 0.0;
+        }
+
+        public static final double SET_SPEED = 90.0; // rotations per sec
         public static final double HALF_SET_SPEED = SET_SPEED / 2.0;
     }
 

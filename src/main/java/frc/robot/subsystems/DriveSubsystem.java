@@ -39,7 +39,8 @@ public class DriveSubsystem extends SubsystemBase {
     /** Swerve drive object. */
     private final SwerveDrive swerveDrive;
 
-    private final PIDController rotPidController = new PIDController(0.08, 0.05, 0);
+    private final PIDController rotController = new PIDController(0.15, 0.32, 0.006);
+    private final PIDController transController = new PIDController(0, 0, 0);
 
     /**
      * Initialize {@link SwerveDrive} with the directory provided.
@@ -102,13 +103,8 @@ public class DriveSubsystem extends SubsystemBase {
                         AutoConstants.ANGLE_PID,
                         // Rotation PID constants
                         4.5,
-                        // Max module speed, in m/s
                         swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
-                        // Drive base radius in meters. Distance from robot center to furthest
-                        // module.
-                        new ReplanningConfig()
-                        // Default path replanning config. See the API for the options here
-                        ),
+                        new ReplanningConfig()),
                 () -> {
                     var alliance = DriverStation.getAlliance();
                     return alliance.isPresent()
@@ -137,10 +133,9 @@ public class DriveSubsystem extends SubsystemBase {
     public double visionTargetPIDCalc(VisionSubsystem vision, double altRotation) {
         boolean target = vision.hasTarget();
         double yaw = vision.getYaw();
-        System.out.println(yaw);
 
         if (target) {
-            return rotPidController.calculate(yaw);
+            return rotController.calculate(yaw);
         }
         return altRotation;
     }
@@ -419,6 +414,10 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     private void setupShuffleBoard() {
+
+        Shuffleboard.getTab("swerve").add("rot", rotController);
+        Shuffleboard.getTab("swerve").add("trans", transController);
+
         Shuffleboard.getTab("swerve")
                 .addNumber(
                         "FL Cancoder",

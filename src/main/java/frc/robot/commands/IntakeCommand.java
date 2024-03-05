@@ -5,33 +5,27 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class IntakeCommand extends Command {
 
-    private final IntakeSubsystem intakeSubsystem;
+    private final IntakeSubsystem intake;
     private final double intakeSpeed;
 
     public IntakeCommand(IntakeSubsystem intakeSubsystem, double intakeSpeed) {
         this.intakeSpeed = intakeSpeed;
-        this.intakeSubsystem = intakeSubsystem;
+        this.intake = intakeSubsystem;
 
         addRequirements(intakeSubsystem);
     }
 
     public void execute() {
-        intakeSubsystem.setSpeed(intakeSpeed);
-        boolean beam = intakeSubsystem.getBeamBreak();
-
-        if (beam == true) {
-            intakeSubsystem.setSpeed(0);
-        }
+        intake.setSpeed(intakeSpeed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        intakeSubsystem.stop();
+        intake.stop();
     }
 
-    /* @Override
-    public boolean isFinished(){
-        return (intakeSubsystem.getBeamBreak());
-    } */
-
+    @Override
+    public boolean isFinished() {
+        return (!intake.getBeamBreak() && intakeSpeed > 0);
+    }
 }
