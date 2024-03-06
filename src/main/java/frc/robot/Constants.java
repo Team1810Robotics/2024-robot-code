@@ -25,8 +25,8 @@ public final class Constants
         public static final int resetGyroButton = 9;
         public static final int driveModeButton = 7; // I think we want it to always be Field Oriented - At least from when I last asked Evan M
 
-        public static final int LEFT_JOYSTICK_PORT = 0;
-        public static final int RIGHT_JOYSTICK_PORT = 1;
+        public static final int DRIVE_JOYSTICK_PORT = 0;
+        public static final int ROTATION_JOYSTICK_PORT = 1;
         public static final int MANIPULATOR_XBOX_PORT = 2;
     }
 
@@ -40,7 +40,8 @@ public final class Constants
     public static final class VisionConstants {
       public static Transform3d CAMERA_OFFSET = new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0,0,0));
 
-      public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
+      //public static final String TARGET_CAMERA = "Arducam_OV9281_USB_Camera";
+      public static final String TARGET_CAMERA = "USB_2.0_Camera";
 
       //How far off can the Robot Yaw be from the Vision Yaw
       //Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
@@ -48,6 +49,18 @@ public final class Constants
 
       public static final PIDConstants VISION_PID = new PIDConstants(0.15, 0.32, 0.006);
 
+      /**
+       * Sets which targets the vision system will look at
+       * Used to only get the right AprilTag when many are in view
+       * 
+       * Currently only has the center speaker tags 4, 7
+       * 
+       * Could add Amp tags - 6, 5
+       *           Source Tags - 9,10 and 1,2 would probally only want to use one of the two (1 instead of 1 and 2 for ecah source)
+       *           Stage 14, 15, 16 and 11, 12, 13
+       * Never want to target 8 and 3
+       */
+      public static final int[] GOOD_TARGETS = {4, 7};
   }
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592;
@@ -58,7 +71,7 @@ public final class Constants
   {
 
     public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
-    public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
+    public static final PIDConstants ANGLE_PID       = VisionConstants.VISION_PID;
   }
 
   public static final class DrivebaseConstants

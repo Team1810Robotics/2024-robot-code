@@ -11,7 +11,7 @@ import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.Swerve;
 import frc.robot.IO;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import swervelib.SwerveController;
 
@@ -19,10 +19,8 @@ public class OmniDrive extends Command {
 
   private Joystick driver;
   private Joystick rotation;
-
   private Boolean driveMode = true;
   private BooleanSupplier dualJoystick;
-
   private DoubleSupplier yAxis;
   private DoubleSupplier xAxis;
   private DoubleSupplier driveSpeed;

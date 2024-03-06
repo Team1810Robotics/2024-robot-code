@@ -25,14 +25,21 @@ public class VisionSubsystem extends SubsystemBase {
     
     Transform3d robotToCam = VisionConstants.CAMERA_OFFSET;
 
+    int[] goodTargets = VisionConstants.GOOD_TARGETS;
+
     PhotonCamera camera;
     PhotonPoseEstimator photonPoseEstimator;
     PhotonPipelineResult result;
 
+    double speakerYaw = 0;
+    int speakerTargetID = 0;
+
     public VisionSubsystem() {
-        camera = new PhotonCamera(VisionConstants.CAMERA_NAME);
+        camera = new PhotonCamera(VisionConstants.TARGET_CAMERA);
         photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camera, robotToCam);
         result = camera.getLatestResult();
+
+        /* Shuffleboard.getTab("Teleoporated").addDouble("Speaker Yaw -", () -> speakerYaw); // Report speaker yaw separately for auto and vision */
     }
 
     /** @return whether or not an AprilTag is detected */
@@ -80,6 +87,35 @@ public class VisionSubsystem extends SubsystemBase {
             return 0.0;
         }
     }
+
+    /** @return the yaw offset for the speaker AprilTags */
+    public double getSpeakerYaw(){
+        speakerYaw = 0.0;
+        speakerTargetID = 0;
+        if(hasTarget()) {
+            for (int i = 0; i < result.getTargets().size(); i++){
+                if (result.getTargets().get(i).getFiducialId() == 4) {
+                    speakerYaw = result.getTargets().get(i).getYaw();
+                    speakerTargetID = 4;
+                    System.out.println("Sending Red Speaker Yaw " + speakerYaw);
+                }
+                if (result.getTargets().get(i).getFiducialId() == 7) {
+                    speakerYaw = result.getTargets().get(i).getYaw();
+                    speakerTargetID = 7;
+                    System.out.println("Sending Blue Speaker Yaw " + speakerYaw);
+                }
+            }
+            if ((result.getTargets().size() == 1) && ((speakerTargetID != 4) && (speakerTargetID != 7))) {
+                System.out.println("Falling back to best target");
+                speakerYaw = result.getBestTarget().getYaw();
+            }
+        } 
+        if (hasTarget() == false) {
+            speakerYaw = 0.0;
+            System.out.println("No Target");
+        }
+        return speakerYaw;
+    }
     
     /** WARNING: Currently causes a loop overrun, do not use
      * @return a Pose3d representing the robot's position on the field*/
@@ -88,8 +124,14 @@ public class VisionSubsystem extends SubsystemBase {
         return pose.get().estimatedPose;
     }
 
+
+
     @Override
     public void periodic() {
         result = camera.getLatestResult();
+        if (result.hasTargets()) {
+            //System.out.println("Cam has targets : " + getSpeakerYaw());
+            getSpeakerYaw();
+        }
     }
 }

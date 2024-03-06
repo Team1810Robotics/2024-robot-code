@@ -1,4 +1,4 @@
-package frc.robot.subsystems.swervedrive;
+package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -41,8 +41,6 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-
-import frc.robot.subsystems.VisionSubsystem;
 
 public class SwerveSubsystem extends SubsystemBase
 {
@@ -142,19 +140,19 @@ public class SwerveSubsystem extends SubsystemBase
     });
   }
 
-    /**
-     * @return the PID output to rotate toward the best AprilTag target
-     * @param altRotation rotation speed when no target is detected
-     */
-    public double visionTargetPIDCalc(VisionSubsystem vision, double altRotation, boolean visionMode) {
-      boolean target = vision.hasTarget();
-      double yaw = vision.getYaw();
+  /**
+  * @return the PID output to rotate toward the best AprilTag target
+  * @param altRotation rotation speed when no target is detected
+  */
+  public double visionTargetPIDCalc(VisionSubsystem vision, double altRotation, boolean visionMode) {
+    boolean target = vision.hasTarget();
+    double yaw = vision.getSpeakerYaw();
 
-      if(target & visionMode) {
-          return rotPidController.calculate(yaw);
-      } else {
-          return altRotation;
-      }
+    if(target & visionMode) {
+        return rotPidController.calculate(yaw);
+    } else {
+        return altRotation;
+    }
   }
 
   public Command getAutonomousCommand(String pathName)
@@ -459,27 +457,27 @@ public class SwerveSubsystem extends SubsystemBase
     Shuffleboard.getTab("Teleoperated").addBoolean("Target In Range", () -> visionSubsystem.hasTarget()); // True/False display for if the camera can see a April0Tag
     Shuffleboard.getTab("swerve").add("Gyro Reset", zeroGyroCmd());
     Shuffleboard.getTab("Teleoperated").addBoolean("Target Lock", () ->
-      (((visionSubsystem.getYaw() <= VisionConstants.TARGET_LOCK_RANGE) & (visionSubsystem.getYaw() >= -VisionConstants.TARGET_LOCK_RANGE)) && visionSubsystem.hasTarget())); // Show if the robot is aimed at the target within set range from Constrants
-    Shuffleboard.getTab("Teleoperated").addDouble("Vision YAW", () -> visionSubsystem.getYaw()); // Display location of one April Tag releative to the camera
+      (((visionSubsystem.getSpeakerYaw() <= VisionConstants.TARGET_LOCK_RANGE) & (visionSubsystem.getSpeakerYaw() >= -VisionConstants.TARGET_LOCK_RANGE)) && visionSubsystem.hasTarget())); // Show if the robot is aimed at the target within set range from Constrants
+    Shuffleboard.getTab("Teleoperated").addDouble("Vision YAW", () -> visionSubsystem.getSpeakerYaw()); // Display location of one April Tag releative to the camera
     
     Shuffleboard.getTab("swerve").add("Swerve Visualizer - actual", new Sendable() { // Add a visual for what the swerve subsystem is currently doing 
 
         @Override
-        public void initSendable(SendableBuilder builder) {
+        public void initSendable(SendableBuilder actual_builder) {
             //Set widget type to swerve
-            builder.setSmartDashboardType("SwerveDrive");
+            actual_builder.setSmartDashboardType("SwerveDrive");
 
             //Wheel angles for Elastic
-            builder.addDoubleProperty("Front Left Angle", () ->  swerveDrive.getModulePositions()[0].angle.getDegrees(), null);
-            builder.addDoubleProperty("Front Right Angle", () ->  swerveDrive.getModulePositions()[1].angle.getDegrees(), null);
-            builder.addDoubleProperty("Back Left Angle", () ->  swerveDrive.getModulePositions()[2].angle.getDegrees(), null);
-            builder.addDoubleProperty("Back Right Angle", () ->  swerveDrive.getModulePositions()[3].angle.getDegrees(), null);
+            actual_builder.addDoubleProperty("Front Left Angle", () ->  swerveDrive.getModulePositions()[0].angle.getDegrees(), null);
+            actual_builder.addDoubleProperty("Front Right Angle", () ->  swerveDrive.getModulePositions()[1].angle.getDegrees(), null);
+            actual_builder.addDoubleProperty("Back Left Angle", () ->  swerveDrive.getModulePositions()[2].angle.getDegrees(), null);
+            actual_builder.addDoubleProperty("Back Right Angle", () ->  swerveDrive.getModulePositions()[3].angle.getDegrees(), null);
  
             //Wheel speeds for Elastic
-            builder.addDoubleProperty("Front Left Velocity", () -> SwerveDriveTelemetry.measuredStates[1], null);
-            builder.addDoubleProperty("Front Right Velocity", () -> SwerveDriveTelemetry.measuredStates[3], null);
-            builder.addDoubleProperty("Back Left Velocity", () -> SwerveDriveTelemetry.measuredStates[5], null);
-            builder.addDoubleProperty("Back Right Velocity", () -> SwerveDriveTelemetry.measuredStates[7], null);
+            actual_builder.addDoubleProperty("Front Left Velocity", () -> SwerveDriveTelemetry.measuredStates[1], null);
+            actual_builder.addDoubleProperty("Front Right Velocity", () -> SwerveDriveTelemetry.measuredStates[3], null);
+            actual_builder.addDoubleProperty("Back Left Velocity", () -> SwerveDriveTelemetry.measuredStates[5], null);
+            actual_builder.addDoubleProperty("Back Right Velocity", () -> SwerveDriveTelemetry.measuredStates[7], null);
 
             //Adds rotation to the widget - Comment out to stop, fourm said it might cause issues
             //builder.addDoubleProperty("Robot Angle", () -> gyro.getAngle(), null);
@@ -489,23 +487,23 @@ public class SwerveSubsystem extends SubsystemBase
     Shuffleboard.getTab("swerve").add("Swerve Visualizer - desired", new Sendable() { // Add a visual for what the swerve subsystem should be doing
 
         @Override
-        public void initSendable(SendableBuilder builder) {
+        public void initSendable(SendableBuilder desired_builder) {
             //Set widget type to swerve
-            builder.setSmartDashboardType("SwerveDrive");
+            desired_builder.setSmartDashboardType("SwerveDrive");
 
             //swerveDrive.get
 
             //Wheel angles for Elastic
-            builder.addDoubleProperty("Front Left Angle", () ->  SwerveDriveTelemetry.desiredStates[0], null);
-            builder.addDoubleProperty("Front Right Angle", () ->  SwerveDriveTelemetry.desiredStates[2], null);
-            builder.addDoubleProperty("Back Left Angle", () ->  SwerveDriveTelemetry.desiredStates[4], null);
-            builder.addDoubleProperty("Back Right Angle", () ->  SwerveDriveTelemetry.desiredStates[6], null);
+            desired_builder.addDoubleProperty("Front Left Angle", () ->  SwerveDriveTelemetry.desiredStates[0], null);
+            desired_builder.addDoubleProperty("Front Right Angle", () ->  SwerveDriveTelemetry.desiredStates[2], null);
+            desired_builder.addDoubleProperty("Back Left Angle", () ->  SwerveDriveTelemetry.desiredStates[4], null);
+            desired_builder.addDoubleProperty("Back Right Angle", () ->  SwerveDriveTelemetry.desiredStates[6], null);
  
             //Wheel speeds for Elastic
-            builder.addDoubleProperty("Front Left Velocity", () -> SwerveDriveTelemetry.desiredStates[1], null);
-            builder.addDoubleProperty("Front Right Velocity", () -> SwerveDriveTelemetry.measuredStates[3], null);
-            builder.addDoubleProperty("Back Left Velocity", () -> SwerveDriveTelemetry.measuredStates[5], null);
-            builder.addDoubleProperty("Back Right Velocity", () -> SwerveDriveTelemetry.measuredStates[7], null);
+            desired_builder.addDoubleProperty("Front Left Velocity", () -> SwerveDriveTelemetry.desiredStates[1], null);
+            desired_builder.addDoubleProperty("Front Right Velocity", () -> SwerveDriveTelemetry.measuredStates[3], null);
+            desired_builder.addDoubleProperty("Back Left Velocity", () -> SwerveDriveTelemetry.measuredStates[5], null);
+            desired_builder.addDoubleProperty("Back Right Velocity", () -> SwerveDriveTelemetry.measuredStates[7], null);
 
             //Adds rotation to the widget - Comment out to stop, fourm said it might cause issues
             //builder.addDoubleProperty("Robot Angle", () -> gyro.getAngle(), null);

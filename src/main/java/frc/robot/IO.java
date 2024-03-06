@@ -8,8 +8,8 @@ import frc.robot.Constants.IOConstants;
 /** Class that "hides" the button bindings */
 public final class IO {
 
-    public static final Joystick driver = new Joystick(IOConstants.LEFT_JOYSTICK_PORT);
-    public static final Joystick rotation = new Joystick(IOConstants.RIGHT_JOYSTICK_PORT);
+    public static final Joystick driver = new Joystick(IOConstants.DRIVE_JOYSTICK_PORT);
+    public static final Joystick rotation = new Joystick(IOConstants.ROTATION_JOYSTICK_PORT);
     public static final XboxController xboxController = new XboxController(IOConstants.MANIPULATOR_XBOX_PORT);
     public static final Box box = new Box(4);
 

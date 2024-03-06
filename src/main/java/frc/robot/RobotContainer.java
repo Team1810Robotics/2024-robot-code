@@ -14,10 +14,10 @@ import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.Swerve;
 import frc.robot.commands.OmniDrive;
-import frc.robot.commands.swervedrive.TeleopDrive;
-import frc.robot.commands.swervedrive.TeleopDriveSpeed;
+import frc.robot.commands.TeleopDrive;
+import frc.robot.commands.TeleopDriveSpeed;
+import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -25,10 +25,9 @@ public class RobotContainer{
 
   public final static SwerveSubsystem drivebase = new SwerveSubsystem(Swerve.directory); // All reference to the swervedrive should use this instance. AKA: RobotContainer.drivebase.action... instead of making a new instance 
   
-  public static CommandJoystick driver = new CommandJoystick(0);
-  public static CommandJoystick rotationController = new CommandJoystick(1);
+  public static CommandJoystick driver = new CommandJoystick(IOConstants.DRIVE_JOYSTICK_PORT);
+  public static CommandJoystick rotationController = new CommandJoystick(IOConstants.ROTATION_JOYSTICK_PORT);
 
-  CommandJoystick driverController = new CommandJoystick(1);
   XboxController joshBox = new XboxController(3);
 
   VisionSubsystem visionSubsystem = new VisionSubsystem(); //Commenting out did not fix overrun
@@ -37,6 +36,7 @@ public class RobotContainer{
   public SendableChooser<Command> driveChooser = new SendableChooser<>();
   
   public static GenericEntry dualDrive;
+  public static GenericEntry visionToggle;
 
   Command visionDrive;
   Command teleopDrive;
@@ -50,7 +50,7 @@ public class RobotContainer{
     configureBindings();
 
     ShuffleboardTab Teleop = Shuffleboard.getTab("Teleoperated");
-    dualDrive = Teleop.add("Dual Joystick Mode", true).getEntry();
+    dualDrive = Teleop.add("Dual Joystick Mode", true).getEntry(); // Setting for Omni Drive Command
 
     /**Speed Control - Drive on one joystick */
     speedDriveTest = new TeleopDriveSpeed(
@@ -91,7 +91,7 @@ public class RobotContainer{
       () -> driver.getX(),
       () -> driver.getThrottle(),
       () -> rotationController.getThrottle(),
-      () -> dualDrive.getBoolean(false),
+      () -> dualDrive.getBoolean(true),
       visionSubsystem
     );
 
