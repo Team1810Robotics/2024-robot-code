@@ -86,19 +86,22 @@ public class RobotContainer{
       () -> MathUtil.applyDeadband(rotationController.getX(), IOConstants.DEADBAND)
     );
 
-    Command OmniDrive = new OmniDrive(
-      () -> driver.getY(),
-      () -> driver.getX(),
-      () -> driver.getThrottle(),
+    Command omniDrive = new OmniDrive(
+      drivebase,
+      () -> MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
+      () -> MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),
+      () -> 1/* driver.getThrottle() */,
       () -> rotationController.getThrottle(),
       () -> dualDrive.getBoolean(true),
+      driver,
+      rotationController,
       visionSubsystem
     );
 
     /**Test - Used to stop drive form moving */
     testDrive = new TeleopDrive(drivebase, () -> 0, () -> 0, () -> 0);
 
-    drivebase.setDefaultCommand(OmniDrive);
+    drivebase.setDefaultCommand(omniDrive);
 
     autoChooser = AutoBuilder.buildAutoChooser();
     Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);

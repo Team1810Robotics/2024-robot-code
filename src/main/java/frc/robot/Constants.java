@@ -35,13 +35,23 @@ public final class Constants
         public static final double maxVelocity = 4.5; //Neo L2 max speed - I think
         public static final double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75, 1024);
         public static final double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(12.8, 4096);
+
+        public static final double FL_CANCODER_OFFSET = 306.738;
+        public static final double FR_CANCODER_OFFSET = 13.738;
+        public static final double BL_CANCODER_OFFSET = 184.658;
+        public static final double BR_CANCODER_OFFSET = 141.064;
+
+        public static final int FL_CANCODER_ID = 12;
+        public static final int FR_CANCODER_ID = 11;
+        public static final int BL_CANCODER_ID = 10;
+        public static final int BR_CANCODER_ID = 9;
     }
 
     public static final class VisionConstants {
       public static Transform3d CAMERA_OFFSET = new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0,0,0));
 
-      //public static final String TARGET_CAMERA = "Arducam_OV9281_USB_Camera";
-      public static final String TARGET_CAMERA = "USB_2.0_Camera";
+      public static final String TARGET_CAMERA = "Arducam_OV9281_USB_Camera";
+      //public static final String TARGET_CAMERA = "USB_2.0_Camera";
 
       //How far off can the Robot Yaw be from the Vision Yaw
       //Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go

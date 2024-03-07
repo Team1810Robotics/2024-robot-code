@@ -106,13 +106,13 @@ public class VisionSubsystem extends SubsystemBase {
                 }
             }
             if ((result.getTargets().size() == 1) && ((speakerTargetID != 4) && (speakerTargetID != 7))) {
-                System.out.println("Falling back to best target");
+                //System.out.println("Falling back to best target");
                 speakerYaw = result.getBestTarget().getYaw();
             }
         } 
         if (hasTarget() == false) {
             speakerYaw = 0.0;
-            System.out.println("No Target");
+            //System.out.println("No Target");
         }
         return speakerYaw;
     }

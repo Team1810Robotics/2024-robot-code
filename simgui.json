@@ -60,6 +60,10 @@
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/Pigeon 2 [13]": "Gyro",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/Shuffleboard/Autonomous/Auto Chooser": "String Chooser",
+      "/Shuffleboard/Teleoperated/Look at AprilTag": "Command",
+      "/Shuffleboard/Teleoperated/Vision Rotation PID": "PIDController",
+      "/Shuffleboard/swerve/Gyro Reset": "Command",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Pigeon 2 (v6) [13]": "Gyro",
       "/SmartDashboard/Pigeon 2 [13]": "Gyro",
@@ -112,5 +116,8 @@
   },
   "NetworkTables Info": {
     "visible": true
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }
