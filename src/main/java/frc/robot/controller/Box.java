@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.controller;
 
 import edu.wpi.first.wpilibj.GenericHID;
 
@@ -10,22 +10,24 @@ public class Box extends GenericHID {
 
     public enum Button {
         // Face Arcade Buttons
-        climb(2),
-        low(3),
-        autoTarget(4),
-        trimUp(5),
-        trimDown(6),
+        travelPos(2),
+        climbPos(3),
+        intakePos(4),
 
         // joystick
         in(9),
-        shoot(10),
-        unused(11),
+        up(11),
+        down(10),
         out(12);
 
-        public final int value;
+        private final int value;
 
         Button(int value) {
             this.value = value;
+        }
+
+        public int get() {
+            return value;
         }
     }
 }

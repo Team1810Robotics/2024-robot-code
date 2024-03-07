@@ -163,10 +163,12 @@ public final class Constants {
         public static final int LEFT_MOTOR_ID = 19;
         public static final int RIGHT_MOTOR_ID = 20;
 
-        public static final int LEFT_TOP_LS = 0;
-        public static final int LEFT_BOTTOM_LS = 0;
-        public static final int RIGHT_TOP_LS = 0;
-        public static final int RIGHT_BOTTOM_LS = 0;
+        public static final int LEFT_TOP_LS = 1;
+        public static final int LEFT_BOTTOM_LS = 2;
+        public static final int RIGHT_TOP_LS = 3;
+        public static final int RIGHT_BOTTOM_LS = 4;
+
+        public static final double CLIMB_SPEED = 0.5;
     }
 
     public static final class TrapConstants {

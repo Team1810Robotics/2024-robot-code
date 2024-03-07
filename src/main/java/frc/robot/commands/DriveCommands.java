@@ -1,6 +1,6 @@
 package frc.robot.commands;
 
-import static frc.robot.IO.*;
+import static frc.robot.controller.IO.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
