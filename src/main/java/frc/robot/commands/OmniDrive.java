@@ -1,10 +1,10 @@
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.Constants.IOConstants;
@@ -13,65 +13,76 @@ import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import swervelib.SwerveController;
 
-public class OmniDrive extends Command {
+@SuppressWarnings("unused")
+public class OmniDrive extends Command{
+    private final SwerveSubsystem drivetrain;
+    private final DoubleSupplier driveSpeed;
+    private final DoubleSupplier rotationSpeed;
+    private final DoubleSupplier dX;
+    private final DoubleSupplier dY;
+    private final DoubleSupplier dZ;
+    private final DoubleSupplier rY;
+    private final SwerveController controller;
 
-  private final SwerveSubsystem driveSubsystem;
-  private CommandJoystick driver;
-  private CommandJoystick rotation;
-  private Boolean driveMode = true;
-  private BooleanSupplier dualJoystick;
-  private DoubleSupplier yAxis;
-  private DoubleSupplier xAxis;
-  private DoubleSupplier driveSpeed;
-  private DoubleSupplier rotationSpeed;
+    private CommandJoystick driver;
+    private CommandJoystick rotation;
 
-  private final SwerveController controller;
-  private VisionSubsystem visionSubsystem;
+    private GenericEntry dualJoystick;
+    private VisionSubsystem visionSubsystem;
 
-  public OmniDrive(SwerveSubsystem driveSubsystem, DoubleSupplier yAxis, DoubleSupplier xAxis, DoubleSupplier driveSpeed, DoubleSupplier rotationSpeed, BooleanSupplier dualJoystick, CommandJoystick rotation, CommandJoystick driver, VisionSubsystem visionSubsystem) {
-    this.driveSubsystem = driveSubsystem;
-    this.yAxis = yAxis;
-    this.xAxis = xAxis;
-    this.driveSpeed = driveSpeed;
-    this.rotationSpeed = rotationSpeed;
-    this.dualJoystick = dualJoystick;
-    this.rotation = rotation;
-    this.driver = driver;
-    this.visionSubsystem = visionSubsystem;
-    this.controller = driveSubsystem.getSwerveController();
-    
-    addRequirements(driveSubsystem);
-  }
+    public OmniDrive(GenericEntry dualJoystick, VisionSubsystem visionSubsystem, CommandJoystick rotation, CommandJoystick driver, SwerveSubsystem drivetrain, DoubleSupplier driveSpeed, DoubleSupplier rotationSpeed, DoubleSupplier dX, DoubleSupplier dY, DoubleSupplier dZ, DoubleSupplier rY) {
+        this.drivetrain = drivetrain;
+        this.driveSpeed = driveSpeed;
+        this.rotationSpeed = rotationSpeed;
+        this.dualJoystick = dualJoystick;
+        this.rotation = rotation;
+        this.driver = driver;
+        this.dX = dX;
+        this.dY = dY;
+        this.dZ = dZ;
+        this.rY = rY;
+        this.controller = drivetrain.getSwerveController();
+        this.visionSubsystem = visionSubsystem;
 
-  @Override
-  public void execute() {
-    double speedMult = (driveSpeed.getAsDouble() + 1) / 2;
-    double rotationMult = (rotationSpeed.getAsDouble() + 1) / 2;
-    double xVelocity = xAxis.getAsDouble() * speedMult;
-    double yVelocity = yAxis.getAsDouble() * rotationMult;
-    double angVelocity;
-
-    if (dualJoystick.getAsBoolean() == true){
-      angVelocity = driveSubsystem.visionTargetPIDCalc(
-                                        visionSubsystem,
-                                        MathUtil.applyDeadband(
-                                                rotation.getY(), IOConstants.DEADBAND),
-                                        driver.button(1).getAsBoolean());
-    } else{
-      angVelocity = driveSubsystem.visionTargetPIDCalc(
-                                        visionSubsystem,
-                                        MathUtil.applyDeadband(
-                                                driver.getZ(), IOConstants.DEADBAND),
-                                        driver.button(1).getAsBoolean());
-
-    System.out.println(rotationMult + "    " + rotationMult + "     " + xVelocity + "     " + yVelocity + "    ");
-
-    driveSubsystem.drive(
-                new Translation2d(
-                        xVelocity * Swerve.maxVelocity,
-                        yVelocity * Swerve.maxVelocity),
-                angVelocity * controller.config.maxAngularVelocity,
-                driveMode);
+        addRequirements(drivetrain);
     }
-  }
+
+    @Override
+    public void initialize() {}
+
+    @Override
+    public void execute() {
+        double speedMult = (driveSpeed.getAsDouble() + 1) / 2;  // Make axis value 0 to 1 instead of -1 to 1
+        double rotationMult = (rotationSpeed.getAsDouble() + 1) / 2;
+        double xVelocity = dX.getAsDouble() * speedMult;
+        double yVelocity = dY.getAsDouble() * speedMult;
+        double driverRotation = dZ.getAsDouble();
+        double rotationRotation = rY.getAsDouble();
+        double angVelocity;
+
+    if (dualJoystick.getBoolean(true) == true){
+        angVelocity = drivetrain.visionTargetPIDCalc(
+                                        visionSubsystem,
+                                        MathUtil.applyDeadband(
+                                                rotationRotation, IOConstants.DEADBAND),
+                                        driver.button(1).getAsBoolean());
+    }   else{
+            angVelocity = drivetrain.visionTargetPIDCalc(
+                                        visionSubsystem,
+                                        MathUtil.applyDeadband(
+                                                driverRotation, IOConstants.DEADBAND),
+                                        driver.button(1).getAsBoolean());
+
+        }
+        drivetrain.drive(new Translation2d(xVelocity * Swerve.maxVelocity, yVelocity * Swerve.maxVelocity),
+                         (angVelocity * controller.config.maxAngularVelocity) * rotationMult,
+                         true);
+    }
+
+    @Override
+    public void end(boolean interrupted) {}
+
+    @Override
+    public boolean isFinished() {return false;}
+
 }

@@ -77,6 +77,16 @@
           "visible": true
         }
       },
+      "/Shuffleboard/Autonomous/Auto Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Teleoperated/Vision Rotation PID": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "XModules": {
           "arrowColor": [
@@ -115,6 +125,18 @@
     }
   },
   "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
+    "Connections": {
+      "open": true
+    },
+    "DartClient_53712889@1": {
+      "open": true
+    },
+    "Server": {
+      "open": true
+    },
     "visible": true
   },
   "NetworkTables View": {

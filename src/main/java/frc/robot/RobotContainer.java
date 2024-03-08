@@ -15,7 +15,6 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.Swerve;
 import frc.robot.commands.OmniDrive;
 import frc.robot.commands.TeleopDrive;
-import frc.robot.commands.TeleopDriveSpeed;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
@@ -52,16 +51,6 @@ public class RobotContainer{
     ShuffleboardTab Teleop = Shuffleboard.getTab("Teleoperated");
     dualDrive = Teleop.add("Dual Joystick Mode", true).getEntry(); // Setting for Omni Drive Command
 
-    /**Speed Control - Drive on one joystick */
-    speedDriveTest = new TeleopDriveSpeed(
-       drivebase,
-       () -> driver.getRawAxis(IOConstants.driveSpeedModAxis),
-       () -> rotationController.getRawAxis(IOConstants.angleSpeedModAxis),
-       () -> MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-       () -> MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),   
-       () -> MathUtil.applyDeadband(driver.getRawAxis(IOConstants.driveOmegaAxis), IOConstants.DEADBAND)
-    );
-
     /**Drive with 2 joysticks, automatically rotating toward a target AprilTag */
     visionDrive = new TeleopDrive(
       drivebase,
@@ -86,22 +75,21 @@ public class RobotContainer{
       () -> MathUtil.applyDeadband(rotationController.getX(), IOConstants.DEADBAND)
     );
 
-    Command omniDrive = new OmniDrive(
-      drivebase,
-      () -> MathUtil.applyDeadband(driver.getY(), OperatorConstants.LEFT_Y_DEADBAND),
-      () -> MathUtil.applyDeadband(driver.getX(), OperatorConstants.LEFT_X_DEADBAND),
-      () -> 1/* driver.getThrottle() */,
-      () -> rotationController.getThrottle(),
-      () -> dualDrive.getBoolean(true),
-      driver,
+    Command omniDriveCLN = new OmniDrive(
+      dualDrive,
+      visionSubsystem,
       rotationController,
-      visionSubsystem
+      driver,
+      drivebase,
+      () -> driver.getThrottle(),
+      () -> rotationController.getThrottle(),
+      () -> driver.getX(),
+      () -> driver.getY(),
+      () -> driver.getZ(),
+      () -> rotationController.getY()
     );
 
-    /**Test - Used to stop drive form moving */
-    testDrive = new TeleopDrive(drivebase, () -> 0, () -> 0, () -> 0);
-
-    drivebase.setDefaultCommand(omniDrive);
+    drivebase.setDefaultCommand(omniDriveCLN);
 
     autoChooser = AutoBuilder.buildAutoChooser();
     Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
