@@ -46,14 +46,14 @@ public class DriveCommands {
                                         visionSubsystem,
                                         -MathUtil.applyDeadband(
                                                 rotation.getZ(), IOConstants.DEADBAND)),
-                        () -> !driver.getRawButton(IOConstants.DRIVE_MODE_BUTTON));
+                        () -> driver.getRawButton(IOConstants.DRIVE_MODE_BUTTON));
 
         this.teleopDrive =
                 new TeleopDrive(
                         driveSubsystem,
-                        () -> -MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
-                        () -> -MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
-                        () -> -MathUtil.applyDeadband(driver.getZ(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getZ(), IOConstants.DEADBAND),
                         () -> !driver.getRawButton(IOConstants.DRIVE_MODE_BUTTON));
 
         this.teleopDrive_twoJoy =

@@ -33,19 +33,6 @@ public class ClimbCommand extends Command {
     }
 
     @Override
-    public boolean isFinished() {
-        if (direction == ClimbDirection.climbUp) {
-            return climbSubsystem.getTopLS();
-        } else if (direction == ClimbDirection.climbDown) {
-            return climbSubsystem.getBottomLS();
-        } else if (direction == ClimbDirection.climbOff) {
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
     public void end(boolean interrupted) {
         climbSubsystem.stop();
     }

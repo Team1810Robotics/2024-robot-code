@@ -161,7 +161,7 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder {
         }
 
         double offset = 0.0;
-        switch (encoder.getDeviceID()) { // TODO Test if works - One thing I changed
+        switch (encoder.getDeviceID()) {
             case SwerveConstants.FL_CANCODER_ID:
                 offset = SwerveConstants.FL_CANCODER_OFFSET;
                 break;
@@ -175,21 +175,6 @@ public class CANCoderSwerve extends SwerveAbsoluteEncoder {
                 offset = SwerveConstants.BR_CANCODER_OFFSET;
                 break;
         }
-        /* double offset = 0.0;
-        switch(encoder.getDeviceID()){
-          case 9:
-            offset = 283;
-            break;
-          case 10:
-            offset = 211;
-            break;
-          case 11:
-            offset = 151;
-            break;
-          case 12:
-            offset = 259;
-            break;
-        } */
 
         double ret_angle = angle.getValue() * 360 - offset;
         return ret_angle % 360;

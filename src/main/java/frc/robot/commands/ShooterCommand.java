@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -9,6 +10,7 @@ public class ShooterCommand extends Command {
 
     private final ShooterSubsystem shooter;
     private final IntakeSubsystem intake;
+    private double startTime;
 
     public ShooterCommand(ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem) {
         this.shooter = shooterSubsystem;
@@ -18,14 +20,21 @@ public class ShooterCommand extends Command {
     }
 
     @Override
+    public void initialize() {
+        startTime = Timer.getFPGATimestamp();
+    }
+
+    @Override
     public void execute() {
-        intake.setSpeed(0.75);
-        shooter.setSetpoint(ShooterConstants.SET_SPEED);
+        shooter.setSpeed(ShooterConstants.SHOOT_SPEED);
+
+        double currentTime = Timer.getFPGATimestamp();
+        if (currentTime - startTime > ShooterConstants.SPIN_UP_TIME) intake.setSpeed(1.0);
     }
 
     @Override
     public void end(boolean interupted) {
         intake.stop();
-        shooter.setSetpoint(ShooterConstants.HALF_SET_SPEED);
+        shooter.stop();
     }
 }

@@ -48,15 +48,15 @@ public final class Constants {
         public static final double angleConversionFactor =
                 SwerveMath.calculateDegreesPerSteeringRotation(12.8, 4096);
 
-        public static final double FL_CANCODER_OFFSET = 260.771;
-        public static final double FR_CANCODER_OFFSET = 113.467;
-        public static final double BL_CANCODER_OFFSET = 155.127;
-        public static final double BR_CANCODER_OFFSET = 283.008;
+        public static final double FL_CANCODER_OFFSET = 282.129;
+        public static final double FR_CANCODER_OFFSET = 224.648;
+        public static final double BL_CANCODER_OFFSET = 65.3906;
+        public static final double BR_CANCODER_OFFSET = 260.684;
 
-        public static final int FL_CANCODER_ID = 12;
-        public static final int FR_CANCODER_ID = 11;
-        public static final int BL_CANCODER_ID = 10;
-        public static final int BR_CANCODER_ID = 9;
+        public static final int FL_CANCODER_ID = 9;
+        public static final int FR_CANCODER_ID = 10;
+        public static final int BL_CANCODER_ID = 11;
+        public static final int BR_CANCODER_ID = 12;
 
         public static final int WHEEL_LOCK_TIME = 10; // in seconds
 
@@ -108,7 +108,7 @@ public final class Constants {
         public static final int MOTOR_B_ID = 18;
 
         public static final int CANCODER_ID = 23;
-        public static final double CANCODER_OFFSET = 0.0; // degrees
+        public static final double CANCODER_OFFSET = -245.5664062; // degrees
 
         public static final double INITIAL_POSITION = 0.0;
         public static final double INTAKE_POSITION = 0.0;
@@ -136,20 +136,8 @@ public final class Constants {
         public static final int TOP_MOTOR_ID = 14;
         public static final int BOTTOM_MOTOR_ID = 15;
 
-        public static final class Top {
-            public static final double kP = 0.075;
-            public static final double kI = 0.002;
-            public static final double kD = 0.001;
-        }
-
-        public static final class Bottom {
-            public static final double kP = 0.04;
-            public static final double kI = 0.01;
-            public static final double kD = 0.0;
-        }
-
-        public static final double SET_SPEED = 90.0; // rotations per sec
-        public static final double HALF_SET_SPEED = SET_SPEED / 2.0;
+        public static final double SHOOT_SPEED = 12.0; // Volts
+        public static final double SPIN_UP_TIME = 2; // seconds
     }
 
     public static final class ExtenderConstants {
@@ -168,7 +156,7 @@ public final class Constants {
         public static final int RIGHT_TOP_LS = 3;
         public static final int RIGHT_BOTTOM_LS = 4;
 
-        public static final double CLIMB_SPEED = 0.5;
+        public static final double CLIMB_SPEED = 0.75;
     }
 
     public static final class TrapConstants {

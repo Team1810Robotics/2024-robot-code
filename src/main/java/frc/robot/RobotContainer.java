@@ -11,17 +11,19 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ShooterCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.ClimbSubsystem.ClimbDirection;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
 
     private final ArmSubsystem armSubsystem = new ArmSubsystem();
-    // private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+    private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
     private final DriveSubsystem driveSubsystem = new DriveSubsystem(SwerveConstants.DIRECTORY);
@@ -61,7 +63,7 @@ public class RobotContainer {
         box_outtake.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
         box_climbUp.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbUp));
         box_climbDown.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbDown));
-        // box_shoot.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem));
+        box_intakePos.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem));
     }
 
     public Command getAutonomousCommand() {

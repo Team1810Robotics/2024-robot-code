@@ -1,7 +1,6 @@
 package frc.robot.controller;
 
 import static edu.wpi.first.wpilibj.XboxController.Button.*;
-import static frc.robot.Constants.IOConstants;
 import static frc.robot.controller.Box.Button.*;
 
 import edu.wpi.first.wpilibj.Joystick;

@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 
 public class ArmSubsystem extends PIDSubsystem {
@@ -25,6 +26,8 @@ public class ArmSubsystem extends PIDSubsystem {
         motor2.follow(armMotor);
 
         setSetpoint(INITIAL_POSITION);
+
+        Shuffleboard.getTab("arm").addNumber("canCoder pos", this::getMeasurement);
     }
 
     @Override
