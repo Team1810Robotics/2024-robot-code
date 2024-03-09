@@ -132,10 +132,14 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public double visionTargetPIDCalc(VisionSubsystem vision, double altRotation) {
         boolean target = vision.hasTarget();
-        double yaw = vision.getYaw();
+        var yaw = vision.getYaw();
+
+        if (yaw.isEmpty()) {
+            return altRotation;
+        }
 
         if (target) {
-            return rotController.calculate(yaw);
+            return rotController.calculate(yaw.get());
         }
         return altRotation;
     }

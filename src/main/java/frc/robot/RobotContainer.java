@@ -22,12 +22,12 @@ import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
 
-    private final ArmSubsystem armSubsystem = new ArmSubsystem();
-    private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-    private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-    private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
-    private final DriveSubsystem driveSubsystem = new DriveSubsystem(SwerveConstants.DIRECTORY);
-    private final VisionSubsystem visionSubsystem = new VisionSubsystem(driveSubsystem);
+    public final ArmSubsystem armSubsystem = new ArmSubsystem();
+    public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+    public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    public final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
+    public final DriveSubsystem driveSubsystem = new DriveSubsystem(SwerveConstants.DIRECTORY);
+    public final VisionSubsystem visionSubsystem = new VisionSubsystem(driveSubsystem);
 
     private final DriveCommands drive = new DriveCommands(driveSubsystem, visionSubsystem);
 
