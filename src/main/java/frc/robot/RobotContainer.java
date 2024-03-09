@@ -3,6 +3,7 @@ package frc.robot;
 import static frc.robot.controller.IO.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -71,9 +72,9 @@ public class RobotContainer {
                         () -> m_rotationController.getThrottle(),
                         driveSubsystem,
                         m_driver,
-                        () -> m_driver.getY(),
-                        () -> m_driver.getX(),
-                        () -> m_rotationController.getX(),
+                        () -> MathUtil.applyDeadband(m_driver.getY(), 0.05),
+                        () -> MathUtil.applyDeadband(m_driver.getY(), 0.05),
+                        () -> MathUtil.applyDeadband(m_rotationController.getX(), 0.05),
                         () -> true);
 
         driveSubsystem.setDefaultCommand(visDrive_two);
