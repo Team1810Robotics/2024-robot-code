@@ -48,10 +48,10 @@ public final class Constants {
         public static final double angleConversionFactor =
                 SwerveMath.calculateDegreesPerSteeringRotation(12.8, 4096);
 
-        public static final double FL_CANCODER_OFFSET = 282.129;
-        public static final double FR_CANCODER_OFFSET = 224.648;
-        public static final double BL_CANCODER_OFFSET = 65.3906;
-        public static final double BR_CANCODER_OFFSET = 260.684;
+        public static final double FL_CANCODER_OFFSET = 283.271;
+        public static final double FR_CANCODER_OFFSET = 34.5410;
+        public static final double BL_CANCODER_OFFSET = 282.480;
+        public static final double BR_CANCODER_OFFSET = 261.738;
 
         public static final int FL_CANCODER_ID = 9;
         public static final int FR_CANCODER_ID = 10;
@@ -115,13 +115,14 @@ public final class Constants {
         public static final double CLIMB_POSITION = 0.0;
 
         // TODO: tune values
-        public static final double kP = 0.0;
+        public static final double kP = 3.596;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
-        public static final double ks = 0.0;
-        public static final double kg = 0.0;
-        public static final double kv = 0.0;
+        public static final double ks = 13.033;
+        public static final double kg = 6.4877;
+        public static final double kv = 7.7311;
+        public static final double ka = 31.489;
 
         public static final double ARM_TOLERANCE = 0.1; // FIXME
         public static final double TICKS_TO_DEG_CONVERSION = 360.0;
