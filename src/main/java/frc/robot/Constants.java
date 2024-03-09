@@ -80,7 +80,7 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        public static final String CAMERA_NAME = "USB_Camera";
+        public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
 
         public static final double CAMERA_HEIGHT = 0.0;
         public static final double APRILTAG_RED_SHOOTER_HEIGHT = 0.0;

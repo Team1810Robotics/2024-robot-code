@@ -145,7 +145,7 @@ public class DriveSubsystem extends SubsystemBase {
     public double visionTargetPIDCalc(
             VisionSubsystem vision, double altRotation, boolean visionMode) {
         boolean target = vision.hasTarget();
-        double yaw = vision.getSpeakerYaw();
+        double yaw = vision.getYaw();
 
         if (target & visionMode) {
             return rotPidController.calculate(yaw);
@@ -444,6 +444,8 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     private void setupShuffleBoard() {
+
+        Shuffleboard.getTab("swerve").add("hehw", rotPidController);
 
         Shuffleboard.getTab("swerve").add("rot", rotController);
         Shuffleboard.getTab("swerve").add("trans", transController);

@@ -31,9 +31,9 @@ public class DriveCommands {
                         driveSubsystem,
                         () -> driver.getThrottle(),
                         () -> rotation.getThrottle(),
-                        () -> -MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
-                        () -> -MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
-                        () -> -MathUtil.applyDeadband(driver.getZ(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getZ(), IOConstants.DEADBAND),
                         () -> !driver.getRawButton(IOConstants.DRIVE_MODE_BUTTON));
 
         this.visionDrive =
@@ -59,9 +59,9 @@ public class DriveCommands {
         this.teleopDrive_twoJoy =
                 new TeleopDrive(
                         driveSubsystem,
-                        () -> -MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
-                        () -> -MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
-                        () -> -MathUtil.applyDeadband(rotation.getZ(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(rotation.getX(), IOConstants.DEADBAND),
                         () -> !driver.getRawButton(IOConstants.DRIVE_MODE_BUTTON));
 
         this.fieldOrientedAngVel =

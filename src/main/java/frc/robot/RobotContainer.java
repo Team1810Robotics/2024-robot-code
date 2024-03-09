@@ -71,15 +71,17 @@ public class RobotContainer {
                         () -> m_rotationController.getThrottle(),
                         driveSubsystem,
                         m_driver,
-                        () -> m_driver.getX(),
                         () -> m_driver.getY(),
+                        () -> m_driver.getX(),
                         () -> m_rotationController.getX(),
                         () -> true);
 
-        driveSubsystem.setDefaultCommand(visDrive);
+        driveSubsystem.setDefaultCommand(visDrive_two);
+        // driveSubsystem.setDefaultCommand(drive.teleopDrive_twoJoy);
 
         autoChooser = AutoBuilder.buildAutoChooser();
         Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
+        Shuffleboard.getTab("vision").addDouble("jish Yaw", visionSubsystem::getYaw);
     }
 
     private void configureBindings() {
@@ -88,7 +90,7 @@ public class RobotContainer {
         driver_button12.whileTrue(new ExtenderCommand(-1, extenderSubsystem));
         driver_button10.whileTrue(new ExtenderCommand(1, extenderSubsystem));
 
-        manipulatorXbox_Y.whileTrue(driveSubsystem.aimAtTarget());
+        driver_button4.whileTrue(driveSubsystem.aimAtTarget());
         rotation_trigger.whileTrue(drive.visionDrive);
 
         box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
