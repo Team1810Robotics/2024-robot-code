@@ -7,14 +7,18 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ExtenderCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ShooterCommand;
+import frc.robot.commands.TeleopDriveVis;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.ClimbSubsystem.ClimbDirection;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ExtenderSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -25,10 +29,14 @@ public class RobotContainer {
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
+    private final ExtenderSubsystem extenderSubsystem = new ExtenderSubsystem();
     private final DriveSubsystem driveSubsystem = new DriveSubsystem(SwerveConstants.DIRECTORY);
-    private final VisionSubsystem visionSubsystem = new VisionSubsystem(driveSubsystem);
+    private final VisionSubsystem visionSubsystem = new VisionSubsystem();
 
     private final DriveCommands drive = new DriveCommands(driveSubsystem, visionSubsystem);
+
+    private final CommandJoystick m_driver = new CommandJoystick(0);
+    private final CommandJoystick m_rotationController = new CommandJoystick(1);
 
     private final SendableChooser<Command> autoChooser;
 
@@ -46,7 +54,29 @@ public class RobotContainer {
         driveChooser.addOption("Speed Mod Test", drive.speedDriveTest);
         Shuffleboard.getTab("Teleoperated").add("Drive Command", driveChooser);
 
-        driveSubsystem.setDefaultCommand(drive.teleopDrive);
+        Command visDrive =
+                new TeleopDriveVis(
+                        () -> -m_driver.getThrottle(),
+                        () -> -m_rotationController.getThrottle(),
+                        driveSubsystem,
+                        m_driver,
+                        () -> m_driver.getX(),
+                        () -> m_driver.getY(),
+                        () -> m_driver.getZ(),
+                        () -> true);
+
+        Command visDrive_two =
+                new TeleopDriveVis(
+                        () -> m_driver.getThrottle(),
+                        () -> m_rotationController.getThrottle(),
+                        driveSubsystem,
+                        m_driver,
+                        () -> m_driver.getX(),
+                        () -> m_driver.getY(),
+                        () -> m_rotationController.getX(),
+                        () -> true);
+
+        driveSubsystem.setDefaultCommand(visDrive);
 
         autoChooser = AutoBuilder.buildAutoChooser();
         Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
@@ -55,7 +85,10 @@ public class RobotContainer {
     private void configureBindings() {
         driver_button9.onTrue(new InstantCommand(driveSubsystem::zeroGyro));
 
-        manipulatorXbox_Y.whileTrue(driveSubsystem.aimAtTarget(visionSubsystem));
+        driver_button12.whileTrue(new ExtenderCommand(-1, extenderSubsystem));
+        driver_button10.whileTrue(new ExtenderCommand(1, extenderSubsystem));
+
+        manipulatorXbox_Y.whileTrue(driveSubsystem.aimAtTarget());
         rotation_trigger.whileTrue(drive.visionDrive);
 
         box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));

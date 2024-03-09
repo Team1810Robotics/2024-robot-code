@@ -96,6 +96,33 @@ public final class Constants {
         // How off can the AprilTag be and still alright
         // Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
         public static final double TARGET_LOCK_RANGE = 2;
+
+        public static Transform3d CAMERA_OFFSET =
+                new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0, 0, 0));
+
+        public static final String TARGET_CAMERA = "Arducam_OV9281_USB_Camera";
+        // public static final String TARGET_CAMERA = "USB_2.0_Camera";
+
+        // How far off can the Robot Yaw be from the Vision Yaw
+        // Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
+        // public static final double TARGET_LOCK_RANGE = 0.5;
+
+        public static final PIDConstants VISION_PID = new PIDConstants(0.15, 0.32, 0.006);
+        public static final double V_Kp = 0.15;
+        public static final double V_Ki = 0.32;
+        public static final double V_Kd = 0.006;
+
+        /**
+         * Sets which targets the vision system will look at Used to only get the right AprilTag
+         * when many are in view
+         *
+         * <p>Currently only has the center speaker tags 4, 7
+         *
+         * <p>Could add Amp tags - 6, 5 Source Tags - 9,10 and 1,2 would probally only want to use
+         * one of the two (1 instead of 1 and 2 for ecah source) Stage 14, 15, 16 and 11, 12, 13
+         * Never want to target 8 and 3
+         */
+        public static final int[] GOOD_TARGETS = {4, 7};
     }
 
     public static final class AutoConstants {
