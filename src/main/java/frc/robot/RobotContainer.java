@@ -73,7 +73,7 @@ public class RobotContainer {
                         driveSubsystem,
                         m_driver,
                         () -> MathUtil.applyDeadband(m_driver.getY(), 0.05),
-                        () -> MathUtil.applyDeadband(m_driver.getY(), 0.05),
+                        () -> MathUtil.applyDeadband(m_driver.getX(), 0.05),
                         () -> MathUtil.applyDeadband(m_rotationController.getX(), 0.05),
                         () -> true);
 
