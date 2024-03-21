@@ -6,6 +6,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.ReplanningConfig;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -23,9 +24,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.VisionConstants;
+import frc.robot.RobotContainer;
 import java.io.File;
-import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
+import java.util.Optional;
+import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveControllerConfiguration;
@@ -34,17 +37,27 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
-public class SwerveSubsystem extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase {
 
     /** Swerve drive object. */
     private final SwerveDrive swerveDrive;
+
+    private final PIDController rotController = new PIDController(0.15, 0.32, 0.006);
+    private final PIDController transController = new PIDController(0, 0, 0);
+
+    PIDController rotPidController =
+            new PIDController(VisionConstants.V_Kp, VisionConstants.V_Ki, VisionConstants.V_Kd);
+
+    public VisionSubsystem visionSubsystem = RobotContainer.visionSubsystem;
+
+    public boolean visHasTarget = false;
 
     /**
      * Initialize {@link SwerveDrive} with the directory provided.
      *
      * @param directory Directory of swerve drive config files.
      */
-    public SwerveSubsystem(File directory) {
+    public DriveSubsystem(File directory) {
 
         // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects
         // being created.
@@ -79,7 +92,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param driveCfg SwerveDriveConfiguration for the swerve.
      * @param controllerCfg Swerve Controller.
      */
-    public SwerveSubsystem(
+    public DriveSubsystem(
             SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
         swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED);
     }
@@ -100,13 +113,8 @@ public class SwerveSubsystem extends SubsystemBase {
                         AutoConstants.ANGLE_PID,
                         // Rotation PID constants
                         4.5,
-                        // Max module speed, in m/s
                         swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
-                        // Drive base radius in meters. Distance from robot center to furthest
-                        // module.
-                        new ReplanningConfig()
-                        // Default path replanning config. See the API for the options here
-                        ),
+                        new ReplanningConfig()),
                 () -> {
                     var alliance = DriverStation.getAlliance();
                     return alliance.isPresent()
@@ -117,18 +125,55 @@ public class SwerveSubsystem extends SubsystemBase {
                 );
     }
 
-    public Command aimAtTarget(PhotonCamera camera) {
+    /** Stops the drivetrain and rotates to face the best target */
+    public Command aimAtTarget() {
         return run(
                 () -> {
-                    PhotonPipelineResult result = camera.getLatestResult();
-                    if (result.hasTargets()) {
+                    if (visionSubsystem.hasTarget()) {
                         drive(
-                                getTargetSpeeds(
-                                        0,
-                                        0,
-                                        Rotation2d.fromDegrees(result.getBestTarget().getYaw())));
+                                new Translation2d(0, 0),
+                                -visionTargetPIDCalc(visionSubsystem, 0, true),
+                                true);
+                    } else {
+                        drive(new Translation2d(0, 0), 0, true);
                     }
                 });
+    }
+
+    /**
+     * @return the PID output to rotate toward the best AprilTag target
+     * @param altRotation rotation speed when no target is detected
+     */
+    public double visionTargetPIDCalc(
+            VisionSubsystem vision, double altRotation, boolean visionMode) {
+        boolean target = vision.hasTarget();
+        Optional<Double> yaw = vision.getYaw();
+
+        if (target && visionMode && yaw.isPresent()) {
+            return rotPidController.calculate(yaw.get());
+        }
+        if ((visionMode == true) && !target) {
+            return altRotation;
+        }
+        return altRotation;
+    }
+
+    /**
+     * @return the PID output to rotate toward the best AprilTag target
+     * @param altRotation rotation speed when no target is detected
+     */
+    public double visionTargetPIDCalc(VisionSubsystem vision, double altRotation) {
+        boolean target = vision.hasTarget();
+        var yaw = vision.getYaw();
+
+        if (yaw.isEmpty()) {
+            return altRotation;
+        }
+
+        if (target) {
+            return rotController.calculate(yaw.get());
+        }
+        return altRotation;
     }
 
     /**
@@ -164,6 +209,26 @@ public class SwerveSubsystem extends SubsystemBase {
                 0.0, // Goal end velocity in meters/sec
                 0.0); // Rotation delay distance in meters. This is how far the robot should travel
         // before attempting to rotate.
+    }
+
+    public Command driveCommand(
+            DoubleSupplier translationX,
+            DoubleSupplier translationY,
+            DoubleSupplier angularRotationX) {
+        return run(
+                () -> {
+                    // Make the robot move
+                    swerveDrive.drive(
+                            new Translation2d(
+                                    Math.pow(translationX.getAsDouble(), 3)
+                                            * swerveDrive.getMaximumVelocity(),
+                                    Math.pow(translationY.getAsDouble(), 3)
+                                            * swerveDrive.getMaximumVelocity()),
+                            Math.pow(angularRotationX.getAsDouble(), 3)
+                                    * swerveDrive.getMaximumAngularVelocity(),
+                            true,
+                            false);
+                });
     }
 
     /**
@@ -385,6 +450,12 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     private void setupShuffleBoard() {
+
+        Shuffleboard.getTab("swerve").add("hehw", rotPidController);
+
+        Shuffleboard.getTab("swerve").add("rot", rotController);
+        Shuffleboard.getTab("swerve").add("trans", transController);
+
         Shuffleboard.getTab("swerve")
                 .addNumber(
                         "FL Cancoder",

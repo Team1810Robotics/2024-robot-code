@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.ShooterConstants.*;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
@@ -8,28 +8,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    CANSparkMax bottomMotor =
-            new CANSparkMax(ShooterConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
-    CANSparkMax topMotor = new CANSparkMax(ShooterConstants.TOP_MOTOR_ID, MotorType.kBrushless);
+    private final CANSparkMax top;
+    private final CANSparkMax bottom;
 
     public ShooterSubsystem() {
-        topMotor.setInverted(true);
+        top = new CANSparkMax(TOP_MOTOR_ID, MotorType.kBrushless);
+        bottom = new CANSparkMax(BOTTOM_MOTOR_ID, MotorType.kBrushless);
+
+        top.setInverted(true);
+        bottom.setInverted(true);
     }
 
-    public void setBottomSpeed(double bottomSpeed) {
-        bottomMotor.set(bottomSpeed);
-    }
-
-    public void setTopSpeed(double topSpeed) {
-        topMotor.set(topSpeed);
-    }
-
-    public void setSpeed(double motorSpeed) {
-        topMotor.set(motorSpeed);
+    public void setSpeed(double volts) {
+        top.setVoltage(volts);
+        bottom.setVoltage(volts);
     }
 
     public void stop() {
-        topMotor.set(0);
-        bottomMotor.set(0);
+        top.stopMotor();
+        bottom.stopMotor();
     }
 }

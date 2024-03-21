@@ -16,6 +16,7 @@ import swervelib.parser.json.PhysicalPropertiesJson;
 import swervelib.parser.json.SwerveDriveJson;
 
 /** Helper class used to parse the JSON directory with specified configuration options. */
+@SuppressWarnings("unused")
 public class SwerveParser {
 
     /** Module number mapped to the JSON name. */
