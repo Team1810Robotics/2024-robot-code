@@ -26,14 +26,13 @@ import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
 
-
     // private final ArmSubsystem armSubsystem = new ArmSubsystem();
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-    private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    public static IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
     private final ExtenderSubsystem extenderSubsystem = new ExtenderSubsystem();
     private final DriveSubsystem driveSubsystem = new DriveSubsystem(SwerveConstants.DIRECTORY);
-    private final VisionSubsystem visionSubsystem = new VisionSubsystem();
+    public static VisionSubsystem visionSubsystem = new VisionSubsystem();
 
     private final DriveCommands drive = new DriveCommands(driveSubsystem, visionSubsystem);
 
@@ -83,7 +82,7 @@ public class RobotContainer {
 
         autoChooser = AutoBuilder.buildAutoChooser();
         Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
-        Shuffleboard.getTab("vision").addDouble("jish Yaw", visionSubsystem::getYaw);
+        // Shuffleboard.getTab("vision").addDouble("jish Yaw", visionSubsystem::getYaw);
     }
 
     private void configureBindings() {

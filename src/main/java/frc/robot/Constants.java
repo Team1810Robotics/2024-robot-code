@@ -165,7 +165,6 @@ public final class Constants {
         public static final int BOTTOM_MOTOR_ID = 15;
         public static final double SHOOT_SPEED = 12.0; // Volts
         public static final double SPIN_UP_TIME = 0.5; // seconds
-
     }
 
     public static final class ExtenderConstants {
@@ -173,9 +172,6 @@ public final class Constants {
         public static final int TOP_LS_PORT = 0; // TODO
         public static final int BOTTOM_LS_PORT = 0; // TODO
     }
-
-    
-
 
     public static final class ClimbConstants {
         // right and left relative to the bot's perspective - forward being shooter side
@@ -188,7 +184,6 @@ public final class Constants {
         public static final int RIGHT_BOTTOM_LS = 5;
         public static final double CLIMB_SPEED = 0.75;
     }
-
 
     public static final class TrapConstants {
         public static final int VICTOR_MOTOR_ID = 0;

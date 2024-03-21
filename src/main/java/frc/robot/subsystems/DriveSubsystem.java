@@ -25,7 +25,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.RobotContainer;
 import java.io.File;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -46,7 +48,7 @@ public class DriveSubsystem extends SubsystemBase {
     PIDController rotPidController =
             new PIDController(VisionConstants.V_Kp, VisionConstants.V_Ki, VisionConstants.V_Kd);
 
-    public VisionSubsystem visionSubsystem = new VisionSubsystem();
+    public VisionSubsystem visionSubsystem = RobotContainer.visionSubsystem;
 
     public boolean visHasTarget = false;
 
@@ -145,10 +147,10 @@ public class DriveSubsystem extends SubsystemBase {
     public double visionTargetPIDCalc(
             VisionSubsystem vision, double altRotation, boolean visionMode) {
         boolean target = vision.hasTarget();
-        double yaw = vision.getYaw();
+        Optional<Double> yaw = vision.getYaw();
 
-        if (target & visionMode) {
-            return rotPidController.calculate(yaw);
+        if (target && visionMode && yaw.isPresent()) {
+            return rotPidController.calculate(yaw.get());
         }
         if ((visionMode == true) && !target) {
             return altRotation;
