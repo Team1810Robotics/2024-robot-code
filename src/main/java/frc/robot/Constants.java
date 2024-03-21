@@ -189,13 +189,6 @@ public final class Constants {
         public static final double CLIMB_SPEED = 0.75;
     }
 
-    public static final class IOConstants {
-        public static final int LEFT_JOYSTICK_PORT = 0;
-        public static final int RIGHT_JOYSTICK_PORT = 1;
-        public static final int MANIPULATOR_XBOX_PORT = 2;
-        public static final double DEADBAND = 0.3;
-    }
-
 
     public static final class TrapConstants {
         public static final int VICTOR_MOTOR_ID = 0;
