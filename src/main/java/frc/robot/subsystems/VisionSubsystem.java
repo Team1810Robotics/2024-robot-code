@@ -30,7 +30,6 @@ public class VisionSubsystem extends SubsystemBase {
     PhotonPoseEstimator photonPoseEstimator;
     PhotonPipelineResult result;
 
-    double speakerYaw = 0;
     int speakerTargetID = 0;
 
     public VisionSubsystem() {
@@ -42,8 +41,6 @@ public class VisionSubsystem extends SubsystemBase {
                         camera,
                         robotToCam);
         result = camera.getLatestResult();
-
-        /* Shuffleboard.getTab("Teleoporated").addDouble("Speaker Yaw -", () -> speakerYaw); // Report speaker yaw separately for auto and vision */
     }
 
     /**
@@ -109,7 +106,7 @@ public class VisionSubsystem extends SubsystemBase {
     /**
      * @return the yaw offset for the speaker AprilTags
      */
-    public double getSpeakerYaw() {
+    /* public double getSpeakerYaw() {
         speakerYaw = 0.0;
         speakerTargetID = 0;
         if (hasTarget()) {
@@ -136,7 +133,7 @@ public class VisionSubsystem extends SubsystemBase {
             // System.out.println("No Target");
         }
         return speakerYaw;
-    }
+    } */
 
     /**
      * WARNING: Currently causes a loop overrun, do not use
@@ -151,9 +148,5 @@ public class VisionSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         result = camera.getLatestResult();
-        if (result.hasTargets()) {
-            // System.out.println("Cam has targets : " + getSpeakerYaw());
-            getSpeakerYaw();
-        }
     }
 }

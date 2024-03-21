@@ -3,6 +3,7 @@ package frc.robot;
 import static frc.robot.controller.IO.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -71,15 +72,17 @@ public class RobotContainer {
                         () -> m_rotationController.getThrottle(),
                         driveSubsystem,
                         m_driver,
-                        () -> m_driver.getX(),
-                        () -> m_driver.getY(),
-                        () -> m_rotationController.getX(),
+                        () -> MathUtil.applyDeadband(m_driver.getY(), 0.05),
+                        () -> MathUtil.applyDeadband(m_driver.getX(), 0.05),
+                        () -> MathUtil.applyDeadband(m_rotationController.getX(), 0.05),
                         () -> true);
 
-        driveSubsystem.setDefaultCommand(visDrive);
+        driveSubsystem.setDefaultCommand(visDrive_two);
+        // driveSubsystem.setDefaultCommand(drive.teleopDrive_twoJoy);
 
         autoChooser = AutoBuilder.buildAutoChooser();
         Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
+        Shuffleboard.getTab("vision").addDouble("jish Yaw", visionSubsystem::getYaw);
     }
 
     private void configureBindings() {
@@ -88,7 +91,7 @@ public class RobotContainer {
         driver_button12.whileTrue(new ExtenderCommand(-1, extenderSubsystem));
         driver_button10.whileTrue(new ExtenderCommand(1, extenderSubsystem));
 
-        manipulatorXbox_Y.whileTrue(driveSubsystem.aimAtTarget());
+        driver_button4.whileTrue(driveSubsystem.aimAtTarget());
         rotation_trigger.whileTrue(drive.visionDrive);
 
         box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));

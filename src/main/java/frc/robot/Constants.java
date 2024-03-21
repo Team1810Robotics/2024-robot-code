@@ -80,7 +80,7 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        public static final String CAMERA_NAME = "USB_Camera";
+        public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
 
         public static final double CAMERA_HEIGHT = 0.0;
         public static final double APRILTAG_RED_SHOOTER_HEIGHT = 0.0;
@@ -165,7 +165,7 @@ public final class Constants {
         public static final int BOTTOM_MOTOR_ID = 15;
 
         public static final double SHOOT_SPEED = 12.0; // Volts
-        public static final double SPIN_UP_TIME = 2; // seconds
+        public static final double SPIN_UP_TIME = 0.5; // seconds
     }
 
     public static final class ExtenderConstants {
@@ -182,7 +182,7 @@ public final class Constants {
         public static final int LEFT_TOP_LS = 1;
         public static final int LEFT_BOTTOM_LS = 2;
         public static final int RIGHT_TOP_LS = 3;
-        public static final int RIGHT_BOTTOM_LS = 4;
+        public static final int RIGHT_BOTTOM_LS = 5;
 
         public static final double CLIMB_SPEED = 0.75;
     }

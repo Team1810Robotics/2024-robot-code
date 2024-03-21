@@ -35,6 +35,6 @@ public class ShooterCommand extends Command {
     @Override
     public void end(boolean interupted) {
         intake.stop();
-        shooter.stop();
+        shooter.setSpeed(4);
     }
 }
