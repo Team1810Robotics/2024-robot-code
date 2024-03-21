@@ -71,30 +71,30 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final int MOTOR_ID = 0;
+        public static final int MOTOR_ID = 16;
         public static final int BEAM_BREAK_PORT = 0;
     }
 
     public static final class ShooterConstants {
-        public static final int TOP_MOTOR_ID = 0;
-        public static final int BOTTOM_MOTOR_ID = 0;
+        public static final int TOP_MOTOR_ID = 14;
+        public static final int BOTTOM_MOTOR_ID = 15;
     }
 
     public static final class ExtenderConstants {
-        public static final int MOTOR_ID = 0;
+        public static final int MOTOR_ID = 22;
         public static final int TOP_LS_PORT = 0;
         public static final int BOTTOM_LS_PORT = 0;
     }
 
     public static final class ClimbConstants {
         // right and left relative to the bot's perspective
-        public static final int LEFT_MOTOR_ID = 0;
-        public static final int RIGHT_MOTOR_ID = 0;
+        public static final int LEFT_MOTOR_ID = 19;
+        public static final int RIGHT_MOTOR_ID = 20;
 
-        public static final int LEFT_TOP_LS = 0;
-        public static final int LEFT_BOTTOM_LS = 0;
-        public static final int RIGHT_TOP_LS = 0;
-        public static final int RIGHT_BOTTOM_LS = 0;
+        public static final int LEFT_TOP_LS = 1;
+        public static final int LEFT_BOTTOM_LS = 2;
+        public static final int RIGHT_TOP_LS = 3;
+        public static final int RIGHT_BOTTOM_LS = 5;
     }
 
     public static final class IOConstants {
