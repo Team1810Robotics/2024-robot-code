@@ -48,10 +48,10 @@ public final class Constants {
         public static final double angleConversionFactor =
                 SwerveMath.calculateDegreesPerSteeringRotation(12.8, 4096);
 
-        public static final double FL_CANCODER_OFFSET = 282.129;
-        public static final double FR_CANCODER_OFFSET = 224.648;
-        public static final double BL_CANCODER_OFFSET = 65.3906;
-        public static final double BR_CANCODER_OFFSET = 260.684;
+        public static final double FL_CANCODER_OFFSET = 283.271;
+        public static final double FR_CANCODER_OFFSET = 34.5410;
+        public static final double BL_CANCODER_OFFSET = 282.480;
+        public static final double BR_CANCODER_OFFSET = 261.738;
 
         public static final int FL_CANCODER_ID = 9;
         public static final int FR_CANCODER_ID = 10;
@@ -80,7 +80,7 @@ public final class Constants {
     }
 
     public static final class VisionConstants {
-        public static final String CAMERA_NAME = "USB_Camera";
+        public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
 
         public static final double CAMERA_HEIGHT = 0.0;
         public static final double APRILTAG_RED_SHOOTER_HEIGHT = 0.0;
@@ -96,6 +96,33 @@ public final class Constants {
         // How off can the AprilTag be and still alright
         // Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
         public static final double TARGET_LOCK_RANGE = 2;
+
+        public static Transform3d CAMERA_OFFSET =
+                new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0, 0, 0));
+
+        public static final String TARGET_CAMERA = "Arducam_OV9281_USB_Camera";
+        // public static final String TARGET_CAMERA = "USB_2.0_Camera";
+
+        // How far off can the Robot Yaw be from the Vision Yaw
+        // Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
+        // public static final double TARGET_LOCK_RANGE = 0.5;
+
+        public static final PIDConstants VISION_PID = new PIDConstants(0.15, 0.32, 0.006);
+        public static final double V_Kp = 0.15;
+        public static final double V_Ki = 0.32;
+        public static final double V_Kd = 0.006;
+
+        /**
+         * Sets which targets the vision system will look at Used to only get the right AprilTag
+         * when many are in view
+         *
+         * <p>Currently only has the center speaker tags 4, 7
+         *
+         * <p>Could add Amp tags - 6, 5 Source Tags - 9,10 and 1,2 would probally only want to use
+         * one of the two (1 instead of 1 and 2 for ecah source) Stage 14, 15, 16 and 11, 12, 13
+         * Never want to target 8 and 3
+         */
+        public static final int[] GOOD_TARGETS = {4, 7};
     }
 
     public static final class AutoConstants {
@@ -115,13 +142,14 @@ public final class Constants {
         public static final double CLIMB_POSITION = 0.0;
 
         // TODO: tune values
-        public static final double kP = 0.0;
+        public static final double kP = 3.596;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
-        public static final double ks = 0.0;
-        public static final double kg = 0.0;
-        public static final double kv = 0.0;
+        public static final double ks = 13.033;
+        public static final double kg = 6.4877;
+        public static final double kv = 7.7311;
+        public static final double ka = 31.489;
 
         public static final double ARM_TOLERANCE = 0.1; // FIXME
         public static final double TICKS_TO_DEG_CONVERSION = 360.0;
@@ -137,7 +165,7 @@ public final class Constants {
         public static final int BOTTOM_MOTOR_ID = 15;
 
         public static final double SHOOT_SPEED = 12.0; // Volts
-        public static final double SPIN_UP_TIME = 2; // seconds
+        public static final double SPIN_UP_TIME = 0.5; // seconds
     }
 
     public static final class ExtenderConstants {
@@ -154,7 +182,7 @@ public final class Constants {
         public static final int LEFT_TOP_LS = 1;
         public static final int LEFT_BOTTOM_LS = 2;
         public static final int RIGHT_TOP_LS = 3;
-        public static final int RIGHT_BOTTOM_LS = 4;
+        public static final int RIGHT_BOTTOM_LS = 5;
 
         public static final double CLIMB_SPEED = 0.75;
     }

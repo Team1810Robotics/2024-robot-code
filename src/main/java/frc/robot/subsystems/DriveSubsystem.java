@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.VisionConstants;
 import java.io.File;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
@@ -41,6 +42,13 @@ public class DriveSubsystem extends SubsystemBase {
 
     private final PIDController rotController = new PIDController(0.15, 0.32, 0.006);
     private final PIDController transController = new PIDController(0, 0, 0);
+
+    PIDController rotPidController =
+            new PIDController(VisionConstants.V_Kp, VisionConstants.V_Ki, VisionConstants.V_Kd);
+
+    public VisionSubsystem visionSubsystem = new VisionSubsystem();
+
+    public boolean visHasTarget = false;
 
     /**
      * Initialize {@link SwerveDrive} with the directory provided.
@@ -115,15 +123,37 @@ public class DriveSubsystem extends SubsystemBase {
                 );
     }
 
-    public Command aimAtTarget(VisionSubsystem vision) {
+    /** Stops the drivetrain and rotates to face the best target */
+    public Command aimAtTarget() {
         return run(
                 () -> {
-                    if (vision.hasTarget()) {
-                        drive(new Translation2d(0, 0), -visionTargetPIDCalc(vision, 0), false);
+                    if (visionSubsystem.hasTarget()) {
+                        drive(
+                                new Translation2d(0, 0),
+                                -visionTargetPIDCalc(visionSubsystem, 0, true),
+                                true);
                     } else {
-                        drive(new Translation2d(0, 0), 0, false);
+                        drive(new Translation2d(0, 0), 0, true);
                     }
                 });
+    }
+
+    /**
+     * @return the PID output to rotate toward the best AprilTag target
+     * @param altRotation rotation speed when no target is detected
+     */
+    public double visionTargetPIDCalc(
+            VisionSubsystem vision, double altRotation, boolean visionMode) {
+        boolean target = vision.hasTarget();
+        double yaw = vision.getYaw();
+
+        if (target & visionMode) {
+            return rotPidController.calculate(yaw);
+        }
+        if ((visionMode == true) && !target) {
+            return altRotation;
+        }
+        return altRotation;
     }
 
     /**
@@ -418,6 +448,8 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     private void setupShuffleBoard() {
+
+        Shuffleboard.getTab("swerve").add("hehw", rotPidController);
 
         Shuffleboard.getTab("swerve").add("rot", rotController);
         Shuffleboard.getTab("swerve").add("trans", transController);
