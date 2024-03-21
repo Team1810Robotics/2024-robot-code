@@ -17,7 +17,7 @@ public class IntakeSubsystem extends SubsystemBase {
         motor = new CANSparkMax(IntakeConstants.MOTOR_ID, MotorType.kBrushless);
         beam = new DigitalInput(IntakeConstants.BEAM_BREAK_PORT);
 
-        Shuffleboard.getTab("intake").addBoolean("hasNote", this::getBeamBreak);
+        Shuffleboard.getTab("intake").addBoolean("hasNote", this::hasNote);
     }
 
     public void setSpeed(double motorSpeed) {
@@ -28,7 +28,7 @@ public class IntakeSubsystem extends SubsystemBase {
         motor.stopMotor();
     }
 
-    public boolean getBeamBreak() {
+    public boolean hasNote() {
         return beam.get();
     }
 }

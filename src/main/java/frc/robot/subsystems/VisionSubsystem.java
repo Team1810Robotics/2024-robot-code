@@ -95,12 +95,19 @@ public class VisionSubsystem extends SubsystemBase {
     /**
      * @return the yaw offset of the best target
      */
-    public double getYaw() {
+    public Optional<Double> getYaw() {
         if (hasTarget()) {
-            return result.getBestTarget().getYaw();
+            return Optional.of(result.getBestTarget().getYaw());
         } else {
-            return 0.0;
+            return Optional.empty();
         }
+    }
+
+    public boolean isAligned() {
+        var yaw = getYaw();
+        if (yaw.isEmpty()) return false;
+
+        return Math.abs(getYaw().get()) <= VisionConstants.TARGET_LOCK_RANGE;
     }
 
     /**

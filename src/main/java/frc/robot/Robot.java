@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.subsystems.LEDSubsystem;
 import java.io.File;
 import java.io.IOException;
 import swervelib.parser.SwerveParser;
@@ -56,6 +57,24 @@ public class Robot extends TimedRobot {
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
+
+        // Update the LEDSubsystem
+        boolean hasNote = m_robotContainer.intakeSubsystem.hasNote();
+        boolean hasTarget = m_robotContainer.visionSubsystem.hasTarget();
+        boolean isAligned = m_robotContainer.visionSubsystem.isAligned();
+
+        if (!hasNote) {
+            LEDSubsystem.setState(LEDSubsystem.LEDState.off);
+        } else if (isAligned) {
+            LEDSubsystem.setState(LEDSubsystem.LEDState.isAligned);
+        } else if (hasTarget) {
+            LEDSubsystem.setState(LEDSubsystem.LEDState.hasTarget);
+        } else if (!hasTarget) {
+            LEDSubsystem.setState(LEDSubsystem.LEDState.noTarget);
+        } else {
+            // should never happen ¯\_(ツ)_/¯
+            LEDSubsystem.setState(LEDSubsystem.LEDState.off);
+        }
     }
 
     /** This function is called once each time the robot enters Disabled mode. */

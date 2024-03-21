@@ -190,4 +190,9 @@ public final class Constants {
     public static final class TrapConstants {
         public static final int VICTOR_MOTOR_ID = 0;
     }
+
+    public static final class LEDConstants {
+        public static final int HIGH_BIT = 8; // DIO ports
+        public static final int LOW_BIT = 9; // DIO ports
+    }
 }
