@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7059762690953959,
-        "y": 4.383177909212962
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 1.6002032004064015,
-        "y": 2.286875430893719
-      },
-      "isLocked": false,
-      "linkedName": "BottomStart"
-    },
-    {
-      "anchor": {
         "x": 3.461954352480134,
         "y": 2.858594288617149
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.326862368010451,
+        "y": 1.6565187416089122
+      },
+      "isLocked": false,
+      "linkedName": "BottomShoot"
+    },
+    {
+      "anchor": {
+        "x": 7.845132261693095,
+        "y": 2.374832178235786
+      },
       "prevControl": {
-        "x": 2.157262600239487,
-        "y": 2.228237599332341
+        "x": 6.804310751478646,
+        "y": 1.4366268732537486
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BottomShoot"
+      "linkedName": "Far2"
     }
   ],
   "rotationTargets": [],
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 140.12659652484905,
+    "rotation": -176.2686030008396,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "Bottom Paths",
   "previewStartingState": {
-    "rotation": 119.84593194968743,
+    "rotation": 143.8067926944353,
     "velocity": 0
   },
   "useDefaultConstraints": true
