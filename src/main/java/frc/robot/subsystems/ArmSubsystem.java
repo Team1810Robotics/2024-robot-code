@@ -5,51 +5,76 @@ import static frc.robot.Constants.ArmConstants.*;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 
-public class ArmSubsystem extends PIDSubsystem {
-    private CANSparkMax armMotor = new CANSparkMax(MOTOR_A_ID, MotorType.kBrushless);
-    private CANSparkMax motor2 = new CANSparkMax(MOTOR_B_ID, MotorType.kBrushless);
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
+import lib.ArmFeedforward;
+
+public class ArmSubsystem extends TrapezoidProfileSubsystem {
+    private CANSparkMax motorA = new CANSparkMax(MOTOR_A_ID, MotorType.kBrushless);
+    private CANSparkMax motorB = new CANSparkMax(MOTOR_B_ID, MotorType.kBrushless);
 
     private CANcoder canCoder = new CANcoder(CANCODER_ID);
 
+    private final PIDController controller;
     private final ArmFeedforward feedforward;
 
     public ArmSubsystem() {
-        super(new PIDController(kP, kI, kD));
+        super(CONSTRAINTS);
+        controller = new PIDController(kP, kI, kD);
         feedforward = new ArmFeedforward(ks, kg, kv);
 
-        getController().setTolerance(ARM_TOLERANCE);
-        motor2.follow(armMotor);
+        controller.setTolerance(ARM_TOLERANCE);
+        motorA.setInverted(true);
+        motorB.setInverted(true);
 
-        setSetpoint(INITIAL_POSITION);
+        setpoint(INITIAL_POSITION);
+        enable();
 
         Shuffleboard.getTab("arm").addNumber("canCoder pos", this::getMeasurement);
+        Shuffleboard.getTab("arm").add("pid", controller);
     }
 
-    @Override
-    public void useOutput(double output, double setpoint) {
-        double canCoderVelocity =
-                canCoder.getVelocity().getValueAsDouble() * TICKS_TO_DEG_CONVERSION;
-        double feedforwardOutput = feedforward.calculate(setpoint, canCoderVelocity);
-        armMotor.set(output + feedforwardOutput);
-    }
 
     @Override
+    public void useState(TrapezoidProfile.State setpoint) {
+        double pid = controller.calculate(getMeasurement(), setpoint.position);
+        double feed = feedforward.calculate(getMeasurement(), getVelocity());
+
+        motorA.setVoltage(pid + feed);
+        motorB.setVoltage(pid + feed);
+    }
+
     public double getMeasurement() {
-        double position = canCoder.getPosition().getValueAsDouble();
-        double degrees = position * TICKS_TO_DEG_CONVERSION;
-        return degrees - CANCODER_OFFSET;
+        double position = canCoder.getAbsolutePosition().getValueAsDouble();
+        double rads = position * TICKS_TO_RAD_CONVERSION;
+        return rads - CANCODER_OFFSET;
+    }
+
+    /**
+     * @param setpoint setpoint in degrees; 90 is when the arm is straight up and down
+     */
+    public void setpoint(double setpoint) {
+        setpoint = (setpoint - 30) * (Math.PI / 180.0);
+        super.setGoal(setpoint);
+    }
+
+    public double getVelocity() {
+        return canCoder.getVelocity().getValueAsDouble() * TICKS_TO_RAD_CONVERSION;
     }
 
     public void setSpeed(double motorSpeed) {
-        armMotor.set(motorSpeed);
+        motorSpeed = MathUtil.clamp(motorSpeed, -1, 1);
+
+        motorA.set(motorSpeed);
+        motorB.set(motorSpeed);
     }
 
     public void stop() {
-        armMotor.stopMotor();
+        motorA.stopMotor();
+        motorB.stopMotor();
     }
 }

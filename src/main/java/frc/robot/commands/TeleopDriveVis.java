@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.Constants.IOConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
@@ -16,6 +18,7 @@ public class TeleopDriveVis extends Command {
     private final DoubleSupplier rotationSpeed;
     private final CommandJoystick driver;
     private final DriveSubsystem drive;
+    private final VisionSubsystem vision;
     private final DoubleSupplier vX;
     private final DoubleSupplier vY;
     private final DoubleSupplier omega;
@@ -26,6 +29,7 @@ public class TeleopDriveVis extends Command {
             DoubleSupplier driveSpeed,
             DoubleSupplier rotationSpeed,
             DriveSubsystem drive,
+            VisionSubsystem vision,
             CommandJoystick driver,
             DoubleSupplier vX,
             DoubleSupplier vY,
@@ -34,6 +38,7 @@ public class TeleopDriveVis extends Command {
         this.driveSpeed = driveSpeed;
         this.rotationSpeed = rotationSpeed;
         this.drive = drive;
+        this.vision = vision;
         this.driver = driver;
         this.vX = vX;
         this.vY = vY;
@@ -57,10 +62,10 @@ public class TeleopDriveVis extends Command {
         double yVelocity =
                 MathUtil.applyDeadband(vY.getAsDouble(), IOConstants.DEADBAND) * speedMult;
         double angVelocity =
-                drive.visionTargetPIDCalc(
-                        drive.visionSubsystem,
-                        MathUtil.applyDeadband(
-                                (omega.getAsDouble() * rotationMult), IOConstants.DEADBAND),
+                -drive.visionTargetPIDCalc(
+                        vision, 
+                        MathUtil./*Is life worth living?*/applyDeadband(
+                                (-omega.getAsDouble() * rotationMult), IOConstants.DEADBAND),
                         driver.button(1).getAsBoolean());
         SmartDashboard.putNumber("vX", xVelocity);
         SmartDashboard.putNumber("vY", yVelocity);

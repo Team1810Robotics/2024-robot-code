@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.RobotContainer;
 import java.io.File;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
@@ -42,13 +41,12 @@ public class DriveSubsystem extends SubsystemBase {
     /** Swerve drive object. */
     private final SwerveDrive swerveDrive;
 
-    private final PIDController rotController = new PIDController(0.15, 0.32, 0.006);
+    //private final PIDController rotController = new PIDController(0.15, 0.32, 0.006);
+    //private final PIDController rotController = new PIDController(0.0, 0.0, 0.0);
     private final PIDController transController = new PIDController(0, 0, 0);
 
     PIDController rotPidController =
             new PIDController(VisionConstants.V_Kp, VisionConstants.V_Ki, VisionConstants.V_Kd);
-
-    public VisionSubsystem visionSubsystem = RobotContainer.visionSubsystem;
 
     public boolean visHasTarget = false;
 
@@ -126,7 +124,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /** Stops the drivetrain and rotates to face the best target */
-    public Command aimAtTarget() {
+    public Command aimAtTarget(VisionSubsystem visionSubsystem) {
         return run(
                 () -> {
                     if (visionSubsystem.hasTarget()) {
@@ -146,13 +144,12 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public double visionTargetPIDCalc(
             VisionSubsystem vision, double altRotation, boolean visionMode) {
-        boolean target = vision.hasTarget();
-        Optional<Double> yaw = vision.getYaw();
+        Optional<Double> yaw = vision.getSpeakerYaw();
 
-        if (target && visionMode && yaw.isPresent()) {
+        if (visionMode && yaw.isPresent()) {
             return rotPidController.calculate(yaw.get());
         }
-        if ((visionMode == true) && !target) {
+        if (visionMode && yaw.isEmpty()) {
             return altRotation;
         }
         return altRotation;
@@ -163,17 +160,13 @@ public class DriveSubsystem extends SubsystemBase {
      * @param altRotation rotation speed when no target is detected
      */
     public double visionTargetPIDCalc(VisionSubsystem vision, double altRotation) {
-        boolean target = vision.hasTarget();
-        var yaw = vision.getYaw();
+        var yaw = vision.getSpeakerYaw();
 
         if (yaw.isEmpty()) {
             return altRotation;
         }
 
-        if (target) {
-            return rotController.calculate(yaw.get());
-        }
-        return altRotation;
+        return rotPidController.calculate(yaw.get());
     }
 
     /**
@@ -194,6 +187,8 @@ public class DriveSubsystem extends SubsystemBase {
      * @return PathFinding command
      */
     public Command driveToPose(Pose2d pose) {
+        zeroGyro();
+        resetOdometry(new Pose2d());
         // Create the constraints to use while pathfinding
         PathConstraints constraints =
                 new PathConstraints(
@@ -451,9 +446,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     private void setupShuffleBoard() {
 
-        Shuffleboard.getTab("swerve").add("hehw", rotPidController);
-
-        Shuffleboard.getTab("swerve").add("rot", rotController);
+        Shuffleboard.getTab("swerve").add("rot", rotPidController);
         Shuffleboard.getTab("swerve").add("trans", transController);
 
         Shuffleboard.getTab("swerve")

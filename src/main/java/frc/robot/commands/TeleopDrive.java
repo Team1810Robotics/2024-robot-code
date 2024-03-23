@@ -20,7 +20,7 @@ public class TeleopDrive extends Command {
             DriveSubsystem drive,
             DoubleSupplier vX,
             DoubleSupplier vY,
-            DoubleSupplier omega,
+            DoubleSupplier omega, //bob
             BooleanSupplier driveMode) {
         this.drive = drive;
         this.vX = vX;

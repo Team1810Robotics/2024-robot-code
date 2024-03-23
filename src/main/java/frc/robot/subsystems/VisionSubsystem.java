@@ -28,7 +28,6 @@ public class VisionSubsystem extends SubsystemBase {
 
     PhotonCamera camera;
     PhotonPoseEstimator photonPoseEstimator;
-    PhotonPipelineResult result;
 
     int speakerTargetID = 0;
 
@@ -40,14 +39,13 @@ public class VisionSubsystem extends SubsystemBase {
                         PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
                         camera,
                         robotToCam);
-        result = camera.getLatestResult();
     }
 
     /**
      * @return whether or not an AprilTag is detected
      */
     public boolean hasTarget() {
-        return result.hasTargets();
+        return getResult().hasTargets();
     }
 
     /**
@@ -63,11 +61,13 @@ public class VisionSubsystem extends SubsystemBase {
      * @return the best target's ID
      */
     public int getTargetId() {
-        return result.getBestTarget().getFiducialId();
+        var target = getResult().hasTargets();
+        if (!target) return -1;
+        return getResult().getBestTarget().getFiducialId();
     }
 
     public List<PhotonTrackedTarget> getTargets() {
-        return result.getTargets();
+        return getResult().getTargets();
     }
 
     /**
@@ -86,10 +86,10 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     /**
-     * @returns the vision pipeline's result (all of its data)
+     * @returns the vision pipeline's getResult() (all of its data)
      */
     public PhotonPipelineResult getResult() {
-        return result;
+        return camera.getLatestResult();
     }
 
     /**
@@ -97,7 +97,7 @@ public class VisionSubsystem extends SubsystemBase {
      */
     public Optional<Double> getYaw() {
         if (hasTarget()) {
-            return Optional.of(result.getBestTarget().getYaw());
+            return Optional.of(getResult().getBestTarget().getYaw());
         } else {
             return Optional.empty();
         }
@@ -113,34 +113,44 @@ public class VisionSubsystem extends SubsystemBase {
     /**
      * @return the yaw offset for the speaker AprilTags
      */
-    /* public double getSpeakerYaw() {
-        speakerYaw = 0.0;
+    public Optional<Double> getSpeakerYaw() {
+        Optional<Double> speakerYaw = Optional.empty();
         speakerTargetID = 0;
         if (hasTarget()) {
-            for (int i = 0; i < result.getTargets().size(); i++) {
-                if (result.getTargets().get(i).getFiducialId() == 4) {
-                    speakerYaw = result.getTargets().get(i).getYaw();
+            for (int i = 0; i < getResult().getTargets().size(); i++) {
+                if (getResult().getTargets().get(i).getFiducialId() == 4) {
+                    speakerYaw = Optional.of(getResult().getTargets().get(i).getYaw());
                     speakerTargetID = 4;
                     System.out.println("Sending Red Speaker Yaw " + speakerYaw);
                 }
-                if (result.getTargets().get(i).getFiducialId() == 7) {
-                    speakerYaw = result.getTargets().get(i).getYaw();
+                if (getResult().getTargets().get(i).getFiducialId() == 7) {
+                    speakerYaw = Optional.of(getResult().getTargets().get(i).getYaw());
                     speakerTargetID = 7;
                     System.out.println("Sending Blue Speaker Yaw " + speakerYaw);
                 }
+                if (getResult().getTargets().get(i).getFiducialId() == 6) {
+                    speakerYaw = Optional.of(getResult().getTargets().get(i).getYaw());
+                    speakerTargetID = 6; //sam is hot
+                    System.out.println("Sending Blue Amp Yaw " + speakerYaw);
+                }
+                if (getResult().getTargets().get(i).getFiducialId() == 5) {
+                    speakerYaw = Optional.of(getResult().getTargets().get(i).getYaw());
+                    speakerTargetID = 5;
+                    System.out.println("Sending Red Amp Yaw " + speakerYaw);
+                }
             }
-            if ((result.getTargets().size() == 1)
-                    && ((speakerTargetID != 4) && (speakerTargetID != 7))) {
+            if ((getResult().getTargets().size() == 1)
+                    && ((speakerTargetID != 4) && (speakerTargetID != 7) && (speakerTargetID != 5) && (speakerTargetID != 6))) {
                 // System.out.println("Falling back to best target");
-                speakerYaw = result.getBestTarget().getYaw();
+                speakerYaw = Optional.of(getResult().getBestTarget().getYaw());
             }
-        }
+        } //I love ian weatherman
         if (hasTarget() == false) {
-            speakerYaw = 0.0;
+            speakerYaw = Optional.empty();
             // System.out.println("No Target");
         }
         return speakerYaw;
-    } */
+    }
 
     /**
      * WARNING: Currently causes a loop overrun, do not use
@@ -150,10 +160,5 @@ public class VisionSubsystem extends SubsystemBase {
     public Pose3d getRobotPose() {
         Optional<EstimatedRobotPose> pose = photonPoseEstimator.update();
         return pose.get().estimatedPose;
-    }
-
-    @Override
-    public void periodic() {
-        result = camera.getLatestResult();
     }
 }

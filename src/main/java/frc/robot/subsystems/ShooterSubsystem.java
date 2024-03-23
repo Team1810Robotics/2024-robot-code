@@ -10,6 +10,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final CANSparkMax top;
     private final CANSparkMax bottom;
+    //I hate robotics
 
     public ShooterSubsystem() {
         top = new CANSparkMax(TOP_MOTOR_ID, MotorType.kBrushless);

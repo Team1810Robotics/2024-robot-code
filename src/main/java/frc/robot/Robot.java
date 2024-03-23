@@ -61,6 +61,7 @@ public class Robot extends TimedRobot {
         // Update the LEDSubsystem
         boolean hasNote = m_robotContainer.intakeSubsystem.hasNote();
         boolean hasTarget = m_robotContainer.visionSubsystem.hasTarget();
+        //sam is cool and beautiful
         boolean isAligned = m_robotContainer.visionSubsystem.isAligned();
 
         if (!hasNote) {

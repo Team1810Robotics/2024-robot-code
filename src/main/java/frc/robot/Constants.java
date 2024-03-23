@@ -6,6 +6,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import java.io.File;
@@ -50,12 +51,14 @@ public final class Constants {
 
         public static final double FL_CANCODER_OFFSET = 283.271;
         public static final double FR_CANCODER_OFFSET = 34.5410;
-        public static final double BL_CANCODER_OFFSET = 282.480;
+        public static final double BL_CANCODER_OFFSET = 102.480;
+        //public static final double BL_CANCODER_OFFSET = 282.480;
         public static final double BR_CANCODER_OFFSET = 261.738;
 
         public static final int FL_CANCODER_ID = 9;
         public static final int FR_CANCODER_ID = 10;
         public static final int BL_CANCODER_ID = 11;
+        //You suck
         public static final int BR_CANCODER_ID = 12;
 
         public static final int WHEEL_LOCK_TIME = 10; // in seconds
@@ -107,10 +110,12 @@ public final class Constants {
         // Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
         // public static final double TARGET_LOCK_RANGE = 0.5;
 
-        public static final PIDConstants VISION_PID = new PIDConstants(0.15, 0.32, 0.006);
         public static final double V_Kp = 0.15;
         public static final double V_Ki = 0.32;
         public static final double V_Kd = 0.006;
+        /* public static final double V_Kp = 0.1;
+        public static final double V_Ki = 0.0;
+        public static final double V_Kd = 0.0; */
 
         /**
          * Sets which targets the vision system will look at Used to only get the right AprilTag
@@ -131,28 +136,34 @@ public final class Constants {
     }
 
     public static final class ArmConstants {
+
+        public static final double MAX_SPEED = Math.PI / 10.0; // rad/s
+        public static final double MAX_ACCEL = MAX_SPEED / 2.0; // rad/s^2
+
+        public static final TrapezoidProfile.Constraints CONSTRAINTS =
+            new TrapezoidProfile.Constraints(MAX_SPEED, MAX_ACCEL);
+
         public static final int MOTOR_A_ID = 17;
         public static final int MOTOR_B_ID = 18;
 
         public static final int CANCODER_ID = 23;
-        public static final double CANCODER_OFFSET = -245.5664062; // degrees
+        public static final double CANCODER_OFFSET = -1.667437116431692; // radians
 
-        public static final double INITIAL_POSITION = 0.0;
+        public static final double INITIAL_POSITION = 90.0;
         public static final double INTAKE_POSITION = 0.0;
         public static final double CLIMB_POSITION = 0.0;
 
         // TODO: tune values
-        public static final double kP = 3.596;
-        public static final double kI = 0.0;
-        public static final double kD = 0.0;
+        public static final double kP = 0.0;// 3.0;
+        public static final double kI = 0.0;// 0.0;
+        public static final double kD = 0.0;// 0.0;
 
-        public static final double ks = 13.033;
-        public static final double kg = 6.4877;
-        public static final double kv = 7.7311;
-        public static final double ka = 31.489;
+        public static final double ks = 0.0;
+        public static final double kg = 0.5;
+        public static final double kv = -0.0;
 
         public static final double ARM_TOLERANCE = 0.1; // FIXME
-        public static final double TICKS_TO_DEG_CONVERSION = 360.0;
+        public static final double TICKS_TO_RAD_CONVERSION = (2 * Math.PI);
     }
 
     public static final class IntakeConstants {
@@ -169,8 +180,6 @@ public final class Constants {
 
     public static final class ExtenderConstants {
         public static final int MOTOR_ID = 22;
-        public static final int TOP_LS_PORT = 0; // TODO
-        public static final int BOTTOM_LS_PORT = 0; // TODO
     }
 
     public static final class ClimbConstants {

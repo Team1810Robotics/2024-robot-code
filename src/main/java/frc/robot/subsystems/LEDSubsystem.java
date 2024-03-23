@@ -26,7 +26,8 @@ public class LEDSubsystem extends SubsystemBase {
     private static final DigitalOutput highBit = new DigitalOutput(LEDConstants.HIGH_BIT);
     private static final DigitalOutput lowBit = new DigitalOutput(LEDConstants.LOW_BIT);
 
-    private static LEDState state = LEDState.off;
+    //private static LEDState state = LEDState.off;
+    private static LEDState state = LEDState.isAligned;
 
     public static void setState(LEDState state) {
         LEDSubsystem.state = state;

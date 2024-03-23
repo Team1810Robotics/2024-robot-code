@@ -4,6 +4,9 @@ import static frc.robot.controller.IO.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,6 +18,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ExtenderCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ShooterCommand;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.commands.TeleopDriveVis;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.ClimbSubsystem.ClimbDirection;
@@ -26,8 +30,8 @@ import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
 
-    // private final ArmSubsystem armSubsystem = new ArmSubsystem();
-    private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+    private final ArmSubsystem armSubsystem = new ArmSubsystem();
+    // private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     public static IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
     private final ExtenderSubsystem extenderSubsystem = new ExtenderSubsystem();
@@ -60,6 +64,7 @@ public class RobotContainer {
                         () -> -m_driver.getThrottle(),
                         () -> -m_rotationController.getThrottle(),
                         driveSubsystem,
+                        visionSubsystem,
                         m_driver,
                         () -> m_driver.getX(),
                         () -> m_driver.getY(),
@@ -68,9 +73,11 @@ public class RobotContainer {
 
         Command visDrive_two =
                 new TeleopDriveVis(
+                    //i love sam
                         () -> m_driver.getThrottle(),
                         () -> m_rotationController.getThrottle(),
                         driveSubsystem,
+                        visionSubsystem,
                         m_driver,
                         () -> MathUtil.applyDeadband(m_driver.getY(), 0.05),
                         () -> MathUtil.applyDeadband(m_driver.getX(), 0.05),
@@ -81,6 +88,7 @@ public class RobotContainer {
         // driveSubsystem.setDefaultCommand(drive.teleopDrive_twoJoy);
 
         autoChooser = AutoBuilder.buildAutoChooser();
+        autoChooser.addOption("5m line", driveSubsystem.driveToPose(new Pose2d(new Translation2d(5, 0), new Rotation2d())));
         Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
         // Shuffleboard.getTab("vision").addDouble("jish Yaw", visionSubsystem::getYaw);
     }
@@ -91,14 +99,15 @@ public class RobotContainer {
         driver_button12.whileTrue(new ExtenderCommand(-1, extenderSubsystem));
         driver_button10.whileTrue(new ExtenderCommand(1, extenderSubsystem));
 
-        driver_button4.whileTrue(driveSubsystem.aimAtTarget());
-        rotation_trigger.whileTrue(drive.visionDrive);
+        driver_button4.whileTrue(driveSubsystem.aimAtTarget(visionSubsystem));
+        driver_button3.whileTrue(driveSubsystem.aimAtTarget(visionSubsystem));
+        //rotation_trigger.whileTrue(drive.visionDrive);
 
-        box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
+        box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));//nothing is real
         box_outtake.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
         box_climbUp.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbUp));
         box_climbDown.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbDown));
-        box_intakePos.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem));
+        // box_intakePos.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem));
     }
 
     public Command getAutonomousCommand() {

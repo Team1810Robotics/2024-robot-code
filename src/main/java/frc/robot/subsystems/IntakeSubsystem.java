@@ -29,6 +29,6 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public boolean hasNote() {
-        return beam.get();
+        return !beam.get();
     }
 }

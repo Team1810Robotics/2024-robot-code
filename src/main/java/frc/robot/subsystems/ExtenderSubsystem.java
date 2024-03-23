@@ -15,6 +15,7 @@ public class ExtenderSubsystem extends SubsystemBase {
         extender.setNeutralMode(NeutralMode.Brake);
     }
 
+    //Reid ellis is a very beautiful man
     public void setSpeed(double speed) {
         extender.set(ControlMode.PercentOutput, speed);
     }

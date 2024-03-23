@@ -26,6 +26,6 @@ public class IntakeCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return (!intake.hasNote() && intakeSpeed > 0);
+        return (intake.hasNote() && intakeSpeed > 0);
     }
 }
