@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
 
         // Update the LEDSubsystem
-        boolean hasNote = m_robotContainer.intakeSubsystem.hasNote();
+       /*  boolean hasNote = m_robotContainer.intakeSubsystem.hasNote();
         boolean hasTarget = m_robotContainer.visionSubsystem.hasTarget();
         //sam is cool and beautiful
         boolean isAligned = m_robotContainer.visionSubsystem.isAligned();
@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
         } else {
             // should never happen ¯\_(ツ)_/¯
             LEDSubsystem.setState(LEDSubsystem.LEDState.off);
-        }
+        } */
     }
 
     /** This function is called once each time the robot enters Disabled mode. */

@@ -158,9 +158,9 @@ public final class Constants {
         public static final double kI = 0.0;// 0.0;
         public static final double kD = 0.0;// 0.0;
 
-        public static final double ks = 0.0;
-        public static final double kg = 0.5;
-        public static final double kv = -0.0;
+        public static final double ks = 0.1;
+        public static final double kg = 0.4;
+        public static final double kv = -1.5;
 
         public static final double ARM_TOLERANCE = 0.1; // FIXME
         public static final double TICKS_TO_RAD_CONVERSION = (2 * Math.PI);
