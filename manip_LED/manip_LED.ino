@@ -2,21 +2,18 @@
 constexpr int PIN_8 = 8;
 constexpr int PIN_9 = 9;
 
-constexpr int SHORT_LED_PIN[] = {2, 3, 4, 5, 6};
-constexpr int LONG_LED_PIN = 7;
+constexpr int LED_PINS[] = {2, 3, 4, 5, 6};
+constexpr int NUMBER_OF_PINS = sizeof(LED_PINS) / sizeof(LED_PINS[0]);
 
-constexpr int LONG_STRIP_LENGTH = 18;
-constexpr int SHORT_STRIP_LENGTH = 4;
+constexpr int LED_STRIP_LENGTH = 8;
 
-const int NUM_LEDS =
-  LONG_STRIP_LENGTH +
-  (5 * SHORT_STRIP_LENGTH);
+const int NUM_LEDS = (NUMBER_OF_PINS * LED_STRIP_LENGTH);
 
 enum LEDState {
-  hasTarget,
-  noTarget,
-  isAligned,
-  off
+  off       = 0b00,
+  isAligned = 0b01,
+  noTarget  = 0b10,
+  hasTarget = 0b11
 };
 
 CRGB leds[NUM_LEDS]{};
@@ -29,18 +26,24 @@ void setup() {
   pinMode(PIN_9, INPUT_PULLUP);
   pinMode(PIN_8, INPUT_PULLUP);
 
-  FastLED.addLeds<WS2812B, LONG_LED_PIN,     RGB>(leds, 0, 18);
-  FastLED.addLeds<WS2812B, SHORT_LED_PIN[0], RGB>(leds, 18, 4);
-  FastLED.addLeds<WS2812B, SHORT_LED_PIN[1], RGB>(leds, 22, 4);
-  FastLED.addLeds<WS2812B, SHORT_LED_PIN[2], RGB>(leds, 26, 4);
-  FastLED.addLeds<WS2812B, SHORT_LED_PIN[3], RGB>(leds, 30, 4);
-  FastLED.addLeds<WS2812B, SHORT_LED_PIN[4], RGB>(leds, 34, 4);
+  Serial.begin(9600);
+
+  FastLED.addLeds<WS2812B, LED_PINS[0], RGB>(leds, 0,  LED_STRIP_LENGTH);
+  FastLED.addLeds<WS2812B, LED_PINS[1], RGB>(leds, 8,  LED_STRIP_LENGTH);
+  FastLED.addLeds<WS2812B, LED_PINS[2], RGB>(leds, 16, LED_STRIP_LENGTH);
+  FastLED.addLeds<WS2812B, LED_PINS[3], RGB>(leds, 24, LED_STRIP_LENGTH);
+  FastLED.addLeds<WS2812B, LED_PINS[4], RGB>(leds, 32, LED_STRIP_LENGTH);
 }
 
 int getStatus() {
   uint8_t p1 = digitalRead(PIN_8);
   uint8_t p2 = digitalRead(PIN_9);
   delay(100);
+
+  Serial.print("p1: ");
+  Serial.print(p1);
+  Serial.print(" p2: ");
+  Serial.println(p2);
 
   uint8_t status = (p1 << 1) | (p2);
 
@@ -54,7 +57,6 @@ void solidColor(const Color& color) {
 }
 
 void loop() {
-  Serial.println(getStatus());
   switch (getStatus()) {
     case hasTarget:
       solidColor({ 0, 255, 0 }); // green
@@ -66,7 +68,7 @@ void loop() {
       solidColor({ 255, 0, 255 }); // purple
       break;
     case off:
-      solidColor({ 0, 0, 0}); // black
+      solidColor({ 0, 0, 0 }); // black
       break;
   }
 
