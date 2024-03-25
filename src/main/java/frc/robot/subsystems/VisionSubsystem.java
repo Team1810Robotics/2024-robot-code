@@ -5,6 +5,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 import java.util.List;
@@ -24,8 +25,6 @@ public class VisionSubsystem extends SubsystemBase {
 
     Transform3d robotToCam = VisionConstants.CAMERA_OFFSET;
 
-    // int[] goodTargets = VisionConstants.GOOD_TARGETS;
-
     PhotonCamera camera;
     PhotonPoseEstimator photonPoseEstimator;
 
@@ -39,13 +38,28 @@ public class VisionSubsystem extends SubsystemBase {
                         PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
                         camera,
                         robotToCam);
+
+        Shuffleboard.getTab("vision").addNumber("Tag ID", this::getTargetId);
+        Shuffleboard.getTab("vision").addNumber("Tag Yaw", () -> getYaw().orElse(0.0));
     }
 
     /**
      * @return whether or not an AprilTag is detected
      */
     public boolean hasTarget() {
-        return getResult().hasTargets();
+        var result = getResult();
+        var hasTarget = result.hasTargets();
+        if (!hasTarget) return false;
+
+        for (var target : result.getTargets()) {
+            int id = target.getFiducialId();
+            if (id == VisionConstants.APRILTAG_SPEAKER_CENTER_BLUE
+                    || id == VisionConstants.APRILTAG_SPEAKER_CENTER_RED) {
+                return hasTarget;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -96,60 +110,23 @@ public class VisionSubsystem extends SubsystemBase {
      * @return the yaw offset of the best target
      */
     public Optional<Double> getYaw() {
-        if (hasTarget()) {
-            return Optional.of(getResult().getBestTarget().getYaw());
-        } else {
-            return Optional.empty();
+        var result = getResult();
+        if (!result.hasTargets()) return Optional.empty();
+
+        for (var target : result.getTargets()) {
+            int id = target.getFiducialId();
+            if (id == VisionConstants.APRILTAG_SPEAKER_CENTER_BLUE
+                    || id == VisionConstants.APRILTAG_SPEAKER_CENTER_RED) {
+                return Optional.of(target.getYaw());
+            }
         }
+
+        return Optional.empty();
     }
 
     public boolean isAligned() {
-        var yaw = getYaw();
-        if (yaw.isEmpty()) return false;
-
-        return Math.abs(getYaw().get()) <= VisionConstants.TARGET_LOCK_RANGE;
-    }
-
-    /**
-     * @return the yaw offset for the speaker AprilTags
-     */
-    public Optional<Double> getSpeakerYaw() {
-        Optional<Double> speakerYaw = Optional.empty();
-        speakerTargetID = 0;
-        if (hasTarget()) {
-            for (int i = 0; i < getResult().getTargets().size(); i++) {
-                if (getResult().getTargets().get(i).getFiducialId() == 4) {
-                    speakerYaw = Optional.of(getResult().getTargets().get(i).getYaw());
-                    speakerTargetID = 4;
-                    System.out.println("Sending Red Speaker Yaw " + speakerYaw);
-                }
-                if (getResult().getTargets().get(i).getFiducialId() == 7) {
-                    speakerYaw = Optional.of(getResult().getTargets().get(i).getYaw());
-                    speakerTargetID = 7;
-                    System.out.println("Sending Blue Speaker Yaw " + speakerYaw);
-                }
-                if (getResult().getTargets().get(i).getFiducialId() == 6) {
-                    speakerYaw = Optional.of(getResult().getTargets().get(i).getYaw());
-                    speakerTargetID = 6; //sam is hot
-                    System.out.println("Sending Blue Amp Yaw " + speakerYaw);
-                }
-                if (getResult().getTargets().get(i).getFiducialId() == 5) {
-                    speakerYaw = Optional.of(getResult().getTargets().get(i).getYaw());
-                    speakerTargetID = 5;
-                    System.out.println("Sending Red Amp Yaw " + speakerYaw);
-                }
-            }
-            if ((getResult().getTargets().size() == 1)
-                    && ((speakerTargetID != 4) && (speakerTargetID != 7) && (speakerTargetID != 5) && (speakerTargetID != 6))) {
-                // System.out.println("Falling back to best target");
-                speakerYaw = Optional.of(getResult().getBestTarget().getYaw());
-            }
-        } //I love ian weatherman
-        if (hasTarget() == false) {
-            speakerYaw = Optional.empty();
-            // System.out.println("No Target");
-        }
-        return speakerYaw;
+        // 10 is outside of target lock
+        return Math.abs(getYaw().orElse(10.0)) <= VisionConstants.TARGET_LOCK_RANGE;
     }
 
     /**

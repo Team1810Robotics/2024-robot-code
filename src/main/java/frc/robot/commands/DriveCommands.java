@@ -12,9 +12,6 @@ public class DriveCommands {
     /** Speed Control - Drive on one joystick */
     public final Command speedDriveTest;
 
-    /** Drive with 2 joysticks, automatically rotating toward a target AprilTag */
-    public final Command visionDrive;
-
     /** Drive on one joystick */
     public final Command teleopDrive;
 
@@ -35,18 +32,6 @@ public class DriveCommands {
                         () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
                         () -> MathUtil.applyDeadband(driver.getZ(), IOConstants.DEADBAND),
                         () -> !driver.getRawButton(IOConstants.DRIVE_MODE_BUTTON));
-
-        this.visionDrive =
-                new TeleopDrive(
-                        driveSubsystem,
-                        () -> -MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
-                        () -> -MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
-                        () ->
-                                driveSubsystem.visionTargetPIDCalc(
-                                        visionSubsystem,
-                                        -MathUtil.applyDeadband(
-                                                rotation.getZ(), IOConstants.DEADBAND)),
-                        () -> driver.getRawButton(IOConstants.DRIVE_MODE_BUTTON));
 
         this.teleopDrive =
                 new TeleopDrive(

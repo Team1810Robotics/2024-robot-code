@@ -26,7 +26,6 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.VisionConstants;
 import java.io.File;
-import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -41,8 +40,8 @@ public class DriveSubsystem extends SubsystemBase {
     /** Swerve drive object. */
     private final SwerveDrive swerveDrive;
 
-    //private final PIDController rotController = new PIDController(0.15, 0.32, 0.006);
-    //private final PIDController rotController = new PIDController(0.0, 0.0, 0.0);
+    // private final PIDController rotController = new PIDController(0.15, 0.32, 0.006);
+    // private final PIDController rotController = new PIDController(0.0, 0.0, 0.0);
     private final PIDController transController = new PIDController(0, 0, 0);
 
     PIDController rotPidController =
@@ -130,7 +129,7 @@ public class DriveSubsystem extends SubsystemBase {
                     if (visionSubsystem.hasTarget()) {
                         drive(
                                 new Translation2d(0, 0),
-                                -visionTargetPIDCalc(visionSubsystem, 0, true),
+                                visionTargetPIDCalc(visionSubsystem, 0, true),
                                 true);
                     } else {
                         drive(new Translation2d(0, 0), 0, true);
@@ -139,34 +138,16 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /**
-     * @return the PID output to rotate toward the best AprilTag target
      * @param altRotation rotation speed when no target is detected
+     * @return the PID output to rotate toward the best AprilTag target
      */
     public double visionTargetPIDCalc(
             VisionSubsystem vision, double altRotation, boolean visionMode) {
-        Optional<Double> yaw = vision.getSpeakerYaw();
+        var yaw = vision.getYaw();
 
-        if (visionMode && yaw.isPresent()) {
-            return rotPidController.calculate(yaw.get());
-        }
-        if (visionMode && yaw.isEmpty()) {
-            return altRotation;
-        }
-        return altRotation;
-    }
+        if (!visionMode || yaw.isEmpty()) return altRotation;
 
-    /**
-     * @return the PID output to rotate toward the best AprilTag target
-     * @param altRotation rotation speed when no target is detected
-     */
-    public double visionTargetPIDCalc(VisionSubsystem vision, double altRotation) {
-        var yaw = vision.getSpeakerYaw();
-
-        if (yaw.isEmpty()) {
-            return altRotation;
-        }
-
-        return rotPidController.calculate(yaw.get());
+        return -rotPidController.calculate(yaw.get());
     }
 
     /**

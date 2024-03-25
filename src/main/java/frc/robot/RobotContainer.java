@@ -10,33 +10,37 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ExtenderCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ShooterCommand;
-import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.commands.TeleopDriveVis;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.ClimbSubsystem.ClimbDirection;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtenderSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 public class RobotContainer {
 
     private final ArmSubsystem armSubsystem = new ArmSubsystem();
-    // private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+    private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     public static IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
     private final ExtenderSubsystem extenderSubsystem = new ExtenderSubsystem();
     private final DriveSubsystem driveSubsystem = new DriveSubsystem(SwerveConstants.DIRECTORY);
     public static VisionSubsystem visionSubsystem = new VisionSubsystem();
+    public static LEDSubsystem ledSubsystem = new LEDSubsystem();
 
     private final DriveCommands drive = new DriveCommands(driveSubsystem, visionSubsystem);
 
@@ -52,8 +56,7 @@ public class RobotContainer {
 
         // Create a SendableChooser to select the drive command
         SendableChooser<Command> driveChooser = new SendableChooser<>();
-        driveChooser.setDefaultOption("Vision Drive", drive.visionDrive);
-        driveChooser.addOption("Teleop Drive", drive.teleopDrive);
+        driveChooser.setDefaultOption("Teleop Drive", drive.teleopDrive);
         driveChooser.addOption("Teleop Drive (Two Joysticks)", drive.teleopDrive_twoJoy);
         driveChooser.addOption("Drive Field Oriented (Needs Testing)", drive.fieldOrientedAngVel);
         driveChooser.addOption("Speed Mod Test", drive.speedDriveTest);
@@ -65,20 +68,19 @@ public class RobotContainer {
                         () -> -m_rotationController.getThrottle(),
                         driveSubsystem,
                         visionSubsystem,
-                        m_driver,
-                        () -> m_driver.getX(),
-                        () -> m_driver.getY(),
-                        () -> m_driver.getZ(),
+                        m_driver.trigger(),
+                        () -> MathUtil.applyDeadband(m_driver.getY(), 0.05),
+                        () -> MathUtil.applyDeadband(m_driver.getX(), 0.05),
+                        () -> MathUtil.applyDeadband(m_driver.getZ(), 0.05),
                         () -> true);
 
         Command visDrive_two =
                 new TeleopDriveVis(
-                    //i love sam
                         () -> m_driver.getThrottle(),
                         () -> m_rotationController.getThrottle(),
                         driveSubsystem,
                         visionSubsystem,
-                        m_driver,
+                        m_driver.trigger(),
                         () -> MathUtil.applyDeadband(m_driver.getY(), 0.05),
                         () -> MathUtil.applyDeadband(m_driver.getX(), 0.05),
                         () -> MathUtil.applyDeadband(m_rotationController.getX(), 0.05),
@@ -88,7 +90,9 @@ public class RobotContainer {
         // driveSubsystem.setDefaultCommand(drive.teleopDrive_twoJoy);
 
         autoChooser = AutoBuilder.buildAutoChooser();
-        autoChooser.addOption("5m line", driveSubsystem.driveToPose(new Pose2d(new Translation2d(5, 0), new Rotation2d())));
+        autoChooser.addOption(
+                "5m line",
+                driveSubsystem.driveToPose(new Pose2d(new Translation2d(5, 0), new Rotation2d())));
         Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
         // Shuffleboard.getTab("vision").addDouble("jish Yaw", visionSubsystem::getYaw);
     }
@@ -101,13 +105,23 @@ public class RobotContainer {
 
         driver_button4.whileTrue(driveSubsystem.aimAtTarget(visionSubsystem));
         driver_button3.whileTrue(driveSubsystem.aimAtTarget(visionSubsystem));
-        //rotation_trigger.whileTrue(drive.visionDrive);
+        // rotation_trigger.whileTrue(drive.visionDrive);
 
-        box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));//nothing is real
+        box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75)); // nothing is real
         box_outtake.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
         box_climbUp.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbUp));
         box_climbDown.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbDown));
         // box_intakePos.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem));
+        driver_button7.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem));
+
+        manipulatorXbox_A.onTrue(
+                Commands.run(
+                        () -> armSubsystem.setpoint(ArmConstants.INTAKE_POSITION), armSubsystem));
+        manipulatorXbox_Y.onTrue(
+                Commands.run(
+                        () -> armSubsystem.setpoint(ArmConstants.DRIVE_POSITION), armSubsystem));
+        manipulatorXbox_RB.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
+        manipulatorXbox_LB.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
     }
 
     public Command getAutonomousCommand() {

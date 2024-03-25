@@ -5,7 +5,6 @@ import static frc.robot.Constants.ArmConstants.*;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -27,17 +26,17 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
         controller = new PIDController(kP, kI, kD);
         feedforward = new ArmFeedforward(ks, kg, kv);
 
-        controller.setTolerance(ARM_TOLERANCE);
+        // controller.setTolerance(ARM_TOLERANCE);
         motorA.setInverted(true);
         motorB.setInverted(true);
 
-        setpoint(INITIAL_POSITION);
+        setpoint(INTAKE_POSITION);
         enable();
 
         Shuffleboard.getTab("arm").addNumber("canCoder pos", this::getMeasurement);
         Shuffleboard.getTab("arm").add("pid", controller);
+        Shuffleboard.getTab("arm").addNumber("error", controller::getPositionError);
     }
-
 
     @Override
     public void useState(TrapezoidProfile.State setpoint) {
@@ -58,7 +57,7 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
      * @param setpoint setpoint in degrees; 90 is when the arm is straight up and down
      */
     public void setpoint(double setpoint) {
-        setpoint = (setpoint - 30) * (Math.PI / 180.0);
+        setpoint = Math.toRadians(setpoint - SETPOINT_OFFSET);
         super.setGoal(setpoint);
     }
 

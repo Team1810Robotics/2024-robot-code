@@ -52,13 +52,12 @@ public final class Constants {
         public static final double FL_CANCODER_OFFSET = 283.271;
         public static final double FR_CANCODER_OFFSET = 34.5410;
         public static final double BL_CANCODER_OFFSET = 102.480;
-        //public static final double BL_CANCODER_OFFSET = 282.480;
         public static final double BR_CANCODER_OFFSET = 261.738;
 
         public static final int FL_CANCODER_ID = 9;
         public static final int FR_CANCODER_ID = 10;
         public static final int BL_CANCODER_ID = 11;
-        //You suck
+        // You suck
         public static final int BR_CANCODER_ID = 12;
 
         public static final int WHEEL_LOCK_TIME = 10; // in seconds
@@ -98,36 +97,19 @@ public final class Constants {
 
         // How off can the AprilTag be and still alright
         // Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
-        public static final double TARGET_LOCK_RANGE = 2;
+        public static final double TARGET_LOCK_RANGE = 0.5;
 
         public static Transform3d CAMERA_OFFSET =
                 new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0, 0, 0));
 
         public static final String TARGET_CAMERA = "Arducam_OV9281_USB_Camera";
-        // public static final String TARGET_CAMERA = "USB_2.0_Camera";
 
-        // How far off can the Robot Yaw be from the Vision Yaw
-        // Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
-        // public static final double TARGET_LOCK_RANGE = 0.5;
-
-        public static final double V_Kp = 0.15;
+        public static final double V_Kp = 0.023;
         public static final double V_Ki = 0.32;
         public static final double V_Kd = 0.006;
-        /* public static final double V_Kp = 0.1;
-        public static final double V_Ki = 0.0;
-        public static final double V_Kd = 0.0; */
 
-        /**
-         * Sets which targets the vision system will look at Used to only get the right AprilTag
-         * when many are in view
-         *
-         * <p>Currently only has the center speaker tags 4, 7
-         *
-         * <p>Could add Amp tags - 6, 5 Source Tags - 9,10 and 1,2 would probally only want to use
-         * one of the two (1 instead of 1 and 2 for ecah source) Stage 14, 15, 16 and 11, 12, 13
-         * Never want to target 8 and 3
-         */
-        public static final int[] GOOD_TARGETS = {4, 7};
+        public static final int APRILTAG_SPEAKER_CENTER_BLUE = 7;
+        public static final int APRILTAG_SPEAKER_CENTER_RED = 4;
     }
 
     public static final class AutoConstants {
@@ -137,11 +119,11 @@ public final class Constants {
 
     public static final class ArmConstants {
 
-        public static final double MAX_SPEED = Math.PI / 10.0; // rad/s
+        public static final double MAX_SPEED = Math.PI / 4.0; // rad/s
         public static final double MAX_ACCEL = MAX_SPEED / 2.0; // rad/s^2
 
         public static final TrapezoidProfile.Constraints CONSTRAINTS =
-            new TrapezoidProfile.Constraints(MAX_SPEED, MAX_ACCEL);
+                new TrapezoidProfile.Constraints(MAX_SPEED, MAX_ACCEL);
 
         public static final int MOTOR_A_ID = 17;
         public static final int MOTOR_B_ID = 18;
@@ -150,19 +132,19 @@ public final class Constants {
         public static final double CANCODER_OFFSET = -1.667437116431692; // radians
 
         public static final double INITIAL_POSITION = 90.0;
-        public static final double INTAKE_POSITION = 0.0;
-        public static final double CLIMB_POSITION = 0.0;
+        public static final double INTAKE_POSITION = 43.0;
+        public static final double DRIVE_POSITION = 55.0;
 
-        // TODO: tune values
-        public static final double kP = 0.0;// 3.0;
-        public static final double kI = 0.0;// 0.0;
-        public static final double kD = 0.0;// 0.0;
+        public static final double SETPOINT_OFFSET = 30; // degrees
+
+        public static final double kP = 9.0;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
 
         public static final double ks = 0.1;
         public static final double kg = 0.4;
-        public static final double kv = -1.5;
+        public static final double kv = -2.5;
 
-        public static final double ARM_TOLERANCE = 0.1; // FIXME
         public static final double TICKS_TO_RAD_CONVERSION = (2 * Math.PI);
     }
 

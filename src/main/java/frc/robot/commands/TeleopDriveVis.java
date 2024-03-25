@@ -4,11 +4,9 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.Constants.IOConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
@@ -16,7 +14,7 @@ import swervelib.SwerveController;
 public class TeleopDriveVis extends Command {
     private final DoubleSupplier driveSpeed;
     private final DoubleSupplier rotationSpeed;
-    private final CommandJoystick driver;
+    private final BooleanSupplier driver;
     private final DriveSubsystem drive;
     private final VisionSubsystem vision;
     private final DoubleSupplier vX;
@@ -30,7 +28,7 @@ public class TeleopDriveVis extends Command {
             DoubleSupplier rotationSpeed,
             DriveSubsystem drive,
             VisionSubsystem vision,
-            CommandJoystick driver,
+            BooleanSupplier driver,
             DoubleSupplier vX,
             DoubleSupplier vY,
             DoubleSupplier omega,
@@ -54,22 +52,21 @@ public class TeleopDriveVis extends Command {
 
     @Override
     public void execute() {
-        double speedMult =
-                (driveSpeed.getAsDouble() + 1) / 2; // Make axis value 0 to 1 instead of -1 to 1
-        double rotationMult = (rotationSpeed.getAsDouble() + 1) / 2;
+        // Make axis value 0 to 1 instead of -1 to 1
+        double speedMult = (-driveSpeed.getAsDouble() + 1) / 2;
+        double rotationMult = (-rotationSpeed.getAsDouble() + 1) / 2;
         double xVelocity =
                 MathUtil.applyDeadband(vX.getAsDouble(), IOConstants.DEADBAND) * speedMult;
         double yVelocity =
                 MathUtil.applyDeadband(vY.getAsDouble(), IOConstants.DEADBAND) * speedMult;
+        double controllerSpeed =
+                MathUtil.applyDeadband((-omega.getAsDouble() * rotationMult), IOConstants.DEADBAND);
         double angVelocity =
-                -drive.visionTargetPIDCalc(
-                        vision, 
-                        MathUtil./*Is life worth living?*/applyDeadband(
-                                (-omega.getAsDouble() * rotationMult), IOConstants.DEADBAND),
-                        driver.button(1).getAsBoolean());
+                drive.visionTargetPIDCalc(vision, controllerSpeed, driver.getAsBoolean());
         SmartDashboard.putNumber("vX", xVelocity);
         SmartDashboard.putNumber("vY", yVelocity);
         SmartDashboard.putNumber("omega", angVelocity);
+        SmartDashboard.putBoolean("Target Button", driver.getAsBoolean());
 
         drive.drive(
                 new Translation2d(xVelocity * 5, yVelocity * 5),
