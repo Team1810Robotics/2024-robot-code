@@ -9,6 +9,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
 import lib.ArmFeedforward;
 
@@ -75,5 +77,9 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
     public void stop() {
         motorA.stopMotor();
         motorB.stopMotor();
+    }
+
+    public Command setpointCommand(double setpoint) {
+        return Commands.run(() -> setpoint(setpoint), this);
     }
 }

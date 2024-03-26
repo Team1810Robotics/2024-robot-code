@@ -1,5 +1,6 @@
 package frc.robot;
 
+import static frc.robot.Constants.*;
 import static frc.robot.controller.IO.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -11,25 +12,12 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.commands.ClimbCommand;
-import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ExtenderCommand;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.ShooterCommand;
-import frc.robot.commands.TeleopDriveVis;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ClimbSubsystem;
-import frc.robot.subsystems.ClimbSubsystem.ClimbDirection;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.ExtenderSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.LEDSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 
 public class RobotContainer {
 
@@ -69,9 +57,9 @@ public class RobotContainer {
                         driveSubsystem,
                         visionSubsystem,
                         m_driver.trigger(),
-                        () -> MathUtil.applyDeadband(m_driver.getY(), 0.05),
-                        () -> MathUtil.applyDeadband(m_driver.getX(), 0.05),
-                        () -> MathUtil.applyDeadband(m_driver.getZ(), 0.05),
+                        () -> MathUtil.applyDeadband(m_driver.getY(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(m_driver.getX(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(m_driver.getZ(), IOConstants.DEADBAND),
                         () -> true);
 
         Command visDrive_two =
@@ -81,9 +69,11 @@ public class RobotContainer {
                         driveSubsystem,
                         visionSubsystem,
                         m_driver.trigger(),
-                        () -> MathUtil.applyDeadband(m_driver.getY(), 0.05),
-                        () -> MathUtil.applyDeadband(m_driver.getX(), 0.05),
-                        () -> MathUtil.applyDeadband(m_rotationController.getX(), 0.05),
+                        () -> MathUtil.applyDeadband(m_driver.getY(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(m_driver.getX(), IOConstants.DEADBAND),
+                        () ->
+                                MathUtil.applyDeadband(
+                                        m_rotationController.getX(), IOConstants.DEADBAND),
                         () -> true);
 
         driveSubsystem.setDefaultCommand(visDrive_two);
@@ -94,32 +84,27 @@ public class RobotContainer {
                 "5m line",
                 driveSubsystem.driveToPose(new Pose2d(new Translation2d(5, 0), new Rotation2d())));
         Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
-        // Shuffleboard.getTab("vision").addDouble("jish Yaw", visionSubsystem::getYaw);
     }
 
     private void configureBindings() {
-        driver_button9.onTrue(new InstantCommand(driveSubsystem::zeroGyro));
+        driver_button9.onTrue(Commands.run(driveSubsystem::zeroGyro, driveSubsystem));
 
         driver_button12.whileTrue(new ExtenderCommand(-1, extenderSubsystem));
         driver_button10.whileTrue(new ExtenderCommand(1, extenderSubsystem));
 
         driver_button4.whileTrue(driveSubsystem.aimAtTarget(visionSubsystem));
         driver_button3.whileTrue(driveSubsystem.aimAtTarget(visionSubsystem));
-        // rotation_trigger.whileTrue(drive.visionDrive);
 
-        box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75)); // nothing is real
+        box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
         box_outtake.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
-        box_climbUp.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbUp));
-        box_climbDown.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbDown));
-        // box_intakePos.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem));
-        driver_button7.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem));
+        box_climbUp.whileTrue(
+                new ClimbCommand(climbSubsystem, ClimbSubsystem.ClimbDirection.climbUp));
+        box_climbDown.whileTrue(
+                new ClimbCommand(climbSubsystem, ClimbSubsystem.ClimbDirection.climbDown));
+        box_intakePos.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem, false));
 
-        manipulatorXbox_A.onTrue(
-                Commands.run(
-                        () -> armSubsystem.setpoint(ArmConstants.INTAKE_POSITION), armSubsystem));
-        manipulatorXbox_Y.onTrue(
-                Commands.run(
-                        () -> armSubsystem.setpoint(ArmConstants.DRIVE_POSITION), armSubsystem));
+        manipulatorXbox_A.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
+        manipulatorXbox_Y.onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
         manipulatorXbox_RB.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
         manipulatorXbox_LB.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
     }

@@ -23,15 +23,8 @@ import swervelib.math.SwerveMath;
 public final class Constants {
 
     public static class IOConstants {
-        public static final double DEADBAND = 0.3;
+        public static final double DEADBAND = 0.05;
         // Drive Controller Speed
-        // TODO find right axis if needed - if nothing is happening check this
-        public static final int driveSpeedModAxis = 4;
-        public static final int angleSpeedModAxis = 4; // Angle Controller Speed
-        public static final int driveXAxis = 1;
-        public static final int driveYAxis = 0;
-        public static final int driveOmegaAxis = 2;
-        public static final int resetGyroButton = 9;
         public static final int DRIVE_MODE_BUTTON = 7;
 
         public static final int LEFT_JOYSTICK_PORT = 0;
@@ -57,13 +50,15 @@ public final class Constants {
         public static final int FL_CANCODER_ID = 9;
         public static final int FR_CANCODER_ID = 10;
         public static final int BL_CANCODER_ID = 11;
-        // You suck
         public static final int BR_CANCODER_ID = 12;
 
         public static final int WHEEL_LOCK_TIME = 10; // in seconds
 
-        /** Maximum speed of the robot in meters per second, used to limit acceleration. */
-        public static final double MAX_SPEED = Units.feetToMeters(14.5);
+        public static final double MODULE_OFFSET_FROM_CENTER = 9.125;
+        public static final double MAX_SPEED = 4.4196;
+        public static final double MAX_ANG_SPEED =
+                SwerveMath.calculateMaxAngularVelocity(
+                        MAX_SPEED, MODULE_OFFSET_FROM_CENTER, MODULE_OFFSET_FROM_CENTER);
 
         // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
         //  In this case the gear ratio is 12.8 motor revolutions per wheel rotation.

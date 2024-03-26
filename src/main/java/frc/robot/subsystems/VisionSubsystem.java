@@ -28,8 +28,6 @@ public class VisionSubsystem extends SubsystemBase {
     PhotonCamera camera;
     PhotonPoseEstimator photonPoseEstimator;
 
-    int speakerTargetID = 0;
-
     public VisionSubsystem() {
         camera = new PhotonCamera(VisionConstants.TARGET_CAMERA);
         photonPoseEstimator =
@@ -75,9 +73,9 @@ public class VisionSubsystem extends SubsystemBase {
      * @return the best target's ID
      */
     public int getTargetId() {
-        var target = getResult().hasTargets();
-        if (!target) return -1;
-        return getResult().getBestTarget().getFiducialId();
+        var results = getResult();
+        if (!results.hasTargets()) return -1;
+        return results.getBestTarget().getFiducialId();
     }
 
     public List<PhotonTrackedTarget> getTargets() {
