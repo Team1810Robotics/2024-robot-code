@@ -128,7 +128,7 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     /** angle the arm should be at to shoot */
-    public double getAngle() {
+    public double getAngle() { // TODO: not been set up yet
         return 90;
     }
 

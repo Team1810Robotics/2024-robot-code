@@ -12,9 +12,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.IOConstants;
-import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ClimbSubsystem.ClimbDirection;
@@ -25,7 +22,6 @@ public class RobotContainer {
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     public static IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
-    private final ExtenderSubsystem extenderSubsystem = new ExtenderSubsystem();
     private final DriveSubsystem driveSubsystem = new DriveSubsystem(SwerveConstants.DIRECTORY);
     public static VisionSubsystem visionSubsystem = new VisionSubsystem();
     public static LEDSubsystem ledSubsystem = new LEDSubsystem();
