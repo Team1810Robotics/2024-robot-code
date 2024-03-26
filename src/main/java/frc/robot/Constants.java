@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.pathplanner.lib.util.PIDConstants;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -8,6 +10,8 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.Filesystem;
 import java.io.File;
 import swervelib.math.SwerveMath;
@@ -151,7 +155,7 @@ public final class Constants {
     public static final class ShooterConstants {
         public static final int TOP_MOTOR_ID = 14;
         public static final int BOTTOM_MOTOR_ID = 15;
-        public static final double SHOOT_SPEED = 12.0; // Volts
+        public static final Measure<Voltage> SHOOT_SPEED = Volts.of(12.0); // Volts
         public static final double SPIN_UP_TIME = 0.5; // seconds
     }
 

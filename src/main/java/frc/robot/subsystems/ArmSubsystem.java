@@ -32,6 +32,7 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
         motorA.setInverted(true);
         motorB.setInverted(true);
 
+        controller.setTolerance(1.0, 0.1);
         setpoint(INTAKE_POSITION);
         enable();
 
@@ -77,6 +78,10 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
     public void stop() {
         motorA.stopMotor();
         motorB.stopMotor();
+    }
+
+    public boolean atSetpoint() {
+        return controller.atSetpoint();
     }
 
     public Command setpointCommand(double setpoint) {

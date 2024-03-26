@@ -14,13 +14,18 @@ public class ShooterCommand extends Command {
     private final IntakeSubsystem intake;
 
     private final boolean idle;
+    private final boolean blocked;
     private double startTime;
 
     public ShooterCommand(
-            ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, boolean idle) {
+            ShooterSubsystem shooterSubsystem,
+            IntakeSubsystem intakeSubsystem,
+            boolean idle,
+            boolean blocked) {
         this.shooter = shooterSubsystem;
         this.intake = intakeSubsystem;
         this.idle = idle;
+        this.blocked = blocked;
 
         addRequirements(shooterSubsystem, intakeSubsystem);
     }
@@ -32,10 +37,10 @@ public class ShooterCommand extends Command {
 
     @Override
     public void execute() {
-        shooter.setSpeed(ShooterConstants.SHOOT_SPEED);
+        shooter.setVoltage(ShooterConstants.SHOOT_SPEED);
 
         double deltaTime = Timer.getFPGATimestamp() - startTime;
-        if (deltaTime > ShooterConstants.SPIN_UP_TIME) intake.setSpeed(1.0);
+        if ((deltaTime > ShooterConstants.SPIN_UP_TIME) && !blocked) intake.setSpeed(1.0);
     }
 
     @Override

@@ -127,6 +127,11 @@ public class VisionSubsystem extends SubsystemBase {
         return Math.abs(getYaw().orElse(10.0)) <= VisionConstants.TARGET_LOCK_RANGE;
     }
 
+    /** angle the arm should be at to shoot */
+    public double getAngle() {
+        return 90;
+    }
+
     /**
      * WARNING: Currently causes a loop overrun, do not use
      *

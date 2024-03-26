@@ -12,34 +12,34 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class TeleopDriveVis extends Command {
-    private final DoubleSupplier driveSpeed;
-    private final DoubleSupplier rotationSpeed;
-    private final BooleanSupplier visionMode;
     private final DriveSubsystem drive;
     private final VisionSubsystem vision;
+    private final DoubleSupplier driveSpeed;
+    private final DoubleSupplier rotationSpeed;
     private final DoubleSupplier vX;
     private final DoubleSupplier vY;
     private final DoubleSupplier omega;
+    private final BooleanSupplier visionMode;
     private final BooleanSupplier driveMode;
 
     public TeleopDriveVis(
-            DoubleSupplier driveSpeed,
-            DoubleSupplier rotationSpeed,
             DriveSubsystem drive,
             VisionSubsystem vision,
-            BooleanSupplier visionMode,
+            DoubleSupplier driveSpeed,
+            DoubleSupplier rotationSpeed,
             DoubleSupplier vX,
             DoubleSupplier vY,
             DoubleSupplier omega,
+            BooleanSupplier visionMode,
             BooleanSupplier driveMode) {
-        this.driveSpeed = driveSpeed;
-        this.rotationSpeed = rotationSpeed;
         this.drive = drive;
         this.vision = vision;
-        this.visionMode = visionMode;
+        this.driveSpeed = driveSpeed;
+        this.rotationSpeed = rotationSpeed;
         this.vX = vX;
         this.vY = vY;
         this.omega = omega;
+        this.visionMode = visionMode;
         this.driveMode = driveMode;
 
         addRequirements(drive);

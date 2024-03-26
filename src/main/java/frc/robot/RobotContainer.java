@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ClimbSubsystem.ClimbDirection;
 
 public class RobotContainer {
 
@@ -30,11 +30,6 @@ public class RobotContainer {
     public static VisionSubsystem visionSubsystem = new VisionSubsystem();
     public static LEDSubsystem ledSubsystem = new LEDSubsystem();
 
-    private final DriveCommands drive = new DriveCommands(driveSubsystem, visionSubsystem);
-
-    private final CommandJoystick m_driver = new CommandJoystick(0);
-    private final CommandJoystick m_rotationController = new CommandJoystick(1);
-
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
@@ -42,42 +37,31 @@ public class RobotContainer {
         // Configure the trigger bindings
         configureBindings();
 
-        // Create a SendableChooser to select the drive command
-        SendableChooser<Command> driveChooser = new SendableChooser<>();
-        driveChooser.setDefaultOption("Teleop Drive", drive.teleopDrive);
-        driveChooser.addOption("Teleop Drive (Two Joysticks)", drive.teleopDrive_twoJoy);
-        driveChooser.addOption("Drive Field Oriented (Needs Testing)", drive.fieldOrientedAngVel);
-        driveChooser.addOption("Speed Mod Test", drive.speedDriveTest);
-        Shuffleboard.getTab("Teleoperated").add("Drive Command", driveChooser);
-
         Command visDrive =
                 new TeleopDriveVis(
-                        () -> -m_driver.getThrottle(),
-                        () -> -m_rotationController.getThrottle(),
                         driveSubsystem,
                         visionSubsystem,
-                        m_driver.trigger(),
-                        () -> MathUtil.applyDeadband(m_driver.getY(), IOConstants.DEADBAND),
-                        () -> MathUtil.applyDeadband(m_driver.getX(), IOConstants.DEADBAND),
-                        () -> MathUtil.applyDeadband(m_driver.getZ(), IOConstants.DEADBAND),
+                        () -> -driver.getThrottle(),
+                        () -> -driver.getThrottle(),
+                        () -> MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getZ(), IOConstants.DEADBAND),
+                        () -> driver.getTrigger(),
                         () -> true);
 
         Command visDrive_two =
                 new TeleopDriveVis(
-                        () -> m_driver.getThrottle(),
-                        () -> m_rotationController.getThrottle(),
                         driveSubsystem,
                         visionSubsystem,
-                        m_driver.trigger(),
-                        () -> MathUtil.applyDeadband(m_driver.getY(), IOConstants.DEADBAND),
-                        () -> MathUtil.applyDeadband(m_driver.getX(), IOConstants.DEADBAND),
-                        () ->
-                                MathUtil.applyDeadband(
-                                        m_rotationController.getX(), IOConstants.DEADBAND),
+                        () -> driver.getThrottle(),
+                        () -> rotation.getThrottle(),
+                        () -> MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(rotation.getX(), IOConstants.DEADBAND),
+                        () -> driver.getTrigger(),
                         () -> true);
 
         driveSubsystem.setDefaultCommand(visDrive_two);
-        // driveSubsystem.setDefaultCommand(drive.teleopDrive_twoJoy);
 
         autoChooser = AutoBuilder.buildAutoChooser();
         autoChooser.addOption(
@@ -89,24 +73,15 @@ public class RobotContainer {
     private void configureBindings() {
         driver_button9.onTrue(Commands.run(driveSubsystem::zeroGyro, driveSubsystem));
 
-        driver_button12.whileTrue(new ExtenderCommand(-1, extenderSubsystem));
-        driver_button10.whileTrue(new ExtenderCommand(1, extenderSubsystem));
-
-        driver_button4.whileTrue(driveSubsystem.aimAtTarget(visionSubsystem));
-        driver_button3.whileTrue(driveSubsystem.aimAtTarget(visionSubsystem));
+        driver_trigger.whileTrue(
+                new Shoot(shooterSubsystem, intakeSubsystem, armSubsystem, visionSubsystem));
 
         box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
         box_outtake.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
-        box_climbUp.whileTrue(
-                new ClimbCommand(climbSubsystem, ClimbSubsystem.ClimbDirection.climbUp));
-        box_climbDown.whileTrue(
-                new ClimbCommand(climbSubsystem, ClimbSubsystem.ClimbDirection.climbDown));
-        box_intakePos.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem, false));
-
-        manipulatorXbox_A.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
-        manipulatorXbox_Y.onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
-        manipulatorXbox_RB.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
-        manipulatorXbox_LB.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
+        box_climbUp.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbUp));
+        box_climbDown.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbDown));
+        box_intakePos.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
+        box_travelPos.onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
     }
 
     public Command getAutonomousCommand() {

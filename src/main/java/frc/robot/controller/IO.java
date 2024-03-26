@@ -13,7 +13,7 @@ public final class IO {
 
     public static final Joystick driver = new Joystick(IOConstants.LEFT_JOYSTICK_PORT);
     public static final Joystick rotation = new Joystick(IOConstants.RIGHT_JOYSTICK_PORT);
-    public static final XboxController xboxController = new XboxController(IOConstants.XBOX_PORT);
+    public static final XboxController xbox = new XboxController(IOConstants.XBOX_PORT);
     public static final Box box = new Box(IOConstants.BOX_PORT);
 
     // Joystick Buttons
@@ -43,26 +43,16 @@ public final class IO {
     public static final JoystickButton rotation_button11 = new JoystickButton(driver, 11);
 
     // Xbox buttons
-    public static final JoystickButton manipulatorXbox_A =
-            new JoystickButton(xboxController, kA.value);
-    public static final JoystickButton manipulatorXbox_B =
-            new JoystickButton(xboxController, kB.value);
-    public static final JoystickButton manipulatorXbox_X =
-            new JoystickButton(xboxController, kX.value);
-    public static final JoystickButton manipulatorXbox_Y =
-            new JoystickButton(xboxController, kY.value);
-    public static final JoystickButton manipulatorXbox_LB =
-            new JoystickButton(xboxController, kLeftBumper.value);
-    public static final JoystickButton manipulatorXbox_RB =
-            new JoystickButton(xboxController, kRightBumper.value);
-    public static final JoystickButton manipulatorXbox_Back =
-            new JoystickButton(xboxController, kBack.value);
-    public static final JoystickButton manipulatorXbox_Start =
-            new JoystickButton(xboxController, kStart.value);
-    public static final JoystickButton manipulatorXbox_LStick =
-            new JoystickButton(xboxController, kLeftStick.value);
-    public static final JoystickButton manipulatorXbox_RStick =
-            new JoystickButton(xboxController, kRightStick.value);
+    public static final JoystickButton xbox_A = new JoystickButton(xbox, kA.value);
+    public static final JoystickButton xbox_B = new JoystickButton(xbox, kB.value);
+    public static final JoystickButton xbox_X = new JoystickButton(xbox, kX.value);
+    public static final JoystickButton xbox_Y = new JoystickButton(xbox, kY.value);
+    public static final JoystickButton xbox_LB = new JoystickButton(xbox, kLeftBumper.value);
+    public static final JoystickButton xbox_RB = new JoystickButton(xbox, kRightBumper.value);
+    public static final JoystickButton xbox_Back = new JoystickButton(xbox, kBack.value);
+    public static final JoystickButton xbox_Start = new JoystickButton(xbox, kStart.value);
+    public static final JoystickButton xbox_LStick = new JoystickButton(xbox, kLeftStick.value);
+    public static final JoystickButton xbox_RStick = new JoystickButton(xbox, kRightStick.value);
 
     public static final JoystickButton box_intake = new JoystickButton(box, in.get());
     public static final JoystickButton box_outtake = new JoystickButton(box, out.get());
