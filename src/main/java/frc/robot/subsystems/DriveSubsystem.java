@@ -126,7 +126,7 @@ public class DriveSubsystem extends SubsystemBase {
     public Command aimAtTarget(VisionSubsystem visionSubsystem) {
         return run(
                 () -> {
-                    if (visionSubsystem.hasTarget()) {
+                    if (visionSubsystem.hasSpeakerTarget()) {
                         drive(
                                 new Translation2d(0, 0),
                                 visionTargetPIDCalc(visionSubsystem, 0, true),
@@ -145,7 +145,7 @@ public class DriveSubsystem extends SubsystemBase {
             VisionSubsystem vision, double altRotation, boolean visionMode) {
         if (!visionMode) return altRotation;
 
-        return -rotPidController.calculate(vision.getYaw().orElse(0.0));
+        return -rotPidController.calculate(vision.getSpeakerYaw().orElse(0.0));
     }
 
     /**

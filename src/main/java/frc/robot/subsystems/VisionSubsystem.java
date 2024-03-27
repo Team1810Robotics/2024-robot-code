@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -10,10 +9,8 @@ import frc.robot.Constants.VisionConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.photonvision.EstimatedRobotPose;
+import java.util.function.Function;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -25,40 +22,53 @@ public class VisionSubsystem extends SubsystemBase {
     Transform3d robotToCam = VisionConstants.CAMERA_OFFSET;
 
     PhotonCamera camera;
-    PhotonPoseEstimator photonPoseEstimator;
 
     public VisionSubsystem() {
         camera = new PhotonCamera(VisionConstants.TARGET_CAMERA);
-        photonPoseEstimator =
-                new PhotonPoseEstimator(
-                        aprilTagFieldLayout,
-                        PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
-                        camera,
-                        robotToCam);
 
         Shuffleboard.getTab("vision").addNumber("Tag ID", this::getTargetId);
-        Shuffleboard.getTab("vision").addNumber("Tag Yaw", () -> getYaw().orElse(0.0));
-        Shuffleboard.getTab("vision")
-                .addNumber("Distance From Target", () -> getGroundDistanceFromTarget());
+        Shuffleboard.getTab("vision").addNumber("Tag Yaw", () -> getSpeakerYaw().orElse(0.0));
+        Shuffleboard.getTab("vision").addNumber("Distance", this::getDistanceFromSpeakerTarget);
     }
 
     /**
      * @return whether or not an AprilTag is detected
      */
-    public boolean hasTarget() {
+    public boolean hasSpeakerTarget() {
         var result = getResult();
         var hasTarget = result.hasTargets();
         if (!hasTarget) return false;
 
         for (var target : result.getTargets()) {
             int id = target.getFiducialId();
-            if (id == VisionConstants.APRILTAG_SPEAKER_CENTER_BLUE
-                    || id == VisionConstants.APRILTAG_SPEAKER_CENTER_RED) {
+            if (isSpeakerTarget(id)) {
                 return hasTarget;
             }
         }
 
         return false;
+    }
+
+    /**
+     * @return whether or not an AprilTag is detected
+     */
+    public boolean hasSpeakerTarget(PhotonPipelineResult result) {
+        var hasTarget = result.hasTargets();
+        if (!hasTarget) return false;
+
+        for (var target : result.getTargets()) {
+            int id = target.getFiducialId();
+            if (isSpeakerTarget(id)) return hasTarget;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return whether or not an AprilTag is detected
+     */
+    public boolean hasTarget() {
+        return getResult().hasTargets();
     }
 
     /**
@@ -91,7 +101,7 @@ public class VisionSubsystem extends SubsystemBase {
     /**
      * @return the distance from the target in meters
      */
-    public double getGroundDistanceFromTarget() {
+    public double getDistanceFromTarget() {
         var result = getResult();
         if (result.hasTargets()) {
             Transform3d transform = result.getBestTarget().getBestCameraToTarget();
@@ -99,6 +109,24 @@ public class VisionSubsystem extends SubsystemBase {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * @return the distance from the target in meters
+     */
+    public double getDistanceFromSpeakerTarget() {
+        var result = getResult();
+        if (result.hasTargets()) {
+            for (var target : result.getTargets()) {
+                int id = target.getFiducialId();
+                if (isSpeakerTarget(id)) {
+                    Transform3d transform = target.getBestCameraToTarget();
+                    return Math.hypot(transform.getX(), transform.getY());
+                }
+            }
+        }
+
+        return 0;
     }
 
     /**
@@ -111,39 +139,69 @@ public class VisionSubsystem extends SubsystemBase {
     /**
      * @return the yaw offset of the best target
      */
-    public Optional<Double> getYaw() {
+    public Optional<Double> getSpeakerYaw() {
         var result = getResult();
         if (!result.hasTargets()) return Optional.empty();
 
         for (var target : result.getTargets()) {
             int id = target.getFiducialId();
-            if (id == VisionConstants.APRILTAG_SPEAKER_CENTER_BLUE
-                    || id == VisionConstants.APRILTAG_SPEAKER_CENTER_RED) {
+            if (isSpeakerTarget(id)) {
                 return Optional.of(target.getYaw());
             }
         }
 
         return Optional.empty();
-    }
 
-    public boolean isAligned() {
-        // 10 is outside of target lock
-        return Math.abs(getYaw().orElse(10.0)) <= VisionConstants.TARGET_LOCK_RANGE;
-    }
+        // TODO: test this, might be dry-er
+        /* return speakerTargets(
+        (PhotonTrackedTarget target) -> Optional.of(target.getYaw()),
+        Optional.empty(),
+        result); */
 
-    /** angle the arm should be at to shoot */
-    public double getAngle() { // TODO: not been set up yet
-        // https://desmos.com/calculator/u5civq4pfs
-        return 90;
     }
 
     /**
-     * WARNING: Currently causes a loop overrun, do not use
-     *
-     * @return a Pose3d representing the robot's position on the field
+     * @return the yaw offset of the best target
      */
-    public Pose3d getRobotPose() {
-        Optional<EstimatedRobotPose> pose = photonPoseEstimator.update();
-        return pose.get().estimatedPose;
+    public Optional<Double> getYaw() {
+        var result = getResult();
+        if (!result.hasTargets()) return Optional.empty();
+
+        return Optional.of(result.getBestTarget().getYaw());
+    }
+
+    public boolean isAligned() {
+        // VisionConstants.TARGET_LOCK_RANGE + 1 is outside the range
+        // meaning if it's outside the range, it's not aligned
+        double yaw = getSpeakerYaw().orElse(VisionConstants.TARGET_LOCK_RANGE + 1);
+        return Math.abs(yaw) <= VisionConstants.TARGET_LOCK_RANGE;
+    }
+
+    /** angle the arm should be at to shoot */
+    // https://desmos.com/calculator/u5civq4pfs
+    public double getAngle() { // TODO: not been set up yet
+        double distance = getDistanceFromSpeakerTarget();
+
+        double d = 30.7022 * Math.pow(distance, 3);
+        double c = -215.524 * Math.pow(distance, 2);
+        double b = 508.904 * Math.pow(distance, 1);
+        double a = -334.329 * Math.pow(distance, 0);
+
+        return a + b + c + d;
+    }
+
+    private boolean isSpeakerTarget(int id) {
+        return id == VisionConstants.APRILTAG_SPEAKER_CENTER_BLUE
+                || id == VisionConstants.APRILTAG_SPEAKER_CENTER_RED;
+    }
+
+    private <T extends Object> T speakerTargets(
+            Function<PhotonTrackedTarget, T> fn, T other, PhotonPipelineResult result) {
+        for (var target : result.getTargets()) {
+            int id = target.getFiducialId();
+            if (isSpeakerTarget(id)) return fn.apply(target);
+        }
+
+        return other;
     }
 }
