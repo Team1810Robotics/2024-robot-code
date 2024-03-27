@@ -9,6 +9,20 @@ constexpr int LED_STRIP_LENGTH = 8;
 
 const int NUM_LEDS = (NUMBER_OF_PINS * LED_STRIP_LENGTH);
 
+#define BRETT_MODE false
+
+#define BLACK { 0, 0, 0 }
+#define PURPLE { 255, 0, 255 }
+#define RED { 255, 0, 0 }
+#define GREEN { 0, 255, 0 }
+#define BLUE { 0, 0, 255 }
+#define YELLOW { 255, 255, 0 }
+
+Color OFF         = BLACK;
+Color NO_TARGET   = RED;
+Color HAS_TARGET  = (BRETT_MODE) ? YELLOW : GREEN;
+Color IS_ALIGNED  = (BRETT_MODE) ? BLUE   : PURPLE;
+
 enum LEDState {
   off       = 0b00,
   isAligned = 0b01,
@@ -59,16 +73,16 @@ void solidColor(const Color& color) {
 void loop() {
   switch (getStatus()) {
     case hasTarget:
-      solidColor({ 0, 255, 0 }); // green
+      solidColor(HAS_TARGET);
       break;
     case noTarget:
-      solidColor({ 255, 0, 0 }); // red
+      solidColor(NO_TARGET);
       break;
     case isAligned:
-      solidColor({ 255, 0, 255 }); // purple
+      solidColor(IS_ALIGNED);
       break;
     case off:
-      solidColor({ 0, 0, 0 }); // black
+      solidColor(OFF);
       break;
   }
 
