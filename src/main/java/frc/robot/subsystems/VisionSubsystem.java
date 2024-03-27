@@ -155,8 +155,7 @@ public class VisionSubsystem extends SubsystemBase {
         // TODO: test this, might be dry-er
         /* return speakerTargets(
         (PhotonTrackedTarget target) -> Optional.of(target.getYaw()),
-        Optional.empty(),
-        result); */
+        Optional.empty()); */
 
     }
 
@@ -195,8 +194,10 @@ public class VisionSubsystem extends SubsystemBase {
                 || id == VisionConstants.APRILTAG_SPEAKER_CENTER_RED;
     }
 
-    private <T extends Object> T speakerTargets(
-            Function<PhotonTrackedTarget, T> fn, T other, PhotonPipelineResult result) {
+    private <T extends Object> T speakerTargets(Function<PhotonTrackedTarget, T> fn, T other) {
+        var result = getResult();
+        if (!result.hasTargets()) return other;
+
         for (var target : result.getTargets()) {
             if (isSpeakerTarget(target.getFiducialId())) return fn.apply(target);
         }
