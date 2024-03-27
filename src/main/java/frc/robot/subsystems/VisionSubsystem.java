@@ -198,8 +198,7 @@ public class VisionSubsystem extends SubsystemBase {
     private <T extends Object> T speakerTargets(
             Function<PhotonTrackedTarget, T> fn, T other, PhotonPipelineResult result) {
         for (var target : result.getTargets()) {
-            int id = target.getFiducialId();
-            if (isSpeakerTarget(id)) return fn.apply(target);
+            if (isSpeakerTarget(target.getFiducialId())) return fn.apply(target);
         }
 
         return other;
