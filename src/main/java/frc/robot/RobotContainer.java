@@ -18,7 +18,7 @@ import frc.robot.subsystems.ClimbSubsystem.ClimbDirection;
 
 public class RobotContainer {
 
-    private final ArmSubsystem armSubsystem = new ArmSubsystem();
+    public final ArmSubsystem armSubsystem = new ArmSubsystem();
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     public static IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
@@ -78,6 +78,8 @@ public class RobotContainer {
         box_climbDown.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbDown));
         box_intakePos.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
         box_travelPos.onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
+
+        // xbox_A.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem, true, false));
     }
 
     public Command getAutonomousCommand() {

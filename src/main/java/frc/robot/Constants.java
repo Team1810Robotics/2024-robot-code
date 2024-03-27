@@ -137,8 +137,9 @@ public final class Constants {
         public static final double SETPOINT_OFFSET = 30; // degrees
 
         public static final double kP = 9.0;
-        public static final double kI = 0.0;
+        public static final double kI = 0.01;
         public static final double kD = 0.0;
+        public static final double kIZ = 0.01;
 
         public static final double ks = 0.1;
         public static final double kg = 0.4;

@@ -26,17 +26,22 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
     public ArmSubsystem() {
         super(CONSTRAINTS);
         controller = new PIDController(kP, kI, kD);
+        controller.setIZone(kIZ);
         feedforward = new ArmFeedforward(ks, kg, kv);
 
         // controller.setTolerance(ARM_TOLERANCE);
         motorA.setInverted(true);
         motorB.setInverted(true);
 
-        controller.setTolerance(1.0, 0.1);
+        controller.setTolerance(0.1 /* rads */);
         setpoint(INTAKE_POSITION);
         enable();
 
         Shuffleboard.getTab("arm").addNumber("canCoder pos", this::getMeasurement);
+        Shuffleboard.getTab("arm")
+                .addNumber(
+                        "canCoder pos degrees",
+                        () -> Math.toDegrees(this.getMeasurement()) + SETPOINT_OFFSET);
         Shuffleboard.getTab("arm").add("pid", controller);
         Shuffleboard.getTab("arm").addNumber("error", controller::getPositionError);
     }

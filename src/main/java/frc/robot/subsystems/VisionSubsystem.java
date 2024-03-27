@@ -4,17 +4,16 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -39,6 +38,8 @@ public class VisionSubsystem extends SubsystemBase {
 
         Shuffleboard.getTab("vision").addNumber("Tag ID", this::getTargetId);
         Shuffleboard.getTab("vision").addNumber("Tag Yaw", () -> getYaw().orElse(0.0));
+        Shuffleboard.getTab("vision")
+                .addNumber("Distance From Target", () -> getGroundDistanceFromTarget());
     }
 
     /**
@@ -79,22 +80,25 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     public List<PhotonTrackedTarget> getTargets() {
-        return getResult().getTargets();
+        var result = getResult();
+        if (result.hasTargets()) {
+            return result.getTargets();
+        } else {
+            return new ArrayList<PhotonTrackedTarget>();
+        }
     }
 
     /**
      * @return the distance from the target in meters
      */
-    public double getPoseFromTarget() {
-        PhotonTrackedTarget target = getTargets().get(0);
-        double range =
-                PhotonUtils.calculateDistanceToTargetMeters(
-                        robotToCam.getZ(),
-                        target.getBestCameraToTarget().getZ(),
-                        robotToCam.getRotation().getZ(),
-                        Units.degreesToRadians(target.getPitch()));
-
-        return range;
+    public double getGroundDistanceFromTarget() {
+        var result = getResult();
+        if (result.hasTargets()) {
+            Transform3d transform = result.getBestTarget().getBestCameraToTarget();
+            return Math.hypot(transform.getX(), transform.getY());
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -129,6 +133,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     /** angle the arm should be at to shoot */
     public double getAngle() { // TODO: not been set up yet
+        // https://desmos.com/calculator/u5civq4pfs
         return 90;
     }
 
