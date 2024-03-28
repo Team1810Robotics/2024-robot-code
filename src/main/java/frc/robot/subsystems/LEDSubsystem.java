@@ -5,6 +5,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
 
 public class LEDSubsystem extends SubsystemBase {
+    private static final DigitalOutput highBit = new DigitalOutput(LEDConstants.HIGH_BIT);
+    private static final DigitalOutput lowBit = new DigitalOutput(LEDConstants.LOW_BIT);
+
+    private static LEDState state = LEDState.off;
 
     public enum LEDState {
         hasTarget(0b00),
@@ -22,11 +26,6 @@ public class LEDSubsystem extends SubsystemBase {
             return value;
         }
     }
-
-    private static final DigitalOutput highBit = new DigitalOutput(LEDConstants.HIGH_BIT);
-    private static final DigitalOutput lowBit = new DigitalOutput(LEDConstants.LOW_BIT);
-
-    private static LEDState state = LEDState.off;
 
     public static void setState(LEDState state) {
         LEDSubsystem.state = state;

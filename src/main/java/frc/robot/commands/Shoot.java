@@ -14,7 +14,7 @@ public class Shoot extends ParallelCommandGroup {
             IntakeSubsystem intake,
             ArmSubsystem arm,
             VisionSubsystem vision) {
-        BooleanSupplier block = () -> /* !vision.isAligned() && */ !arm.atSetpoint();
+        BooleanSupplier block = () -> !vision.isAligned() && !arm.atSetpoint();
         addCommands(
                 arm.setpointCommand(vision.getAngle()),
                 new ShooterCommand(shooter, intake, true, block));

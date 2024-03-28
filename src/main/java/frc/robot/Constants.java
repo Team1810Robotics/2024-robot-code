@@ -85,9 +85,10 @@ public final class Constants {
         // Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
         public static final double TARGET_LOCK_RANGE = 0.5;
 
-        public static final double V_Kp = 0.023;
-        public static final double V_Ki = 0.32;
-        public static final double V_Kd = 0.006;
+        public static final double kP = 0.023;
+        public static final double kI = 0.32;
+        public static final double kD = 0.006;
+        public static final double kIz = 10.0;
 
         public static final int APRILTAG_SPEAKER_CENTER_BLUE = 7;
         public static final int APRILTAG_SPEAKER_CENTER_RED = 4;

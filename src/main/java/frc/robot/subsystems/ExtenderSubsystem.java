@@ -10,6 +10,7 @@ public class ExtenderSubsystem extends SubsystemBase {
     private final VictorSPX extender;
 
     public ExtenderSubsystem() {
+        // TODO: make constant once we know if were using it
         extender = new VictorSPX(22);
         extender.setNeutralMode(NeutralMode.Brake);
     }

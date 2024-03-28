@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.ClimbSubsystem.ClimbDirection;
 
 public class RobotContainer {
 
@@ -39,8 +38,8 @@ public class RobotContainer {
                 new TeleopDriveVis(
                         driveSubsystem,
                         visionSubsystem,
-                        () -> -driver.getThrottle(),
-                        () -> -driver.getThrottle(),
+                        () -> driver.getThrottle(),
+                        () -> driver.getThrottle(),
                         () -> MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
                         () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
                         () -> MathUtil.applyDeadband(driver.getZ(), IOConstants.DEADBAND),
@@ -72,13 +71,13 @@ public class RobotContainer {
     private void configureBindings() {
         driver_button9.onTrue(Commands.run(driveSubsystem::zeroGyro));
 
-        driver_button12.whileTrue(
+        driver_trigger.whileTrue(
                 new Shoot(shooterSubsystem, intakeSubsystem, armSubsystem, visionSubsystem));
 
         box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
         box_outtake.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
-        box_climbUp.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbUp));
-        box_climbDown.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbDown));
+        box_climbUp.whileTrue(new ExtenderCommand(true, extenderSubsystem));
+        box_climbDown.whileTrue(new ExtenderCommand(false, extenderSubsystem));
         box_intakePos.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
         box_travelPos.onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
 

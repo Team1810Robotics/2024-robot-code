@@ -1,9 +1,7 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -17,7 +15,7 @@ public class TeleopDriveVis extends Command {
     private final DoubleSupplier rotationSpeed;
     private final DoubleSupplier vX;
     private final DoubleSupplier vY;
-    private final DoubleSupplier omega;
+    private final DoubleSupplier vT;
     private final BooleanSupplier visionMode;
     private final BooleanSupplier driveMode;
 
@@ -37,7 +35,7 @@ public class TeleopDriveVis extends Command {
         this.rotationSpeed = rotationSpeed;
         this.vX = vX;
         this.vY = vY;
-        this.omega = omega;
+        this.vT = omega;
         this.visionMode = visionMode;
         this.driveMode = driveMode;
 
@@ -48,24 +46,15 @@ public class TeleopDriveVis extends Command {
     public void execute() {
         // Make axis value 0 to 1 instead of -1 to 1
         double speedMult = convertSpace(-driveSpeed.getAsDouble());
-        double rotationMult = convertSpace(-rotationSpeed.getAsDouble());
-        double xVelocity =
-                MathUtil.applyDeadband(vX.getAsDouble(), IOConstants.DEADBAND) * speedMult;
-        double yVelocity =
-                MathUtil.applyDeadband(vY.getAsDouble(), IOConstants.DEADBAND) * speedMult;
-        double controllerSpeed =
-                MathUtil.applyDeadband((omega.getAsDouble()), IOConstants.DEADBAND)
-                        * rotationMult
-                        * SwerveConstants.MAX_ANG_SPEED;
-        double angVelocity =
-                drive.visionTargetPIDCalc(vision, controllerSpeed, visionMode.getAsBoolean());
+        double rotMult = convertSpace(-rotationSpeed.getAsDouble());
 
-        drive.drive(
-                new Translation2d(
-                        xVelocity * SwerveConstants.MAX_SPEED,
-                        yVelocity * SwerveConstants.MAX_SPEED),
-                angVelocity,
-                driveMode.getAsBoolean());
+        double xVelocity = vX.getAsDouble() * speedMult * SwerveConstants.MAX_SPEED;
+        double yVelocity = vY.getAsDouble() * speedMult * SwerveConstants.MAX_SPEED;
+        double thetaVel_ = vT.getAsDouble() * rotMult * SwerveConstants.MAX_ANG_SPEED;
+
+        double thetaVel = vision.visionTargetPIDCalc(thetaVel_, visionMode.getAsBoolean());
+
+        drive.drive(new Translation2d(xVelocity, yVelocity), thetaVel, driveMode.getAsBoolean());
     }
 
     @Override

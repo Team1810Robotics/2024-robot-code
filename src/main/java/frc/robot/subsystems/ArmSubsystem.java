@@ -15,8 +15,8 @@ import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
 import lib.ArmFeedforward;
 
 public class ArmSubsystem extends TrapezoidProfileSubsystem {
-    private CANSparkMax motorA = new CANSparkMax(MOTOR_A_ID, MotorType.kBrushless);
-    private CANSparkMax motorB = new CANSparkMax(MOTOR_B_ID, MotorType.kBrushless);
+    private CANSparkMax motorA;
+    private CANSparkMax motorB;
 
     private CANcoder canCoder = new CANcoder(CANCODER_ID);
 
@@ -26,25 +26,20 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
     public ArmSubsystem() {
         super(CONSTRAINTS);
         controller = new PIDController(kP, kI, kD);
-        controller.setIZone(kIZ);
         feedforward = new ArmFeedforward(ks, kg, kv);
 
-        // controller.setTolerance(ARM_TOLERANCE);
+        motorA = new CANSparkMax(MOTOR_A_ID, MotorType.kBrushless);
+        motorB = new CANSparkMax(MOTOR_B_ID, MotorType.kBrushless);
+
         motorA.setInverted(true);
         motorB.setInverted(true);
 
+        controller.setIZone(kIZ);
         controller.setTolerance(0.005 /* rads */);
         setpoint(INTAKE_POSITION);
         enable();
 
-        Shuffleboard.getTab("arm").addNumber("canCoder pos", this::getMeasurement);
-        Shuffleboard.getTab("arm")
-                .addNumber(
-                        "canCoder pos degrees",
-                        () -> Math.toDegrees(this.getMeasurement()) + SETPOINT_OFFSET);
-        Shuffleboard.getTab("arm").add("pid", controller);
-        Shuffleboard.getTab("arm").addNumber("error", controller::getPositionError);
-        Shuffleboard.getTab("arm").addBoolean("atSetpoint", this::atSetpoint);
+        setupShuffleboard();
     }
 
     @Override
@@ -62,24 +57,21 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
         return rads - CANCODER_OFFSET;
     }
 
+    public double getVelocity() {
+        return canCoder.getVelocity().getValueAsDouble() * TICKS_TO_RAD_CONVERSION;
+    }
+
+    public double getMeasurementDegrees() {
+        return Math.toDegrees(getMeasurement()) + SETPOINT_OFFSET;
+    }
+
     /**
-     * @param setpoint setpoint in degrees; 90 is when the arm is straight up and down
+     * @param setpoint setpoint in degrees; 90° is when the arm is straight up and down
      */
     public void setpoint(double setpoint) {
         double clampSetpoint = MathUtil.clamp(setpoint, 41, 94.0);
         clampSetpoint = Math.toRadians(clampSetpoint - SETPOINT_OFFSET);
         super.setGoal(clampSetpoint);
-    }
-
-    public double getVelocity() {
-        return canCoder.getVelocity().getValueAsDouble() * TICKS_TO_RAD_CONVERSION;
-    }
-
-    public void setSpeed(double motorSpeed) {
-        motorSpeed = MathUtil.clamp(motorSpeed, -1, 1);
-
-        motorA.set(motorSpeed);
-        motorB.set(motorSpeed);
     }
 
     public void stop() {
@@ -93,5 +85,13 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
 
     public Command setpointCommand(double setpoint) {
         return Commands.runOnce(() -> setpoint(setpoint));
+    }
+
+    private void setupShuffleboard() {
+        Shuffleboard.getTab("arm").add("pid", controller);
+        Shuffleboard.getTab("arm").addNumber("canCoder pos", this::getMeasurement);
+        Shuffleboard.getTab("arm").addNumber("canCoder pos degrees", this::getMeasurementDegrees);
+        Shuffleboard.getTab("arm").addNumber("error", controller::getPositionError);
+        Shuffleboard.getTab("arm").addBoolean("atSetpoint", this::atSetpoint);
     }
 }

@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,14 +16,39 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class VisionSubsystem extends SubsystemBase {
 
     private final PhotonCamera camera;
+    private final PIDController rotPidController;
 
     public VisionSubsystem() {
         camera = new PhotonCamera(VisionConstants.CAMERA_NAME);
 
-        Shuffleboard.getTab("vision").addNumber("Tag ID", this::getTargetId);
-        Shuffleboard.getTab("vision").addNumber("Tag Yaw", () -> getSpeakerYaw().orElse(0.0));
-        Shuffleboard.getTab("vision").addNumber("Distance", this::getDistanceFromSpeakerTarget);
-        Shuffleboard.getTab("vision").addNumber("angle", this::getAngle);
+        rotPidController =
+                new PIDController(VisionConstants.kP, VisionConstants.kI, VisionConstants.kD);
+        rotPidController.setIZone(VisionConstants.kIz);
+
+        setupShuffleboard();
+    }
+
+    /**
+     * (don't use this unless you're desperate)
+     *
+     * @return the PhotonCamera object
+     */
+    public PhotonCamera getCamera() {
+        return camera;
+    }
+
+    /**
+     * @returns the vision pipeline's getResult() (all of its data)
+     */
+    public PhotonPipelineResult getResult() {
+        return camera.getLatestResult();
+    }
+
+    /**
+     * @return whether or not an AprilTag is detected
+     */
+    public boolean hasTarget() {
+        return getResult().hasTargets();
     }
 
     /**
@@ -58,20 +84,13 @@ public class VisionSubsystem extends SubsystemBase {
         return false;
     }
 
-    /**
-     * @return whether or not an AprilTag is detected
-     */
-    public boolean hasTarget() {
-        return getResult().hasTargets();
-    }
-
-    /**
-     * (don't use this unless you're desperate)
-     *
-     * @return the PhotonCamera object
-     */
-    public PhotonCamera getCamera() {
-        return camera;
+    public List<PhotonTrackedTarget> getTargets() {
+        var result = getResult();
+        if (result.hasTargets()) {
+            return result.getTargets();
+        } else {
+            return new ArrayList<PhotonTrackedTarget>();
+        }
     }
 
     /**
@@ -81,15 +100,6 @@ public class VisionSubsystem extends SubsystemBase {
         var results = getResult();
         if (!results.hasTargets()) return -1;
         return results.getBestTarget().getFiducialId();
-    }
-
-    public List<PhotonTrackedTarget> getTargets() {
-        var result = getResult();
-        if (result.hasTargets()) {
-            return result.getTargets();
-        } else {
-            return new ArrayList<PhotonTrackedTarget>();
-        }
     }
 
     /**
@@ -118,10 +128,13 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     /**
-     * @returns the vision pipeline's getResult() (all of its data)
+     * @return the yaw offset of the best target
      */
-    public PhotonPipelineResult getResult() {
-        return camera.getLatestResult();
+    public Optional<Double> getYaw() {
+        var result = getResult();
+        if (!result.hasTargets()) return Optional.empty();
+
+        return Optional.of(result.getBestTarget().getYaw());
     }
 
     /**
@@ -133,20 +146,23 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     /**
-     * @return the yaw offset of the best target
+     * @return whether the robot is aligned with the speaker target
      */
-    public Optional<Double> getYaw() {
-        var result = getResult();
-        if (!result.hasTargets()) return Optional.empty();
-
-        return Optional.of(result.getBestTarget().getYaw());
-    }
-
     public boolean isAligned() {
         // VisionConstants.TARGET_LOCK_RANGE + 1 is outside the range
         // meaning if it's outside the range, it's not aligned
         double yaw = getSpeakerYaw().orElse(VisionConstants.TARGET_LOCK_RANGE + 1);
         return Math.abs(yaw) <= VisionConstants.TARGET_LOCK_RANGE;
+    }
+
+    /**
+     * @param altRotation rotation speed when no target is detected
+     * @return the PID output to rotate toward the best AprilTag target
+     */
+    public double visionTargetPIDCalc(double altRotation, boolean visionMode) {
+        if (!visionMode) return altRotation;
+
+        return -rotPidController.calculate(getSpeakerYaw().orElse(0.0));
     }
 
     /** angle the arm should be at to shoot */
@@ -176,5 +192,13 @@ public class VisionSubsystem extends SubsystemBase {
         }
 
         return other;
+    }
+
+    public void setupShuffleboard() {
+        Shuffleboard.getTab("vision").addNumber("Tag ID", this::getTargetId);
+        Shuffleboard.getTab("vision").addNumber("Tag Yaw", () -> getSpeakerYaw().orElse(0.0));
+        Shuffleboard.getTab("vision").addNumber("Distance", this::getDistanceFromSpeakerTarget);
+        Shuffleboard.getTab("vision").addNumber("angle", this::getAngle);
+        Shuffleboard.getTab("vision").add("rotation PID", rotPidController);
     }
 }
