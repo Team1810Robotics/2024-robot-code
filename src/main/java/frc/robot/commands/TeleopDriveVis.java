@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.SwerveConstants;
@@ -55,16 +54,11 @@ public class TeleopDriveVis extends Command {
         double yVelocity =
                 MathUtil.applyDeadband(vY.getAsDouble(), IOConstants.DEADBAND) * speedMult;
         double controllerSpeed =
-                MathUtil.applyDeadband((-omega.getAsDouble()), IOConstants.DEADBAND)
+                MathUtil.applyDeadband((omega.getAsDouble()), IOConstants.DEADBAND)
                         * rotationMult
                         * SwerveConstants.MAX_ANG_SPEED;
         double angVelocity =
                 drive.visionTargetPIDCalc(vision, controllerSpeed, visionMode.getAsBoolean());
-
-        SmartDashboard.putNumber("vX", xVelocity);
-        SmartDashboard.putNumber("vY", yVelocity);
-        SmartDashboard.putNumber("omega", angVelocity);
-        SmartDashboard.putBoolean("Target Button", visionMode.getAsBoolean());
 
         drive.drive(
                 new Translation2d(

@@ -1,11 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.SwerveConstants;
@@ -26,8 +24,6 @@ public class Robot extends TimedRobot {
 
     private Timer disabledTimer;
 
-    GenericEntry setpoint;
-
     /**
      * This function is run when the robot is first started up and should be used for any
      * initialization code.
@@ -45,8 +41,6 @@ public class Robot extends TimedRobot {
 
         // Puts the driver camera to Shuffleboard
         CameraServer.startAutomaticCapture();
-
-        setpoint = Shuffleboard.getTab("arm").add("setpoint", 90).getEntry();
     }
 
     /**
@@ -65,10 +59,9 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
 
         // Update the LEDSubsystem
-        boolean hasNote = RobotContainer.intakeSubsystem.hasNote();
-        boolean hasTarget = RobotContainer.visionSubsystem.hasSpeakerTarget();
-        // sam is (not) cool [but instead] beautiful
-        boolean isAligned = RobotContainer.visionSubsystem.isAligned();
+        boolean hasNote = m_robotContainer.intakeSubsystem.hasNote();
+        boolean hasTarget = m_robotContainer.visionSubsystem.hasSpeakerTarget();
+        boolean isAligned = m_robotContainer.visionSubsystem.isAligned();
 
         if (!hasNote) {
             LEDSubsystem.setState(LEDSubsystem.LEDState.off);
@@ -82,8 +75,6 @@ public class Robot extends TimedRobot {
             // should never happen ¯\_(ツ)_/¯
             LEDSubsystem.setState(LEDSubsystem.LEDState.off);
         }
-
-        m_robotContainer.armSubsystem.setpoint(setpoint.getDouble(90));
     }
 
     /** This function is called once each time the robot enters Disabled mode. */

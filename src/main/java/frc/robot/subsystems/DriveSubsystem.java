@@ -40,8 +40,6 @@ public class DriveSubsystem extends SubsystemBase {
     /** Swerve drive object. */
     private final SwerveDrive swerveDrive;
 
-    // private final PIDController rotController = new PIDController(0.15, 0.32, 0.006);
-    // private final PIDController rotController = new PIDController(0.0, 0.0, 0.0);
     private final PIDController transController = new PIDController(0, 0, 0);
 
     PIDController rotPidController =
@@ -81,6 +79,8 @@ public class DriveSubsystem extends SubsystemBase {
 
         setupPathPlanner();
         setupShuffleBoard();
+
+        rotPidController.setIZone(10);
     }
 
     /**

@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,19 +14,15 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionSubsystem extends SubsystemBase {
 
-    AprilTagFieldLayout aprilTagFieldLayout =
-            AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-
-    Transform3d robotToCam = VisionConstants.CAMERA_OFFSET;
-
-    PhotonCamera camera;
+    private final PhotonCamera camera;
 
     public VisionSubsystem() {
-        camera = new PhotonCamera(VisionConstants.TARGET_CAMERA);
+        camera = new PhotonCamera(VisionConstants.CAMERA_NAME);
 
         Shuffleboard.getTab("vision").addNumber("Tag ID", this::getTargetId);
         Shuffleboard.getTab("vision").addNumber("Tag Yaw", () -> getSpeakerYaw().orElse(0.0));
         Shuffleboard.getTab("vision").addNumber("Distance", this::getDistanceFromSpeakerTarget);
+        Shuffleboard.getTab("vision").addNumber("angle", this::getAngle);
     }
 
     /**
@@ -115,18 +109,12 @@ public class VisionSubsystem extends SubsystemBase {
      * @return the distance from the target in meters
      */
     public double getDistanceFromSpeakerTarget() {
-        var result = getResult();
-        if (result.hasTargets()) {
-            for (var target : result.getTargets()) {
-                int id = target.getFiducialId();
-                if (isSpeakerTarget(id)) {
+        return speakerTargets(
+                (PhotonTrackedTarget target) -> {
                     Transform3d transform = target.getBestCameraToTarget();
                     return Math.hypot(transform.getX(), transform.getY());
-                }
-            }
-        }
-
-        return 0;
+                },
+                0.0);
     }
 
     /**
@@ -140,23 +128,8 @@ public class VisionSubsystem extends SubsystemBase {
      * @return the yaw offset of the best target
      */
     public Optional<Double> getSpeakerYaw() {
-        var result = getResult();
-        if (!result.hasTargets()) return Optional.empty();
-
-        for (var target : result.getTargets()) {
-            int id = target.getFiducialId();
-            if (isSpeakerTarget(id)) {
-                return Optional.of(target.getYaw());
-            }
-        }
-
-        return Optional.empty();
-
-        // TODO: test this, might be dry-er
-        /* return speakerTargets(
-        (PhotonTrackedTarget target) -> Optional.of(target.getYaw()),
-        Optional.empty()); */
-
+        return speakerTargets(
+                (PhotonTrackedTarget target) -> Optional.of(target.getYaw()), Optional.empty());
     }
 
     /**
@@ -178,15 +151,15 @@ public class VisionSubsystem extends SubsystemBase {
 
     /** angle the arm should be at to shoot */
     // https://desmos.com/calculator/u5civq4pfs
-    public double getAngle() { // TODO: not been set up yet
+    public double getAngle() {
         double distance = getDistanceFromSpeakerTarget();
+        if (distance == 0.0) return 62.0;
 
-        double d = 30.7022 * Math.pow(distance, 3);
-        double c = -215.524 * Math.pow(distance, 2);
-        double b = 508.904 * Math.pow(distance, 1);
-        double a = -334.329 * Math.pow(distance, 0);
+        double c = -4.91756 * Math.pow(distance, 2);
+        double b = 35.6183 * distance;
+        double a = 19.4615;
 
-        return a + b + c + d;
+        return a + b + c;
     }
 
     private boolean isSpeakerTarget(int id) {

@@ -19,12 +19,13 @@ import frc.robot.subsystems.ClimbSubsystem.ClimbDirection;
 public class RobotContainer {
 
     public final ArmSubsystem armSubsystem = new ArmSubsystem();
-    private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-    public static IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-    private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
-    private final DriveSubsystem driveSubsystem = new DriveSubsystem(SwerveConstants.DIRECTORY);
-    public static VisionSubsystem visionSubsystem = new VisionSubsystem();
-    public static LEDSubsystem ledSubsystem = new LEDSubsystem();
+    public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+    public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    public final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
+    public final DriveSubsystem driveSubsystem = new DriveSubsystem(SwerveConstants.DIRECTORY);
+    public final VisionSubsystem visionSubsystem = new VisionSubsystem();
+    public final LEDSubsystem ledSubsystem = new LEDSubsystem();
+    public final ExtenderSubsystem extenderSubsystem = new ExtenderSubsystem();
 
     private final SendableChooser<Command> autoChooser;
 
@@ -33,6 +34,7 @@ public class RobotContainer {
         // Configure the trigger bindings
         configureBindings();
 
+        @SuppressWarnings("unused")
         Command visDrive =
                 new TeleopDriveVis(
                         driveSubsystem,
@@ -45,6 +47,7 @@ public class RobotContainer {
                         () -> driver.getTrigger(),
                         () -> true);
 
+        @SuppressWarnings("unused")
         Command visDrive_two =
                 new TeleopDriveVis(
                         driveSubsystem,
@@ -57,7 +60,7 @@ public class RobotContainer {
                         () -> driver.getTrigger(),
                         () -> true);
 
-        driveSubsystem.setDefaultCommand(visDrive_two);
+        driveSubsystem.setDefaultCommand(visDrive);
 
         autoChooser = AutoBuilder.buildAutoChooser();
         autoChooser.addOption(
@@ -67,9 +70,9 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        driver_button9.onTrue(Commands.run(driveSubsystem::zeroGyro, driveSubsystem));
+        driver_button9.onTrue(Commands.run(driveSubsystem::zeroGyro));
 
-        driver_trigger.whileTrue(
+        driver_button12.whileTrue(
                 new Shoot(shooterSubsystem, intakeSubsystem, armSubsystem, visionSubsystem));
 
         box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
@@ -79,7 +82,12 @@ public class RobotContainer {
         box_intakePos.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
         box_travelPos.onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
 
-        // xbox_A.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem, true, false));
+        xbox_A.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem, false, () -> false));
+        xbox_B.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
+        xbox_X.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
+        xbox_Y.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
+        xbox_LStick.whileTrue(new ExtenderCommand(true, extenderSubsystem));
+        xbox_RStick.whileTrue(new ExtenderCommand(false, extenderSubsystem));
     }
 
     public Command getAutonomousCommand() {

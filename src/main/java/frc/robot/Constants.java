@@ -3,8 +3,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.pathplanner.lib.util.PIDConstants;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -83,25 +81,9 @@ public final class Constants {
     public static final class VisionConstants {
         public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
 
-        public static final double CAMERA_HEIGHT = 0.0;
-        public static final double APRILTAG_RED_SHOOTER_HEIGHT = 0.0;
-        public static final double CAMERA_PITCH = 0.0;
-
-        public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT =
-                AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-
-        public static final double APRILTAG_AMBIGUITY_THRESHOLD = 0.2;
-        public static final Transform3d CAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0, 0, 0));
-
         // How off can the AprilTag be and still alright
         // Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
         public static final double TARGET_LOCK_RANGE = 0.5;
-
-        public static Transform3d CAMERA_OFFSET =
-                new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0, 0, 0));
-
-        public static final String TARGET_CAMERA = "Arducam_OV9281_USB_Camera";
 
         public static final double V_Kp = 0.023;
         public static final double V_Ki = 0.32;
@@ -109,6 +91,10 @@ public final class Constants {
 
         public static final int APRILTAG_SPEAKER_CENTER_BLUE = 7;
         public static final int APRILTAG_SPEAKER_CENTER_RED = 4;
+
+        public static final Transform3d CAMERA_OFFSET =
+                new Transform3d(
+                        new Translation3d(0, Units.inchesToMeters(9.5), 0), new Rotation3d());
     }
 
     public static final class AutoConstants {
@@ -157,11 +143,7 @@ public final class Constants {
         public static final int TOP_MOTOR_ID = 14;
         public static final int BOTTOM_MOTOR_ID = 15;
         public static final Measure<Voltage> SHOOT_SPEED = Volts.of(12.0); // Volts
-        public static final double SPIN_UP_TIME = 0.5; // seconds
-    }
-
-    public static final class ExtenderConstants {
-        public static final int MOTOR_ID = 22;
+        public static final double SPIN_UP_TIME = 0.75; // seconds
     }
 
     public static final class ClimbConstants {
@@ -174,10 +156,6 @@ public final class Constants {
         public static final int RIGHT_TOP_LS = 3;
         public static final int RIGHT_BOTTOM_LS = 5;
         public static final double CLIMB_SPEED = 0.75;
-    }
-
-    public static final class TrapConstants {
-        public static final int VICTOR_MOTOR_ID = 0;
     }
 
     public static final class LEDConstants {

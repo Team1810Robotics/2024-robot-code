@@ -5,6 +5,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import java.util.function.BooleanSupplier;
 
 public class Shoot extends ParallelCommandGroup {
 
@@ -13,7 +14,9 @@ public class Shoot extends ParallelCommandGroup {
             IntakeSubsystem intake,
             ArmSubsystem arm,
             VisionSubsystem vision) {
-        boolean block = !vision.isAligned() && !arm.atSetpoint();
-        addCommands(new AimCommand(vision, arm), new ShooterCommand(shooter, intake, true, block));
+        BooleanSupplier block = () -> /* !vision.isAligned() && */ !arm.atSetpoint();
+        addCommands(
+                arm.setpointCommand(vision.getAngle()),
+                new ShooterCommand(shooter, intake, true, block));
     }
 }

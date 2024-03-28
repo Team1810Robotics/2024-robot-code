@@ -24,6 +24,11 @@ public class AimCommand extends Command {
     }
 
     @Override
+    public boolean isFinished() {
+        return arm.atSetpoint();
+    }
+
+    @Override
     public void end(boolean interrupted) {
         arm.setpoint(DRIVE_POSITION);
     }

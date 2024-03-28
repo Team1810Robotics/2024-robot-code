@@ -33,7 +33,7 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
         motorA.setInverted(true);
         motorB.setInverted(true);
 
-        controller.setTolerance(0.1 /* rads */);
+        controller.setTolerance(0.005 /* rads */);
         setpoint(INTAKE_POSITION);
         enable();
 
@@ -44,6 +44,7 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
                         () -> Math.toDegrees(this.getMeasurement()) + SETPOINT_OFFSET);
         Shuffleboard.getTab("arm").add("pid", controller);
         Shuffleboard.getTab("arm").addNumber("error", controller::getPositionError);
+        Shuffleboard.getTab("arm").addBoolean("atSetpoint", this::atSetpoint);
     }
 
     @Override
@@ -65,8 +66,9 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
      * @param setpoint setpoint in degrees; 90 is when the arm is straight up and down
      */
     public void setpoint(double setpoint) {
-        setpoint = Math.toRadians(setpoint - SETPOINT_OFFSET);
-        super.setGoal(setpoint);
+        double clampSetpoint = MathUtil.clamp(setpoint, 41, 94.0);
+        clampSetpoint = Math.toRadians(clampSetpoint - SETPOINT_OFFSET);
+        super.setGoal(clampSetpoint);
     }
 
     public double getVelocity() {
@@ -90,6 +92,6 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
     }
 
     public Command setpointCommand(double setpoint) {
-        return Commands.run(() -> setpoint(setpoint), this);
+        return Commands.runOnce(() -> setpoint(setpoint));
     }
 }
