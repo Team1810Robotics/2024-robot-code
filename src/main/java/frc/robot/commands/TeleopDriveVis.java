@@ -54,7 +54,7 @@ public class TeleopDriveVis extends Command {
 
         double thetaVel = vision.visionTargetPIDCalc(thetaVel_, visionMode.getAsBoolean());
 
-        drive.drive(new Translation2d(xVelocity, yVelocity), thetaVel, driveMode.getAsBoolean());
+        drive.drive(new Translation2d(xVelocity, yVelocity), thetaVel, true);
     }
 
     @Override

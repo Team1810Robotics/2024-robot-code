@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
-import lib.ArmFeedforward;
+import frc.robot.Constants.ArmConstants;
 
 public class ArmSubsystem extends TrapezoidProfileSubsystem {
     private CANSparkMax motorA;
@@ -21,12 +21,10 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
     private CANcoder canCoder = new CANcoder(CANCODER_ID);
 
     private final PIDController controller;
-    private final ArmFeedforward feedforward;
 
     public ArmSubsystem() {
         super(CONSTRAINTS);
         controller = new PIDController(kP, kI, kD);
-        feedforward = new ArmFeedforward(ks, kg, kv);
 
         motorA = new CANSparkMax(MOTOR_A_ID, MotorType.kBrushless);
         motorB = new CANSparkMax(MOTOR_B_ID, MotorType.kBrushless);
@@ -35,7 +33,7 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
         motorB.setInverted(true);
 
         controller.setIZone(kIZ);
-        controller.setTolerance(0.005 /* rads */);
+        controller.setTolerance(0.05);
         setpoint(INTAKE_POSITION);
         enable();
 
@@ -45,20 +43,15 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
     @Override
     public void useState(TrapezoidProfile.State setpoint) {
         double pid = controller.calculate(getMeasurement(), setpoint.position);
-        double feed = feedforward.calculate(getMeasurement(), getVelocity());
 
-        motorA.setVoltage(pid + feed);
-        motorB.setVoltage(pid + feed);
+        motorA.setVoltage(pid);
+        motorB.setVoltage(pid);
     }
 
     public double getMeasurement() {
         double position = canCoder.getAbsolutePosition().getValueAsDouble();
         double rads = position * TICKS_TO_RAD_CONVERSION;
         return rads - CANCODER_OFFSET;
-    }
-
-    public double getVelocity() {
-        return canCoder.getVelocity().getValueAsDouble() * TICKS_TO_RAD_CONVERSION;
     }
 
     public double getMeasurementDegrees() {
@@ -80,7 +73,17 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
     }
 
     public boolean atSetpoint() {
+        double intakeRadians = Math.toRadians(ArmConstants.INTAKE_POSITION - SETPOINT_OFFSET);
+        if (controller.getSetpoint() == intakeRadians) return false;
         return controller.atSetpoint();
+    }
+
+    public double getSetpoint() {
+        return controller.getSetpoint();
+    }
+
+    public double getSetpointDegrees() {
+        return Math.toDegrees(getSetpoint()) + SETPOINT_OFFSET;
     }
 
     public Command setpointCommand(double setpoint) {
@@ -93,5 +96,6 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
         Shuffleboard.getTab("arm").addNumber("canCoder pos degrees", this::getMeasurementDegrees);
         Shuffleboard.getTab("arm").addNumber("error", controller::getPositionError);
         Shuffleboard.getTab("arm").addBoolean("atSetpoint", this::atSetpoint);
+        Shuffleboard.getTab("arm").addNumber("arm setpoint", this::getSetpointDegrees);
     }
 }

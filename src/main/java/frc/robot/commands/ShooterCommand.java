@@ -40,8 +40,10 @@ public class ShooterCommand extends Command {
     public void execute() {
         shooter.setVoltage(ShooterConstants.SHOOT_SPEED);
 
+        System.out.println("Blocked: " + blocked.getAsBoolean());
+
         double deltaTime = Timer.getFPGATimestamp() - startTime;
-        if ((deltaTime > ShooterConstants.SPIN_UP_TIME) && !blocked.getAsBoolean())
+        if ((deltaTime >= ShooterConstants.SPIN_UP_TIME) && !blocked.getAsBoolean())
             intake.setSpeed(1.0);
     }
 

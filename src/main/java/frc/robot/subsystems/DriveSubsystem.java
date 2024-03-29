@@ -213,6 +213,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     private void setupShuffleBoard() {
         Shuffleboard.getTab("swerve").add("trans", transController);
+        Shuffleboard.getTab("Teleoperated").addNumber("gyro", () -> getHeading().getDegrees());
 
         Shuffleboard.getTab("swerve")
                 .addNumber(

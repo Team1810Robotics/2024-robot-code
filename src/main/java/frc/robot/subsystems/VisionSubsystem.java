@@ -199,6 +199,7 @@ public class VisionSubsystem extends SubsystemBase {
         Shuffleboard.getTab("vision").addNumber("Tag Yaw", () -> getSpeakerYaw().orElse(0.0));
         Shuffleboard.getTab("vision").addNumber("Distance", this::getDistanceFromSpeakerTarget);
         Shuffleboard.getTab("vision").addNumber("angle", this::getAngle);
+        Shuffleboard.getTab("vision").addBoolean("aligned", this::isAligned);
         Shuffleboard.getTab("vision").add("rotation PID", rotPidController);
     }
 }

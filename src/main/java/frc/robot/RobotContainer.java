@@ -5,15 +5,13 @@ import static frc.robot.controller.IO.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ClimbSubsystem.ClimbDirection;
 
 public class RobotContainer {
 
@@ -62,17 +60,16 @@ public class RobotContainer {
         driveSubsystem.setDefaultCommand(visDrive);
 
         autoChooser = AutoBuilder.buildAutoChooser();
-        autoChooser.addOption(
-                "5m line",
-                driveSubsystem.driveToPose(new Pose2d(new Translation2d(5, 0), new Rotation2d())));
         Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
     }
 
     private void configureBindings() {
-        driver_button9.onTrue(Commands.run(driveSubsystem::zeroGyro));
+        driver_button9.onTrue(Commands.runOnce(driveSubsystem::zeroGyro));
 
-        driver_trigger.whileTrue(
-                new Shoot(shooterSubsystem, intakeSubsystem, armSubsystem, visionSubsystem));
+        driver_trigger
+                .whileTrue(
+                        new Shoot(shooterSubsystem, intakeSubsystem, armSubsystem, visionSubsystem))
+                .onFalse(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
 
         box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
         box_outtake.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
@@ -85,8 +82,8 @@ public class RobotContainer {
         xbox_B.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
         xbox_X.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
         xbox_Y.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
-        xbox_LStick.whileTrue(new ExtenderCommand(true, extenderSubsystem));
-        xbox_RStick.whileTrue(new ExtenderCommand(false, extenderSubsystem));
+        xbox_LStick.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbUp));
+        xbox_RStick.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbDown));
     }
 
     public Command getAutonomousCommand() {

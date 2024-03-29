@@ -3,9 +3,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.pathplanner.lib.util.PIDConstants;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
@@ -25,7 +22,7 @@ import swervelib.math.SwerveMath;
 public final class Constants {
 
     public static class IOConstants {
-        public static final double DEADBAND = 0.05;
+        public static final double DEADBAND = 0.1;
         // Drive Controller Speed
         public static final int DRIVE_MODE_BUTTON = 7;
 
@@ -85,17 +82,13 @@ public final class Constants {
         // Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
         public static final double TARGET_LOCK_RANGE = 0.5;
 
-        public static final double kP = 0.023;
+        public static final double kP = 0.15;
         public static final double kI = 0.32;
         public static final double kD = 0.006;
         public static final double kIz = 10.0;
 
         public static final int APRILTAG_SPEAKER_CENTER_BLUE = 7;
         public static final int APRILTAG_SPEAKER_CENTER_RED = 4;
-
-        public static final Transform3d CAMERA_OFFSET =
-                new Transform3d(
-                        new Translation3d(0, Units.inchesToMeters(9.5), 0), new Rotation3d());
     }
 
     public static final class AutoConstants {
@@ -105,7 +98,7 @@ public final class Constants {
 
     public static final class ArmConstants {
 
-        public static final double MAX_SPEED = Math.PI / 4.0; // rad/s
+        public static final double MAX_SPEED = Math.PI / 2.0; // rad/s
         public static final double MAX_ACCEL = MAX_SPEED / 2.0; // rad/s^2
 
         public static final TrapezoidProfile.Constraints CONSTRAINTS =
@@ -123,21 +116,21 @@ public final class Constants {
 
         public static final double SETPOINT_OFFSET = 30; // degrees
 
-        public static final double kP = 9.0;
+        public static final double kP = 9.5;
         public static final double kI = 0.01;
         public static final double kD = 0.0;
-        public static final double kIZ = 0.01;
+        public static final double kIZ = 10;
 
-        public static final double ks = 0.1;
-        public static final double kg = 0.4;
-        public static final double kv = -2.5;
+        public static final double ks = 0.0;
+        public static final double kg = 0.0;
+        public static final double kv = 0.0;
 
         public static final double TICKS_TO_RAD_CONVERSION = (2 * Math.PI);
     }
 
     public static final class IntakeConstants {
         public static final int MOTOR_ID = 16;
-        public static final int BEAM_BREAK_PORT = 0;
+        public static final int BEAM_BREAK_PORT = 7;
     }
 
     public static final class ShooterConstants {
