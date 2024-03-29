@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Bottom Paths",
+  "folder": null,
   "previewStartingState": {
     "rotation": 119.84593194968743,
     "velocity": 0

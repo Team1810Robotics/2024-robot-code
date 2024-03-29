@@ -162,7 +162,7 @@ public class VisionSubsystem extends SubsystemBase {
     public double visionTargetPIDCalc(double altRotation, boolean visionMode) {
         if (!visionMode) return altRotation;
 
-        return -rotPidController.calculate(getSpeakerYaw().orElse(0.0));
+        return rotPidController.calculate(getSpeakerYaw().orElse(0.0));
     }
 
     /** angle the arm should be at to shoot */

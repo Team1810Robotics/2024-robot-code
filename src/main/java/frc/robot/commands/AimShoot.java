@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
@@ -9,26 +11,29 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import java.util.function.BooleanSupplier;
 
-public class Shoot extends Command {
-
-    private final BooleanSupplier blocked;
+public class AimShoot extends Command {
 
     private final ShooterSubsystem shooter;
     private final IntakeSubsystem intake;
     private final ArmSubsystem arm;
     private final VisionSubsystem vision;
 
+    private final BooleanSupplier blocked;
+    private final boolean idle;
+
     private double startTime;
 
-    public Shoot(
+    public AimShoot(
             ShooterSubsystem shooter,
             IntakeSubsystem intake,
             ArmSubsystem arm,
-            VisionSubsystem vision) {
+            VisionSubsystem vision,
+            boolean idleShooter) {
         this.shooter = shooter;
         this.intake = intake;
         this.arm = arm;
         this.vision = vision;
+        this.idle = idleShooter;
         blocked =
                 () -> {
                     boolean isAligned = vision.isAligned() || (arm.getSetpointDegrees() == 62);
@@ -52,8 +57,17 @@ public class Shoot extends Command {
     }
 
     @Override
+    public boolean isFinished() {
+        return !intake.hasNote();
+    }
+
+    @Override
     public void end(boolean interupted) {
         intake.stop();
-        shooter.stop();
+        if (idle) {
+            shooter.setVoltage(Volts.of(4));
+        } else {
+            shooter.stop();
+        }
     }
 }

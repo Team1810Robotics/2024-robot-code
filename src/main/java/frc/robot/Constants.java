@@ -80,7 +80,7 @@ public final class Constants {
 
         // How off can the AprilTag be and still alright
         // Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
-        public static final double TARGET_LOCK_RANGE = 0.5;
+        public static final double TARGET_LOCK_RANGE = 1.0;
 
         public static final double kP = 0.15;
         public static final double kI = 0.32;
@@ -98,7 +98,7 @@ public final class Constants {
 
     public static final class ArmConstants {
 
-        public static final double MAX_SPEED = Math.PI / 2.0; // rad/s
+        public static final double MAX_SPEED = Math.PI / 6.0; // rad/s
         public static final double MAX_ACCEL = MAX_SPEED / 2.0; // rad/s^2
 
         public static final TrapezoidProfile.Constraints CONSTRAINTS =
@@ -120,10 +120,6 @@ public final class Constants {
         public static final double kI = 0.01;
         public static final double kD = 0.0;
         public static final double kIZ = 10;
-
-        public static final double ks = 0.0;
-        public static final double kg = 0.0;
-        public static final double kv = 0.0;
 
         public static final double TICKS_TO_RAD_CONVERSION = (2 * Math.PI);
     }

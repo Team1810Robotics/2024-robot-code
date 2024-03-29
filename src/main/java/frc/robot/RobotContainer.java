@@ -4,14 +4,15 @@ import static frc.robot.Constants.*;
 import static frc.robot.controller.IO.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.*;
+import frc.robot.commands.Auto.Align;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.ClimbSubsystem.ClimbDirection;
 
 public class RobotContainer {
 
@@ -38,11 +39,10 @@ public class RobotContainer {
                         visionSubsystem,
                         () -> driver.getThrottle(),
                         () -> driver.getThrottle(),
-                        () -> MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
-                        () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
-                        () -> MathUtil.applyDeadband(driver.getZ(), IOConstants.DEADBAND),
-                        () -> driver.getTrigger(),
-                        () -> true);
+                        () -> MathUtil.applyDeadband(-driver.getY(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(-driver.getX(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(-driver.getZ(), IOConstants.DEADBAND),
+                        () -> driver.getTrigger());
 
         @SuppressWarnings("unused")
         Command visDrive_two =
@@ -51,13 +51,21 @@ public class RobotContainer {
                         visionSubsystem,
                         () -> driver.getThrottle(),
                         () -> rotation.getThrottle(),
-                        () -> MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
-                        () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
-                        () -> MathUtil.applyDeadband(rotation.getX(), IOConstants.DEADBAND),
-                        () -> driver.getTrigger(),
-                        () -> true);
+                        () -> MathUtil.applyDeadband(-driver.getY(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(-driver.getX(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(-rotation.getX(), IOConstants.DEADBAND),
+                        () -> driver.getTrigger());
 
-        driveSubsystem.setDefaultCommand(visDrive);
+        driveSubsystem.setDefaultCommand(visDrive_two);
+
+        NamedCommands.registerCommand(
+                "Shoot",
+                new AimShoot(
+                        shooterSubsystem, intakeSubsystem, armSubsystem, visionSubsystem, false));
+        NamedCommands.registerCommand(
+                "IntakePosition", armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
+        NamedCommands.registerCommand("Intake", new IntakeCommand(intakeSubsystem, 0.75));
+        NamedCommands.registerCommand("Align", new Align(driveSubsystem, visionSubsystem));
 
         autoChooser = AutoBuilder.buildAutoChooser();
         Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
@@ -68,8 +76,15 @@ public class RobotContainer {
 
         driver_trigger
                 .whileTrue(
-                        new Shoot(shooterSubsystem, intakeSubsystem, armSubsystem, visionSubsystem))
+                        new AimShoot(
+                                shooterSubsystem,
+                                intakeSubsystem,
+                                armSubsystem,
+                                visionSubsystem,
+                                false))
                 .onFalse(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
+
+        driver_button12.whileTrue(new Align(driveSubsystem, visionSubsystem));
 
         box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
         box_outtake.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
@@ -78,12 +93,12 @@ public class RobotContainer {
         box_intakePos.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
         box_travelPos.onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
 
-        xbox_A.whileTrue(new ShooterCommand(shooterSubsystem, intakeSubsystem, false, () -> false));
+        xbox_RStick.whileTrue(
+                new ShooterCommand(shooterSubsystem, intakeSubsystem, false, () -> false));
+        xbox_A.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
+        xbox_Y.onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
         xbox_B.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
         xbox_X.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
-        xbox_Y.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
-        xbox_LStick.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbUp));
-        xbox_RStick.whileTrue(new ClimbCommand(climbSubsystem, ClimbDirection.climbDown));
     }
 
     public Command getAutonomousCommand() {

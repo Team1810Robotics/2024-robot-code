@@ -17,7 +17,6 @@ public class TeleopDriveVis extends Command {
     private final DoubleSupplier vY;
     private final DoubleSupplier vT;
     private final BooleanSupplier visionMode;
-    private final BooleanSupplier driveMode;
 
     public TeleopDriveVis(
             DriveSubsystem drive,
@@ -27,8 +26,7 @@ public class TeleopDriveVis extends Command {
             DoubleSupplier vX,
             DoubleSupplier vY,
             DoubleSupplier omega,
-            BooleanSupplier visionMode,
-            BooleanSupplier driveMode) {
+            BooleanSupplier visionMode) {
         this.drive = drive;
         this.vision = vision;
         this.driveSpeed = driveSpeed;
@@ -37,7 +35,6 @@ public class TeleopDriveVis extends Command {
         this.vY = vY;
         this.vT = omega;
         this.visionMode = visionMode;
-        this.driveMode = driveMode;
 
         addRequirements(drive);
     }

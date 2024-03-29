@@ -54,6 +54,11 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
         return rads - CANCODER_OFFSET;
     }
 
+    public double getVelocity() {
+        double velocity = canCoder.getVelocity().getValueAsDouble();
+        return velocity * TICKS_TO_RAD_CONVERSION;
+    }
+
     public double getMeasurementDegrees() {
         return Math.toDegrees(getMeasurement()) + SETPOINT_OFFSET;
     }

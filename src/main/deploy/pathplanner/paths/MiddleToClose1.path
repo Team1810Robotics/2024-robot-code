@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "MiddlePaths",
+  "folder": null,
   "previewStartingState": {
     "rotation": -179.4645410144354,
     "velocity": 0

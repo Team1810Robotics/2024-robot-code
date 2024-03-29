@@ -14,7 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": null
           }
         },
         {
@@ -39,12 +39,12 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": null
           }
         }
       ]
     }
   },
-  "folder": "Middle",
+  "folder": null,
   "choreoAuto": false
 }

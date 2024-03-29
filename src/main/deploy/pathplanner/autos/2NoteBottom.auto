@@ -20,7 +20,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": null
           }
         },
         {
@@ -51,12 +51,12 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": null
           }
         }
       ]
     }
   },
-  "folder": "Bottom",
+  "folder": null,
   "choreoAuto": false
 }

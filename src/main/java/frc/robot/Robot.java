@@ -1,15 +1,14 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.LEDSubsystem;
-import java.io.File;
-import java.io.IOException;
-import swervelib.parser.SwerveParser;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -23,12 +22,15 @@ public class Robot extends TimedRobot {
 
     private Timer disabledTimer;
 
+    private GenericEntry setpointEntry;
+
     /**
      * This function is run when the robot is first started up and should be used for any
      * initialization code.
      */
     @Override
     public void robotInit() {
+        DriverStation.silenceJoystickConnectionWarning(true);
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
         m_robotContainer = new RobotContainer();
@@ -40,6 +42,8 @@ public class Robot extends TimedRobot {
 
         double setpoint = m_robotContainer.armSubsystem.getMeasurementDegrees();
         m_robotContainer.armSubsystem.setpoint(setpoint);
+
+        setpointEntry = Shuffleboard.getTab("arm").add("PID setpoint", setpoint).getEntry();
     }
 
     /**
@@ -74,6 +78,8 @@ public class Robot extends TimedRobot {
             // should never happen ¯\_(ツ)_/¯
             LEDSubsystem.setState(LEDSubsystem.LEDState.off);
         }
+
+        // m_robotContainer.armSubsystem.setpoint(setpointEntry.getDouble(62));
     }
 
     /** This function is called once each time the robot enters Disabled mode. */
@@ -97,7 +103,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        m_robotContainer.setMotorBrake(true);
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)
@@ -125,19 +130,4 @@ public class Robot extends TimedRobot {
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {}
-
-    @Override
-    public void testInit() {
-        // Cancels all running commands at the start of test mode.
-        CommandScheduler.getInstance().cancelAll();
-        try {
-            new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /** This function is called periodically during test mode. */
-    @Override
-    public void testPeriodic() {}
 }

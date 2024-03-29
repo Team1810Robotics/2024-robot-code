@@ -18,14 +18,21 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Shoot"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
+              }
+            ]
           }
         }
       ]
     }
   },
-  "folder": "Bottom",
+  "folder": null,
   "choreoAuto": false
 }
