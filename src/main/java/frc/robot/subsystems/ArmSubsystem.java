@@ -83,6 +83,14 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
         return controller.atSetpoint();
     }
 
+    public boolean atSetpointRaw() {
+        return controller.atSetpoint();
+    }
+
+    public boolean armAtAngle(double angle) {
+        return Math.abs(getSetpointDegrees() - angle) < 0.05;
+    }
+
     public double getSetpoint() {
         return controller.getSetpoint();
     }
@@ -101,6 +109,7 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
         Shuffleboard.getTab("arm").addNumber("canCoder pos degrees", this::getMeasurementDegrees);
         Shuffleboard.getTab("arm").addNumber("error", controller::getPositionError);
         Shuffleboard.getTab("arm").addBoolean("atSetpoint", this::atSetpoint);
+        Shuffleboard.getTab("arm").addBoolean("atSetpointRaw", this::atSetpointRaw);
         Shuffleboard.getTab("arm").addNumber("arm setpoint", this::getSetpointDegrees);
     }
 }

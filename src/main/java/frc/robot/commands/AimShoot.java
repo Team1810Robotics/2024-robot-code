@@ -22,6 +22,8 @@ public class AimShoot extends Command {
     private final boolean idle;
 
     private double startTime;
+    private double noNoteStartTime = Double.POSITIVE_INFINITY;
+    private boolean h = false;
 
     public AimShoot(
             ShooterSubsystem shooter,
@@ -44,6 +46,9 @@ public class AimShoot extends Command {
     @Override
     public void initialize() {
         startTime = Timer.getFPGATimestamp();
+
+        noNoteStartTime = Double.POSITIVE_INFINITY;
+        h = false;
     }
 
     @Override
@@ -58,7 +63,16 @@ public class AimShoot extends Command {
 
     @Override
     public boolean isFinished() {
-        return !intake.hasNote();
+        boolean noNote = !intake.hasNote();
+
+        if (noNote && !h) {
+            h = true;
+            noNoteStartTime = Timer.getFPGATimestamp();
+        }
+
+        double dt = Timer.getFPGATimestamp() - noNoteStartTime;
+
+        return ((dt >= 0.25) && noNote);
     }
 
     @Override

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.*;
 import frc.robot.commands.Auto.Align;
+import frc.robot.commands.Auto.Position;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
@@ -63,7 +64,7 @@ public class RobotContainer {
                 new AimShoot(
                         shooterSubsystem, intakeSubsystem, armSubsystem, visionSubsystem, false));
         NamedCommands.registerCommand(
-                "IntakePosition", armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
+                "IntakePosition", new Position(armSubsystem, ArmConstants.INTAKE_POSITION));
         NamedCommands.registerCommand("Intake", new IntakeCommand(intakeSubsystem, 0.75));
         NamedCommands.registerCommand("Align", new Align(driveSubsystem, visionSubsystem));
 

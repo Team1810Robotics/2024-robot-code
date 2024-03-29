@@ -44,9 +44,8 @@ public class Align extends Command {
         }
 
         double dt = Timer.getFPGATimestamp() - startTime;
-        if ((dt >= 0.5) && isAligned && h) return true;
 
-        return false;
+        return ((dt >= 0.5) && isAligned && h);
     }
 
     @Override
