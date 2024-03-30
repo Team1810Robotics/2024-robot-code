@@ -87,10 +87,6 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
         return controller.atSetpoint();
     }
 
-    public boolean armAtAngle(double angle) {
-        return Math.abs(getSetpointDegrees() - angle) < 0.05;
-    }
-
     public double getSetpoint() {
         return controller.getSetpoint();
     }

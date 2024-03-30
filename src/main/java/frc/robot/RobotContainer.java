@@ -40,8 +40,8 @@ public class RobotContainer {
                         visionSubsystem,
                         () -> driver.getThrottle(),
                         () -> driver.getThrottle(),
-                        () -> MathUtil.applyDeadband(-driver.getY(), IOConstants.DEADBAND),
-                        () -> MathUtil.applyDeadband(-driver.getX(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
                         () -> MathUtil.applyDeadband(-driver.getZ(), IOConstants.DEADBAND),
                         () -> driver.getTrigger());
 
@@ -52,8 +52,8 @@ public class RobotContainer {
                         visionSubsystem,
                         () -> driver.getThrottle(),
                         () -> rotation.getThrottle(),
-                        () -> MathUtil.applyDeadband(-driver.getY(), IOConstants.DEADBAND),
-                        () -> MathUtil.applyDeadband(-driver.getX(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
                         () -> MathUtil.applyDeadband(-rotation.getX(), IOConstants.DEADBAND),
                         () -> driver.getTrigger());
 
@@ -73,7 +73,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        driver_button9.onTrue(Commands.runOnce(driveSubsystem::zeroGyro));
+        driver_button4.onTrue(Commands.runOnce(driveSubsystem::zeroGyro));
 
         driver_trigger
                 .whileTrue(
@@ -82,7 +82,7 @@ public class RobotContainer {
                                 intakeSubsystem,
                                 armSubsystem,
                                 visionSubsystem,
-                                false))
+                                true))
                 .onFalse(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
 
         driver_button12.whileTrue(new Align(driveSubsystem, visionSubsystem));

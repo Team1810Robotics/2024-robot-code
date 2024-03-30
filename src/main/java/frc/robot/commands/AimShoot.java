@@ -23,7 +23,9 @@ public class AimShoot extends Command {
 
     private double startTime;
     private double noNoteStartTime = Double.POSITIVE_INFINITY;
-    private boolean h = false;
+    private boolean noNote_h = false;
+    private double atSetpointStartTime = Double.POSITIVE_INFINITY;
+    private boolean atSetpoint_h = false;
 
     public AimShoot(
             ShooterSubsystem shooter,
@@ -39,7 +41,7 @@ public class AimShoot extends Command {
         blocked =
                 () -> {
                     boolean isAligned = vision.isAligned() || (arm.getSetpointDegrees() == 62);
-                    return (!isAligned || !arm.atSetpoint());
+                    return !isAligned;
                 };
     }
 
@@ -48,31 +50,45 @@ public class AimShoot extends Command {
         startTime = Timer.getFPGATimestamp();
 
         noNoteStartTime = Double.POSITIVE_INFINITY;
-        h = false;
+        noNote_h = false;
+
+        atSetpointStartTime = Double.POSITIVE_INFINITY;
+        atSetpoint_h = false;
     }
 
     @Override
     public void execute() {
+        boolean atSetpoint = arm.atSetpointRaw();
         shooter.setVoltage(ShooterConstants.SHOOT_SPEED);
         arm.setpoint(vision.getAngle());
 
+        if (atSetpoint && !atSetpoint_h) {
+            atSetpoint_h = true;
+            atSetpointStartTime = Timer.getFPGATimestamp();
+        } else if (!atSetpoint && atSetpoint_h) {
+            atSetpoint_h = false;
+            atSetpointStartTime = Double.POSITIVE_INFINITY;
+        }
+
         double deltaTime = Timer.getFPGATimestamp() - startTime;
-        if ((deltaTime >= ShooterConstants.SPIN_UP_TIME) && !blocked.getAsBoolean())
-            intake.setSpeed(1.0);
+        double atSetpoint_dt = Timer.getFPGATimestamp() - atSetpointStartTime;
+        if ((deltaTime >= ShooterConstants.SPIN_UP_TIME)
+                && !blocked.getAsBoolean()
+                && ((atSetpoint_dt >= 0.75) && atSetpoint)) intake.setSpeed(1.0);
     }
 
     @Override
     public boolean isFinished() {
         boolean noNote = !intake.hasNote();
 
-        if (noNote && !h) {
-            h = true;
+        if (noNote && !noNote_h) {
+            noNote_h = true;
             noNoteStartTime = Timer.getFPGATimestamp();
         }
 
-        double dt = Timer.getFPGATimestamp() - noNoteStartTime;
+        double noNote_dt = Timer.getFPGATimestamp() - noNoteStartTime;
 
-        return ((dt >= 0.25) && noNote);
+        return ((noNote_dt >= 0.25) && noNote);
     }
 
     @Override

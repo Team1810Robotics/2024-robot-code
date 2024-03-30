@@ -44,6 +44,6 @@ public class Position extends Command {
 
         double dt = Timer.getFPGATimestamp() - startTime;
 
-        return ((dt >= 1.5) && atSetpoint);
+        return ((dt >= 1.0) && atSetpoint);
     }
 }

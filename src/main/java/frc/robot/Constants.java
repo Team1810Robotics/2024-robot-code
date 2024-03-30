@@ -98,7 +98,7 @@ public final class Constants {
 
     public static final class ArmConstants {
 
-        public static final double MAX_SPEED = Math.PI / 4.0; // rad/s
+        public static final double MAX_SPEED = Math.PI / 3.0; // rad/s
         public static final double MAX_ACCEL = MAX_SPEED / 2.0; // rad/s^2
 
         public static final TrapezoidProfile.Constraints CONSTRAINTS =
@@ -111,10 +111,10 @@ public final class Constants {
         public static final double CANCODER_OFFSET = -1.667437116431692; // radians
 
         public static final double INITIAL_POSITION = 90.0;
-        public static final double INTAKE_POSITION = 43.0;
-        public static final double DRIVE_POSITION = 55.0;
+        public static final double INTAKE_POSITION = 43.0 - 4.0;
+        public static final double DRIVE_POSITION = 55.0 - 4;
 
-        public static final double SETPOINT_OFFSET = 30; // degrees
+        public static final double SETPOINT_OFFSET = 30.0 - 4.0; // degrees
 
         public static final double kP = 9.5;
         public static final double kI = 0.01;
