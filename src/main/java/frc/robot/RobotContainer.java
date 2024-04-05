@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.commands.*;
 import frc.robot.commands.Auto.Align;
 import frc.robot.commands.Auto.Position;
@@ -26,6 +27,8 @@ public class RobotContainer {
     public final LEDSubsystem ledSubsystem = new LEDSubsystem();
     public final ExtenderSubsystem extenderSubsystem = new ExtenderSubsystem();
 
+    public final Child children = new Child();
+
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
@@ -38,8 +41,6 @@ public class RobotContainer {
                 new TeleopDriveVis(
                         driveSubsystem,
                         visionSubsystem,
-                        () -> driver.getThrottle(),
-                        () -> driver.getThrottle(),
                         () -> MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
                         () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
                         () -> MathUtil.applyDeadband(-driver.getZ(), IOConstants.DEADBAND),
@@ -50,8 +51,6 @@ public class RobotContainer {
                 new TeleopDriveVis(
                         driveSubsystem,
                         visionSubsystem,
-                        () -> driver.getThrottle(),
-                        () -> rotation.getThrottle(),
                         () -> MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
                         () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
                         () -> MathUtil.applyDeadband(-rotation.getX(), IOConstants.DEADBAND),
@@ -91,8 +90,15 @@ public class RobotContainer {
         box_outtake.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
         box_climbUp.whileTrue(new ExtenderCommand(true, extenderSubsystem));
         box_climbDown.whileTrue(new ExtenderCommand(false, extenderSubsystem));
-        box_intakePos.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
-        box_travelPos.onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
+        box_intakePos
+                .onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION))
+                .onTrue(children.add());
+        box_travelPos
+                .onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION))
+                .onTrue(children.doubleChildren());
+        box_climb
+                .onTrue(new PrintCommand("Gave Children Lasagna"))
+                .onFalse(new PrintCommand("Children are starving!"));
 
         xbox_RStick.whileTrue(
                 new ShooterCommand(shooterSubsystem, intakeSubsystem, false, () -> false));

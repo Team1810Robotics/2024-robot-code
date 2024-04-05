@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.VisionConstants;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,11 +170,11 @@ public class VisionSubsystem extends SubsystemBase {
     // https://desmos.com/calculator/u5civq4pfs
     public double getAngle() {
         double distance = getDistanceFromSpeakerTarget();
-        if (distance == 0.0) return 62.0;
+        if (distance == 0.0) return ArmConstants.CLOSE_SHOOT_POSITION;
 
-        double c = -4.91756 * Math.pow(distance, 2);
-        double b = 35.6183 * distance;
-        double a = 19.4615;
+        double c = -4.96837 * Math.pow(distance, 2);
+        double b = 35.5994 * distance;
+        double a = 23.6178;
 
         return a + b + c;
     }

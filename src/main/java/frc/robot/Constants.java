@@ -22,7 +22,7 @@ import swervelib.math.SwerveMath;
 public final class Constants {
 
     public static class IOConstants {
-        public static final double DEADBAND = 0.1;
+        public static final double DEADBAND = 0.2;
         // Drive Controller Speed
         public static final int DRIVE_MODE_BUTTON = 7;
 
@@ -98,7 +98,7 @@ public final class Constants {
 
     public static final class ArmConstants {
 
-        public static final double MAX_SPEED = Math.PI / 3.0; // rad/s
+        public static final double MAX_SPEED = Math.PI / 6; // rad/s
         public static final double MAX_ACCEL = MAX_SPEED / 2.0; // rad/s^2
 
         public static final TrapezoidProfile.Constraints CONSTRAINTS =
@@ -108,18 +108,18 @@ public final class Constants {
         public static final int MOTOR_B_ID = 18;
 
         public static final int CANCODER_ID = 23;
-        public static final double CANCODER_OFFSET = -1.667437116431692; // radians
+        public static final double CANCODER_OFFSET = Math.toRadians(-124.78); // radians
 
-        public static final double INITIAL_POSITION = 90.0;
-        public static final double INTAKE_POSITION = 43.0 - 4.0;
-        public static final double DRIVE_POSITION = 55.0 - 4;
+        public static final double INTAKE_POSITION = 45.0;
+        public static final double DRIVE_POSITION = 55.0;
+        public static final double CLOSE_SHOOT_POSITION = 68.0;
 
-        public static final double SETPOINT_OFFSET = 30.0 - 4.0; // degrees
+        public static final double SETPOINT_OFFSET = 0; // degrees
 
-        public static final double kP = 9.5;
-        public static final double kI = 0.01;
+        public static final double kP = 10.0;
+        public static final double kI = 2.0;
         public static final double kD = 0.0;
-        public static final double kIZ = 10;
+        public static final double kIZ = Math.toRadians(10.0);
 
         public static final double TICKS_TO_RAD_CONVERSION = (2 * Math.PI);
     }

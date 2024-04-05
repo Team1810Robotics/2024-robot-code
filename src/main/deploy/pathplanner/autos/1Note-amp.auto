@@ -2,25 +2,19 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7059762690953959,
-      "y": 4.383177909212962
+      "x": 0.7399244873677722,
+      "y": 6.676482926900691
     },
-    "rotation": 120.41294354859882
+    "rotation": -119.48227598079717
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "StartToShoot"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Align"
+            "name": "Shoot"
           }
         },
         {
@@ -36,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ShootToFar2"
+                  "pathName": "TopStartToClose3"
                 }
               },
               {

@@ -47,14 +47,6 @@ public class ClimbSubsystem extends SubsystemBase {
         rightMotor.set(ControlMode.PercentOutput, speed);
     }
 
-    public boolean getTopLS() {
-        return leftTop.get() && rightTop.get();
-    }
-
-    public boolean getBottomLS() {
-        return leftBottom.get() && rightBottom.get();
-    }
-
     public void climbUp() {
         if (!rightTop.get()) {
             setRightSpeed(ClimbConstants.CLIMB_SPEED);

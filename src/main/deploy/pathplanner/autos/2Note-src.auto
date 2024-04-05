@@ -5,22 +5,22 @@
       "x": 0.7059762690953959,
       "y": 4.383177909212962
     },
-    "rotation": 118.97970769792877
+    "rotation": 120.48034870598457
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "StartToShoot"
+            "name": "Shoot"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "IntakePosition"
           }
         },
         {
@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ShootToFar1"
+                  "pathName": "BottomStartToClose1"
                 }
               },
               {
@@ -45,13 +45,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Far1ToShoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
+            "pathName": "Close3ToShoot"
           }
         },
         {
@@ -59,30 +53,18 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "ShootToFar2"
+                  "name": "Align"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Shoot"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Far2ToShoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
           }
         }
       ]

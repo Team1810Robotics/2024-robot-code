@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -40,7 +41,10 @@ public class AimShoot extends Command {
         this.idle = idleShooter;
         blocked =
                 () -> {
-                    boolean isAligned = vision.isAligned() || (arm.getSetpointDegrees() == 62);
+                    boolean isAligned =
+                            vision.isAligned()
+                                    || (arm.getSetpointDegrees()
+                                            == ArmConstants.CLOSE_SHOOT_POSITION);
                     return !isAligned;
                 };
     }

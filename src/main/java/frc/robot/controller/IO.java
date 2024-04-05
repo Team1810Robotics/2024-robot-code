@@ -58,8 +58,8 @@ public final class IO {
     public static final JoystickButton box_outtake = new JoystickButton(box, out.get());
     public static final JoystickButton box_climbUp = new JoystickButton(box, up.get());
     public static final JoystickButton box_climbDown = new JoystickButton(box, down.get());
-    public static final JoystickButton box_climbPos = new JoystickButton(box, climbPos.get());
-    public static final JoystickButton box_travelPos = new JoystickButton(box, travelPos.get());
+    public static final JoystickButton box_climb = new JoystickButton(box, climb.get());
+    public static final JoystickButton box_travelPos = new JoystickButton(box, drivePos.get());
     public static final JoystickButton box_intakePos = new JoystickButton(box, intakePos.get());
 
     private IO() {

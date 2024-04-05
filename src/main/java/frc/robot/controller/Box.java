@@ -10,9 +10,9 @@ public class Box extends GenericHID {
 
     public enum Button {
         // Face Arcade Buttons
-        travelPos(2),
-        climbPos(3),
-        intakePos(4),
+        drivePos(4),
+        intakePos(3),
+        climb(5),
 
         // joystick
         in(9),
