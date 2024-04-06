@@ -170,7 +170,7 @@ public class VisionSubsystem extends SubsystemBase {
     // https://desmos.com/calculator/u5civq4pfs
     public double getAngle() {
         double distance = getDistanceFromSpeakerTarget();
-        if (distance == 0.0) return ArmConstants.CLOSE_SHOOT_POSITION;
+        if (distance == 0.0 || distance > 4) return ArmConstants.CLOSE_SHOOT_POSITION;
 
         double c = -4.96837 * Math.pow(distance, 2);
         double b = 35.5994 * distance;

@@ -21,12 +21,20 @@ public class Child extends SubsystemBase {
         number *= 2;
     }
 
+    private void minusOne() {
+        number--;
+    }
+
     public Command add() {
         return Commands.runOnce(this::addOne, this);
     }
 
     public Command doubleChildren() {
         return Commands.runOnce(this::times2, this);
+    }
+
+    public Command subtract() {
+        return Commands.runOnce(this::minusOne, this);
     }
 
     public int getChildren() {

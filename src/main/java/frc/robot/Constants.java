@@ -54,7 +54,7 @@ public final class Constants {
         public static final int WHEEL_LOCK_TIME = 10; // in seconds
 
         public static final double MODULE_OFFSET_FROM_CENTER = 9.125;
-        public static final double MAX_SPEED = 4.4196;
+        public static final double MAX_SPEED = 5.0;
         public static final double MAX_ANG_SPEED =
                 SwerveMath.calculateMaxAngularVelocity(
                         MAX_SPEED, MODULE_OFFSET_FROM_CENTER, MODULE_OFFSET_FROM_CENTER);

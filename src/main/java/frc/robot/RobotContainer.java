@@ -84,18 +84,28 @@ public class RobotContainer {
                                 true))
                 .onFalse(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
 
+        driver_button2
+                .whileTrue(
+                        new FeederShot(
+                                shooterSubsystem,
+                                intakeSubsystem,
+                                armSubsystem,
+                                visionSubsystem,
+                                true))
+                .onFalse(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
+
         driver_button12.whileTrue(new Align(driveSubsystem, visionSubsystem));
 
         box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
         box_outtake.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
-        box_climbUp.whileTrue(new ExtenderCommand(true, extenderSubsystem));
-        box_climbDown.whileTrue(new ExtenderCommand(false, extenderSubsystem));
         box_intakePos
                 .onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION))
                 .onTrue(children.add());
         box_travelPos
                 .onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION))
                 .onTrue(children.doubleChildren());
+        box_up.onTrue(armSubsystem.setpointCommand(ArmConstants.CLOSE_SHOOT_POSITION))
+                .onTrue(children.subtract());
         box_climb
                 .onTrue(new PrintCommand("Gave Children Lasagna"))
                 .onFalse(new PrintCommand("Children are starving!"));
