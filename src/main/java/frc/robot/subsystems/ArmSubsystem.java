@@ -87,6 +87,11 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
         return controller.atSetpoint();
     }
 
+    public boolean inRange(double degRange) {
+        double radRange = Math.toRadians(degRange);
+        return Math.abs(controller.getPositionError()) < Math.abs(radRange);
+    }
+
     public double getSetpoint() {
         return controller.getSetpoint();
     }

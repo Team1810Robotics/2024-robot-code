@@ -62,7 +62,7 @@ public class FeederShot extends Command {
 
     @Override
     public void execute() {
-        boolean atSetpoint = arm.atSetpointRaw();
+        boolean atSetpoint = arm.inRange(5.0);
         shooter.setVoltage(Volts.of(9.6));
         arm.setpoint(vision.getAngle());
 
