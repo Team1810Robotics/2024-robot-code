@@ -56,7 +56,7 @@ public class RobotContainer {
                         () -> MathUtil.applyDeadband(-rotation.getX(), IOConstants.DEADBAND),
                         () -> driver.getTrigger());
 
-        driveSubsystem.setDefaultCommand(visDrive_two);
+        driveSubsystem.setDefaultCommand(visDrive);
 
         NamedCommands.registerCommand(
                 "Shoot",
@@ -98,6 +98,13 @@ public class RobotContainer {
 
         box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
         box_outtake.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
+
+        //Drive Intake
+        driver_button5.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
+        driver_button6.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
+        rotation_button4.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
+        rotation_button2.onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
+
         box_intakePos
                 .onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION))
                 .onTrue(children.add());
