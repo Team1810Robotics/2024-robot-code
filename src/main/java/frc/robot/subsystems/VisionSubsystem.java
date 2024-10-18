@@ -174,7 +174,7 @@ public class VisionSubsystem extends SubsystemBase {
 
         double c = -4.96837 * Math.pow(distance, 2);
         double b = 35.5994 * distance;
-        double a = 21.6178;//23.6178;
+        double a = 21.6178; // 23.6178;
 
         return a + b + c;
     }
