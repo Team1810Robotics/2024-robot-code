@@ -23,6 +23,8 @@ public final class Constants {
 
     public static class IOConstants {
         public static final double DEADBAND = 0.2;
+        public static final double XBOX_DEADBAND = 0.05; // TODO: TUNE ME
+
         // Drive Controller Speed
         public static final int DRIVE_MODE_BUTTON = 7;
 
@@ -80,6 +82,7 @@ public final class Constants {
 
         // How off can the AprilTag be and still alright
         // Used to check if the aim is ready to shoot note - Led? - Elastic Go-No-Go
+        // TODO: Check if this can be made lower.
         public static final double TARGET_LOCK_RANGE = 1.0;
 
         public static final double kP = 0.15;
@@ -110,8 +113,8 @@ public final class Constants {
         public static final int CANCODER_ID = 23;
         public static final double CANCODER_OFFSET = Math.toRadians(-124.78); // radians
 
-        public static final double INTAKE_POSITION = 45.0;
-        public static final double DRIVE_POSITION = 55.0;
+        public static final double INTAKE_POSITION = 47.0;
+        public static final double DRIVE_POSITION = 65.0;
         public static final double CLOSE_SHOOT_POSITION = 68.0;
 
         public static final double SETPOINT_OFFSET = 0; // degrees
@@ -133,7 +136,8 @@ public final class Constants {
         public static final int TOP_MOTOR_ID = 14;
         public static final int BOTTOM_MOTOR_ID = 15;
         public static final Measure<Voltage> SHOOT_SPEED = Volts.of(12.0); // Volts
-        public static final double SPIN_UP_TIME = 0.75; // seconds
+        public static final Measure<Voltage> IDLE_SPEED = Volts.of(5); // Volts
+        public static final double SPIN_UP_TIME = 0.5; // seconds
     }
 
     public static final class ClimbConstants {

@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
@@ -51,7 +49,7 @@ public class ShooterCommand extends Command {
     public void end(boolean interupted) {
         intake.stop();
         if (idle) {
-            shooter.setVoltage(Volts.of(4));
+            shooter.setVoltage(ShooterConstants.IDLE_SPEED);
         } else {
             shooter.stop();
         }

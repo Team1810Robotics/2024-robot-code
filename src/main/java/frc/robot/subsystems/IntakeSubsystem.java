@@ -18,6 +18,7 @@ public class IntakeSubsystem extends SubsystemBase {
         beam = new DigitalInput(IntakeConstants.BEAM_BREAK_PORT);
 
         Shuffleboard.getTab("intake").addBoolean("hasNote", this::hasNote);
+        Shuffleboard.getTab("intake").addDouble("Intake Power", () -> motor.getAppliedOutput());
     }
 
     public void setSpeed(double motorSpeed) {

@@ -1,11 +1,12 @@
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.controller.IO.driver_button2;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.controller.IO;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -20,13 +21,14 @@ public class AimShoot extends Command {
     private final VisionSubsystem vision;
 
     private final BooleanSupplier blocked;
-    private final boolean idle;
+    private boolean idle;
 
     private double startTime;
     private double noNoteStartTime = Double.POSITIVE_INFINITY;
     private boolean noNote_h = false;
     private double atSetpointStartTime = Double.POSITIVE_INFINITY;
     private boolean atSetpoint_h = false;
+    private IO io;
 
     public AimShoot(
             ShooterSubsystem shooter,
@@ -47,6 +49,8 @@ public class AimShoot extends Command {
                                             == ArmConstants.CLOSE_SHOOT_POSITION);
                     return !isAligned;
                 };
+
+        // Shuffleboard.getTab("intake").addBoolean("Blocked", blocked);
     }
 
     @Override
@@ -65,6 +69,12 @@ public class AimShoot extends Command {
         boolean atSetpoint = arm.atSetpointRaw();
         shooter.setVoltage(ShooterConstants.SHOOT_SPEED);
         arm.setpoint(vision.getAngle());
+
+        if (driver_button2.getAsBoolean()) {
+            intake.setSpeed(1);
+        } else {
+            intake.setSpeed(0);
+        }
 
         if (atSetpoint && !atSetpoint_h) {
             atSetpoint_h = true;
@@ -98,8 +108,8 @@ public class AimShoot extends Command {
     @Override
     public void end(boolean interupted) {
         intake.stop();
-        if (idle) {
-            shooter.setVoltage(Volts.of(4));
+        if (idle && intake.hasNote()) {
+            shooter.setVoltage(ShooterConstants.IDLE_SPEED);
         } else {
             shooter.stop();
         }

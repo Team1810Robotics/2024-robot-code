@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -23,8 +22,10 @@ public class ShooterSubsystem extends SubsystemBase {
         top.setInverted(true);
         bottom.setInverted(true);
 
-        Shuffleboard.getTab("shooter").addNumber("top pos", () -> top.get());
-        Shuffleboard.getTab("shooter").addNumber("bottom pos", () -> bottom.get());
+        // Shuffleboard.getTab("shooter").addNumber("top pos", () ->
+        // top.getEncoder().getPosition());
+        // Shuffleboard.getTab("shooter").addNumber("bottom pos", () ->
+        // bottom.getEncoder().getPosition());
     }
 
     public void setSpeed(double speed) {
