@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "TopStartToClose3"
+                  "pathName": "Amp-Start"
                 }
               },
               {
@@ -40,6 +40,18 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Amp-Return"
           }
         },
         {

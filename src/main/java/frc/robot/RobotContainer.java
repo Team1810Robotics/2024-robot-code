@@ -1,6 +1,5 @@
 package frc.robot;
 
-import static frc.robot.Constants.*;
 import static frc.robot.controller.IO.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -11,6 +10,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.IOConstants;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.*;
 import frc.robot.commands.Auto.Align;
 import frc.robot.commands.Auto.Position;
@@ -43,7 +45,7 @@ public class RobotContainer {
                         visionSubsystem,
                         () -> MathUtil.applyDeadband(driver.getY(), IOConstants.DEADBAND),
                         () -> MathUtil.applyDeadband(driver.getX(), IOConstants.DEADBAND),
-                        () -> MathUtil.applyDeadband(-driver.getZ(), IOConstants.DEADBAND),
+                        () -> MathUtil.applyDeadband(-driver.getZ(), IOConstants.ANGLE_DEADBAND),
                         () -> driver.getTrigger());
 
         @SuppressWarnings("unused")
@@ -56,7 +58,19 @@ public class RobotContainer {
                         () -> MathUtil.applyDeadband(-rotation.getX(), IOConstants.DEADBAND),
                         () -> driver.getTrigger());
 
-        driveSubsystem.setDefaultCommand(visDrive);
+        @SuppressWarnings("unused")
+        Command xBoxDrive =
+                new TeleopDriveVis(
+                        driveSubsystem,
+                        visionSubsystem,
+                        () -> MathUtil.applyDeadband(xbox.getLeftY(), IOConstants.XBOX_DEADBAND),
+                        () -> MathUtil.applyDeadband(xbox.getLeftX(), IOConstants.XBOX_DEADBAND),
+                        () -> MathUtil.applyDeadband(xbox.getRightX(), IOConstants.XBOX_DEADBAND),
+                        () -> xbox.getAButton());
+
+        // driveSubsystem.setDefaultCommand(xBoxDrive);
+
+        driveSubsystem.setDefaultCommand(xBoxDrive);
 
         NamedCommands.registerCommand(
                 "Shoot",
@@ -74,6 +88,14 @@ public class RobotContainer {
     private void configureBindings() {
         driver_button4.onTrue(Commands.runOnce(driveSubsystem::zeroGyro));
 
+        xbox_RB.whileTrue(
+                        new AimShoot(
+                                shooterSubsystem,
+                                intakeSubsystem,
+                                armSubsystem,
+                                visionSubsystem,
+                                true))
+                .onFalse(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
         driver_trigger
                 .whileTrue(
                         new AimShoot(
@@ -84,22 +106,31 @@ public class RobotContainer {
                                 true))
                 .onFalse(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
 
-        driver_button2
-                .whileTrue(
-                        new FeederShot(
-                                shooterSubsystem,
-                                intakeSubsystem,
-                                armSubsystem,
-                                visionSubsystem,
-                                true))
-                .onFalse(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
+        driver_button3.onTrue(new Manual(intakeSubsystem));
+
+        xbox_B.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
+        xbox_X.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
+        xbox_A.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
+        xbox_Y.onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
+
+        /*driver_button2
+        .whileTrue(
+                new FeederShot(
+                        shooterSubsystem,
+                        intakeSubsystem,
+                        armSubsystem,
+                        visionSubsystem,
+                        true))
+        .onFalse(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));*/
+
+        driver_button3.onTrue(new Manual(intakeSubsystem));
 
         driver_button12.whileTrue(new Align(driveSubsystem, visionSubsystem));
 
         box_intake.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
         box_outtake.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
 
-        //Drive Intake
+        // Drive Intake
         driver_button5.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
         driver_button6.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
         rotation_button4.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
@@ -117,12 +148,8 @@ public class RobotContainer {
                 .onTrue(new PrintCommand("Gave Children Lasagna"))
                 .onFalse(new PrintCommand("Children are starving!"));
 
-        xbox_RStick.whileTrue(
-                new ShooterCommand(shooterSubsystem, intakeSubsystem, false, () -> false));
-        xbox_A.onTrue(armSubsystem.setpointCommand(ArmConstants.INTAKE_POSITION));
-        xbox_Y.onTrue(armSubsystem.setpointCommand(ArmConstants.DRIVE_POSITION));
-        xbox_B.whileTrue(new IntakeCommand(intakeSubsystem, 0.75));
-        xbox_X.whileTrue(new IntakeCommand(intakeSubsystem, -1.0));
+        /*xbox_RStick.whileTrue(
+        new ShooterCommand(shooterSubsystem, intakeSubsystem, false, () -> false));*/
     }
 
     public Command getAutonomousCommand() {

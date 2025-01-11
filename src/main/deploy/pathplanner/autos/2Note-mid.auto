@@ -3,7 +3,7 @@
   "startingPose": {
     "position": {
       "x": 1.3363329583802028,
-      "y": 5.52661562465982
+      "y": 5.541275082550166
     },
     "rotation": -179.21517539700815
   },
@@ -43,6 +43,18 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid-2-Return"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -59,6 +71,18 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MiddleToClose2"
           }
         }
       ]

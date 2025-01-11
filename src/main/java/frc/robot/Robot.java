@@ -22,6 +22,7 @@ public class Robot extends TimedRobot {
 
     private Timer disabledTimer;
 
+    @SuppressWarnings("unused")
     private GenericEntry setpointEntry;
 
     /**

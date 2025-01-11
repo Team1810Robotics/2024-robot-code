@@ -41,6 +41,7 @@ deploy {
 }
 
 spotless {
+    enforceCheck false
     java {
         target fileTree('.') {
             include '**/*.java'

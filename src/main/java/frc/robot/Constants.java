@@ -22,7 +22,10 @@ import swervelib.math.SwerveMath;
 public final class Constants {
 
     public static class IOConstants {
-        public static final double DEADBAND = 0.2;
+        public static final double DEADBAND = 0.15;
+        public static final double ANGLE_DEADBAND = 0.1;
+        public static final double XBOX_DEADBAND = 0.05;
+
         // Drive Controller Speed
         public static final int DRIVE_MODE_BUTTON = 7;
 

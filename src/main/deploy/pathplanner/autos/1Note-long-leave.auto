@@ -12,6 +12,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Amp-Start"
+          }
+        },
+        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -28,12 +34,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TopStartToClose3"
           }
         }
       ]
